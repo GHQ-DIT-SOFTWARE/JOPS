@@ -1,0 +1,7 @@
+const Ziggy = {"url":"http:\/\/gafsetup.test","port":null,"defaults":{},"routes":{"sanctum.csrf-cookie":{"uri":"sanctum\/csrf-cookie","methods":["GET","HEAD"]},"ignition.healthCheck":{"uri":"_ignition\/health-check","methods":["GET","HEAD"]},"ignition.executeSolution":{"uri":"_ignition\/execute-solution","methods":["POST"]},"ignition.updateConfig":{"uri":"_ignition\/update-config","methods":["POST"]},"login":{"uri":"login","methods":["POST"]},"logout":{"uri":"logout","methods":["GET","HEAD"]},"register":{"uri":"register","methods":["GET","HEAD"]},"password.request":{"uri":"password\/reset","methods":["GET","HEAD"]},"password.email":{"uri":"password\/email","methods":["POST"]},"password.reset":{"uri":"password\/reset\/{token}","methods":["GET","HEAD"],"parameters":["token"]},"password.update":{"uri":"password\/reset","methods":["POST"]},"password.confirm":{"uri":"password\/confirm","methods":["GET","HEAD"]},"dashboard.index":{"uri":"dashboard","methods":["GET","HEAD"]},"profile.index":{"uri":"profile","methods":["GET","HEAD"]},"profile.photo":{"uri":"profile\/photo","methods":["GET","HEAD"]},"profile.security":{"uri":"profile\/security","methods":["GET","HEAD"]},"profile.signature":{"uri":"profile\/signature","methods":["GET","HEAD"]}}};
+
+if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
+    Object.assign(Ziggy.routes, window.Ziggy.routes);
+}
+
+export { Ziggy };
