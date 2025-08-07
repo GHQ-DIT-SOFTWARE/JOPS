@@ -530,7 +530,7 @@ function floatchart() {
                 y: {
                     title: {
                         formatter: function(seriesName) {
-                            return 'Products :'
+                            return 'items :'
                         }
                     }
                 },

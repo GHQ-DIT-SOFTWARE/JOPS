@@ -1,8 +1,12 @@
 <?php
 
-use App\Http\Controllers\Front\Dashboard\DashboardController;
+// use App\Http\Controllers\Front\Dashboard\DashboardController;
 use App\Http\Controllers\Front\Profile\ProfileController;
 use Illuminate\Support\Facades\Route;
+
+use App\Models\User;
+
+use App\Http\Controllers\Superadmin\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,3 +39,26 @@ Route::group(['prefix' => 'profile', 'as' => 'profile.'], function () {
     Route::get('/security', [ProfileController::class, 'security'])->name('security');
     Route::get('/signature', [ProfileController::class, 'signature'])->name('signature');
 });
+
+
+
+
+Route::middleware(['auth', 'role:' . User::ROLE_SUPPERADMIN])
+    ->prefix('superadmin')
+    ->as('superadmin.')
+    ->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+
+
+
+
+
+    });
+
+Route::middleware(['auth', 'role:' . User::ROLE_DG])
+    ->prefix('dg')
+    ->as('dg.')
+    ->group(function () {
+        Route::get('/dashboard', [DGDashboardController::class, 'index'])->name('dashboard');
+    });
