@@ -31,7 +31,7 @@
                                 </div>
                                 <div class="col-auto">
                                     <h6 class="text-muted m-b-10">Duty Report</h6>
-                                    <h2 class="m-b-0">379</h2>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -46,7 +46,7 @@
                                 </div>
                                 <div class="col-auto">
                                     <h6 class="text-muted m-b-10">Daily SITREP</h6>
-                                    <h2 class="m-b-0">205</h2>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                                 </div>
                                 <div class="col-auto">
                                     <h6 class="text-muted m-b-10">Incoming Mails</h6>
-                                    <h2 class="m-b-0">5984</h2>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -76,7 +76,7 @@
                                 </div>
                                 <div class="col-auto">
                                     <h6 class="text-muted m-b-10">Outgoing Mails</h6>
-                                    <h2 class="m-b-0">325</h2>
+                                    
                                 </div>
                             </div>
                         </div>

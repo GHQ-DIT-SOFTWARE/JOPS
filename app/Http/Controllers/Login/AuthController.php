@@ -17,23 +17,23 @@ class AuthController extends Controller
     public function Login(Request $request)
     {
         $request->validate([
-            'email' => 'required|string|email',
+            'service_no' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        $email = $request->email;
+        $service_no = $request->service_no;
         $password = $request->password;
         $now = Carbon::now();
         $todayDate = $now->toDateTimeString();
 
-        if (Auth::attempt(['email' => $email, 'password' => $password])) {
+        if (Auth::attempt(['service_no' => $service_no, 'password' => $password])) {
             $user = Auth::user();
 
             // Log activity
             $activityLog = [
                 'uuid' => Str::uuid(),
-                'name' => $user->name,
-                'email' => $user->email,
+                'name' => $user->fname, // changed from name to fname
+                'service_no' => $user->service_no,
                 'description' => 'has logged in as ' . $user->roleName(),
                 'date_time' => $todayDate,
             ];
@@ -55,8 +55,8 @@ class AuthController extends Controller
         // Log logout activity
         $activityLog = [
             'uuid' => Str::uuid(),
-            'name' => $user->name,
-            'email' => $user->email,
+            'name' => $user->fname, // changed from name to fname
+            'service_no' => $user->service_no,
             'description' => 'has logged out as ' . $user->roleName(),
             'date_time' => $todayDate,
         ];

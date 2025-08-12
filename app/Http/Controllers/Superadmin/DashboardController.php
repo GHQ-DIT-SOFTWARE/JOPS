@@ -13,4 +13,11 @@ class DashboardController extends Controller
          $nav_title = "Dashboard";
         return view('superadmin.dashboard', compact('nav_title'));
     }
+
+
+    
+    
+
 }
+
+

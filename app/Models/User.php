@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\Traits\UuidTrait;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, UuidTrait;
+    use HasFactory, Notifiable;
 
     // Define role constants
     public const ROLE_SUPPERADMIN = 0;
@@ -41,10 +41,15 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name',
-        'email',
+        'service_no',
+        'rank',
+        'fname',
+        'unit',
         'phone',
+        'arm_of_service',
+        'email',
         'password',
+        'gender',
         'is_role',
     ];
 
@@ -98,4 +103,22 @@ class User extends Authenticatable
     {
         return in_array($this->is_role, $roles);
     }
+
+    /**
+     * Override the method to use service_no for authentication.
+     *
+     * @return string
+     */
+    public function getAuthIdentifierName()
+    {
+        return 'service_no';
+    }
+
+    public function getRoleNameAttribute(): string
+{
+    return self::$roleNames[$this->is_role] ?? 'Unknown';
 }
+
+
+}
+

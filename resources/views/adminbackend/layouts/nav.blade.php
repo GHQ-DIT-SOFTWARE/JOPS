@@ -13,7 +13,7 @@
                         ->first();
                 @endphp
                 <div class="main-menu-header">
-                    <img class="img-radius" src="{{ asset('upload/logo2.png') }}" alt="User-Profile-Image">
+                    <img class="img-radius" src="{{ asset('upload/logo2.gif') }}" alt="User-Profile-Image">
 
                 </div>
 
@@ -28,56 +28,34 @@
                             <span class="pcoded-mtext">Dashboard</span>
                         </a>
                     </li>
-                    {{-- USER MANAGEMENT
+
+
+                    {{-- MANAGE PROFILE --}}
                     <li
-                        class="nav-item pcoded-hasmenu {{ $prefix == '/user_management' ? 'active pcoded-trigger' : '' }}">
-                        <a href="#" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-users"></i></span>
-                            <span class="pcoded-mtext">User Management</span>
+                        class="nav-item pcoded-hasmenu {{ Request::is('superadmin/reports*') ? 'active pcoded-trigger' : '' }}">
+                        <a href="#!" class="nav-link">
+                            <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
+                            <span class="pcoded-mtext">Reports</span>
                         </a>
                         <ul class="pcoded-submenu">
-                            <li class="{{ $route == 'superadmin.personnels.list' ? 'active' : '' }}">
-                                <a href="{{ route('superadmin.personnels.list') }}">Personnels</a>
+                            <li class="{{ Request::is('superadmin/reports/dutyreport') ? 'active' : '' }}">
+                                <a href="{{ route('superadmin.dutyreport.view') }}">Duty Report</a>
+                            </li>
+                            <li class="{{ Request::is('superadmin/reports/dailysitrep') ? 'active' : '' }}">
+                                <a href="{{ route('superadmin.dailysitrep.view') }}">Daily Sitrep</a>
                             </li>
                         </ul>
                     </li>
 
-
-                    {{-- LEAVE MANAGEMENT --}}
-                    {{-- <li
-                        class="nav-item pcoded-hasmenu {{ $prefix == 'superadmin/leave_management' ? 'active pcoded-trigger' : '' }}">
-                        <a href="#!" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-database"></i></span>
-                            <span class="pcoded-mtext">Leave Management</span>
+                    <li class="nav-item {{ $route == 'superadmin.mails' ? 'active' : '' }}">
+                        <a href="{{ route('superadmin.mails') }}" class="nav-link">
+                            <span class="pcoded-micon"><i class="fa-solid fa-display"></i></span>
+                            <span class="pcoded-mtext">Mails</span>
                         </a>
-                        <ul class="pcoded-submenu">
-                            <li class="{{ $route == 'superadmin.leave.index' ? 'active' : '' }}">
-                                <a href="{{ route('superadmin.leave.index') }}">Leave List</a>
-                            </li>
-                        </ul>
-                    </li> --}}
-
-                    {{-- SETUP MANAGEMENT --}}
-                    {{-- <li class="nav-item pcoded-hasmenu {{ $prefix == '/setup' ? 'active pcoded-trigger' : '' }}">
-                        <a href="#" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-users"></i></span>
-                            <span class="pcoded-mtext">Setup Management</span>
-                        </a>
-                        <ul class="pcoded-submenu">
-                            <li class="{{ $route == 'superadmin.cell.index' ? 'active' : '' }}">
-                                <a href="{{ route('superadmin.cell.index') }}">Cell</a>
-                            </li>
-                            <li class="{{ $route == 'superadmin.section.index' ? 'active' : '' }}">
-                                <a href="{{ route('superadmin.section.index') }}">Section</a>
-                            </li>
-                            <li class="{{ $route == 'superadmin.assign_section.index' ? 'active' : '' }}">
-                                <a href="{{ route('superadmin.assign_section.index') }}">Assign Section</a>
-                            </li>
-                        </ul>
-                    </li> --}}
+                    </li>
 
                     {{-- USER MANAGEMENT --}}
-                    {{-- <li class="nav-item pcoded-hasmenu {{ $prefix == '/users' ? 'active pcoded-trigger' : '' }}">
+                    <li class="nav-item pcoded-hasmenu {{ $prefix == '/users' ? 'active pcoded-trigger' : '' }}">
                         <a href="#" class="nav-link">
                             <span class="pcoded-micon"><i class="fa-solid fa-users"></i></span>
                             <span class="pcoded-mtext">Users</span>
@@ -87,7 +65,9 @@
                                 <a href="{{ route('superadmin.users.list') }}">Users</a>
                             </li>
                         </ul>
-                    </li> --}}
+                    </li>
+
+
 
                     {{-- DASHBOARDS --}}
                 @elseif(Auth::user()->is_role == 1)
@@ -147,7 +127,7 @@
 
 
                     {{-- LEAVE MANAGEMENT --}}
-                    
+
 
                     {{-- <li class="{{ $route == 'chiefclerk.leave.index' ? 'active' : '' }}">
                         <a href="{{ route('chiefclerk.leave.index') }}" class="nav-link">
@@ -166,7 +146,7 @@
                 @endif
 
                 {{-- MANAGE PROFILE --}}
-                {{-- <li class="nav-item pcoded-hasmenu {{ $prefix == '/profile' ? 'active pcoded-trigger' : '' }}">
+                <li class="nav-item pcoded-hasmenu {{ $prefix == '/profile' ? 'active pcoded-trigger' : '' }}">
                     <a href="#!" class="nav-link">
                         <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
                         <span class="pcoded-mtext">Manage Profile</span>
@@ -179,7 +159,7 @@
                             <a href="{{ route('password.view') }}">Change Password</a>
                         </li>
                     </ul>
-                </li> --}}
+                </li>
 
                 {{-- LOGOUT --}}
                 <li class="nav-item">

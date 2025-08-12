@@ -38,24 +38,29 @@
                     </div>
                 @endif
                 <form action="{{ route('login') }}" method="POST">
-                    @csrf
-                    <h3 class="mb-4 f-w-400">Signin</h3>
-                    <div class="form-group mb-3">
-                        <label class="floating-label" for="Email">Email address</label>
-                        <input type="text" class="form-control" id="Email" name="email" placeholder="">
-                        @error('email')
-                            <span class="badge badge-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="form-group mb-4">
-                        <label class="floating-label" for="Password">Password</label>
-                        <input type="password" class="form-control" id="Password" name="password" placeholder="">
-                        @error('password')
-                            <span class="badge badge-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <button class="btn btn-block btn-primary mb-4">Signin</button>
-                </form>
+    @csrf
+    <h3 class="mb-4 f-w-400">Signin</h3>
+
+    {{-- Service No field instead of Email --}}
+    <div class="form-group mb-3">
+        <label class="floating-label" for="ServiceNo">Service Number</label>
+        <input type="text" class="form-control" id="ServiceNo" name="service_no" placeholder="">
+        @error('service_no')
+            <span class="badge badge-danger">{{ $message }}</span>
+        @enderror
+    </div>
+
+    <div class="form-group mb-4">
+        <label class="floating-label" for="Password">Password</label>
+        <input type="password" class="form-control" id="Password" name="password" placeholder="">
+        @error('password')
+            <span class="badge badge-danger">{{ $message }}</span>
+        @enderror
+    </div>
+
+    <button class="btn btn-block btn-primary mb-4">Signin</button>
+</form>
+
 
             </div>
         </div>
