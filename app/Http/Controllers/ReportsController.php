@@ -20,5 +20,11 @@ class ReportsController extends Controller
         return view('superadmin.reports.dailysitrep', compact('nav_title'));
     }
 
+public function add()
+{
+    $nav_title = "Add Report";
+    $user = auth()->user();  // get the logged-in user
 
+    return view('superadmin.reports.addreport', compact('nav_title', 'user'));
+}
 }

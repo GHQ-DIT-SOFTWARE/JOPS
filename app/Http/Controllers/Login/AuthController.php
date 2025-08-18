@@ -46,27 +46,30 @@ class AuthController extends Controller
         return redirect()->route('login')->withErrors(['error' => 'Invalid credentials. Please try again.']);
     }
 
-    public function Logout()
-    {
-        $user = Auth::user();
-        $now = Carbon::now();
-        $todayDate = $now->toDateTimeString();
-
-        // Log logout activity
-        $activityLog = [
-            'uuid' => Str::uuid(),
-            'name' => $user->fname, // changed from name to fname
-            'service_no' => $user->service_no,
-            'description' => 'has logged out as ' . $user->roleName(),
-            'date_time' => $todayDate,
-        ];
-        DB::table('activity_logs')->insert($activityLog);
-
-        Auth::logout();
-
-        return redirect()->route('login')->with('success', 'User logged out successfully.');
+   public function Logout()
+{
+    if (! Auth::check()) {
+        // Nothing to log — redirect to login
+        return redirect()->route('login')->with('warning', 'You are not logged in.');
     }
 
+    $user = Auth::user();
+    $now = Carbon::now()->toDateTimeString();
+
+    $activityLog = [
+        'uuid'        => Str::uuid(),
+        'name'        => $user->fname ?? $user->name ?? 'Unknown',
+        'service_no'  => $user->service_no ?? null,
+        'description' => 'has logged out as ' . ($user->roleName() ?? 'user'),
+        'date_time'   => $now,
+    ];
+
+    DB::table('activity_logs')->insert($activityLog);
+
+    Auth::logout();
+
+    return redirect()->route('login')->with('success', 'User logged out successfully.');
+}
     /**
      * Redirect user based on role.
      *

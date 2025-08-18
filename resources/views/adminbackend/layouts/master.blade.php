@@ -28,6 +28,8 @@
     <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
+       
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('backend/assets/css/ui/_buttons.scss') }}">
 
@@ -57,6 +59,25 @@
             background-color: #ffffff;
             color: #000000;
         }
+
+       @keyframes scrollLeft {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+#news-ticker {
+  display: inline-block;
+  white-space: nowrap;
+  animation: scrollLeft 20s linear infinite;
+  font-size: 18px;
+  color: #000000;
+}
+
+
     </style>
 
 </head>
@@ -79,12 +100,13 @@
     @yield('main')
 
     <!-- Required Js -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('backend/assets/js/vendor-all.min.js') }}"></script>
     <script src="{{ asset('backend/assets/js/plugins/bootstrap.min.js') }}"></script>
     <script src="{{ asset('backend/assets/js/ripple.js') }}"></script>
     <script src="{{ asset('backend/assets/js/pcoded.min.js') }}"></script>
     <script src="{{ asset('backend/assets/js/menu-setting.min.js') }}"></script>
+    
 
     <!-- notification Js -->
     <script src="{{ asset('backend/assets/js/plugins/bootstrap-notify.min.js') }}"></script>
@@ -94,6 +116,7 @@
     <!-- DataTables -->
     <script src="{{ asset('backend/assets/js/plugins/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('backend/assets/js/plugins/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('backend/assets/js/plugins/jquery.bootstrap.wizard.min.js') }}"></script>
 
     <!-- Toastr -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -145,27 +168,23 @@
     </script>
 
     <script>
-    $(document).ready(function () {
+  $(document).ready(function() {
+    // Example news items (replace with your dynamic data)
+    const newsItems = [
+      "Breaking: New policy update released.",
+      "Reminder: Submit duty reports by end of day.",
+      "Incoming mails processed successfully.",
+      "Outgoing mails dispatch scheduled for tomorrow."
+    ];
 
-        // Define your date range here
-        const startDate = new Date("2025-08-01");
-        const endDate = new Date("2025-08-07");
+    // Join items with some spacing and separators
+    const tickerText = newsItems.join("   •   ");
 
-        // Format the date as "MONTH DAY, YEAR"
-        function formatDate(date) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return date.toLocaleDateString('en-US', options).toUpperCase(); // Example: "AUGUST 1, 2025"
-        }
-
-        // Set the text
-        const formattedStart = formatDate(startDate);
-        const formattedEnd = formatDate(endDate);
-
-        const periodText = `DUTY OFFICER'S FOR THE PERIOD OF ${formattedStart} - ${formattedEnd}`;
-        $("#current-date-time").text(periodText);
-
-    });
+    // Set the ticker text
+    $("#news-ticker").text(tickerText);
+  });
 </script>
+
 
 
 </body>

@@ -19,7 +19,19 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
 
+             <div class="card">
+                <div class="card-body py-2">
+                    <div class="news-ticker-wrapper" style="overflow:hidden; white-space: nowrap;">
+                        <div id="news-ticker" style="display: inline-block; padding-left: 100%; will-change: transform;">
+                            <!-- News items will go here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
             <div class="row">
                 <!-- customar project  start -->
                 <div class="col-xl-3 col-md-6">
@@ -85,11 +97,7 @@
 
             </div>
 
-            <div class="card">
-                <div class="card-body py-2 text-center">
-                    <h4 id="current-date-time" style="color: #000000"></h4>
-                </div>
-            </div>
+            
 
 
             <div class="card">

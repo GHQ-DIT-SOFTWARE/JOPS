@@ -67,6 +67,7 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPPERADMIN])
     Route::prefix('reports')->group(function () {
         Route::get('/dutyreport', [ReportsController::class, 'dutyReport'])->name('dutyreport.view');
         Route::get('/dailysitrep', [ReportsController::class, 'dailySitrep'])->name('dailysitrep.view');
+        Route::get('/addreport', [ReportsController::class, 'add'])->name('add.report');
     });
 
     Route::prefix('users')->as('users.')->group(function () {
@@ -74,7 +75,7 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPPERADMIN])
         Route::get('/create', [UserController::class, 'create'])->name('create');
         Route::post('/store', [UserController::class, 'store'])->name('store');
         Route::get('/edit/{id}', [UserController::class, 'edit'])->name('edit');
-        Route::post('/update/{id}', [UserController::class, 'update'])->name('update');
+        Route::put('/update/{id}', [UserController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('destroy');
         Route::get('/ajax', [UserController::class, 'usersAjax'])->name('ajax');
     });
@@ -88,3 +89,10 @@ Route::middleware(['auth', 'role:' . User::ROLE_DG])
     ->group(function () {
         Route::get('/dashboard', [DGDashboardController::class, 'index'])->name('dashboard');
     });
+
+
+
+
+Route::get('/ck', function () {
+    return view('dutyofficer');
+});
