@@ -10738,7 +10738,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .text-muted {
-    color: #868e96 !important;
+    color: #513805 !important;
 }
 
 .text-black-50 {
@@ -20396,7 +20396,7 @@ body {
     font-size: 14px;
     color: #373a3c;
     font-weight: 400;
-    background: #4f95fb;
+    background: #9b6b0a;
     position: relative;
   
 }
@@ -25618,7 +25618,7 @@ pre[class*=language-]:before {
 }
 
 .pcoded-navbar.menu-light a {
-    color: #535763;
+    color: #513805;
 }
 
 .pcoded-navbar.menu-light.navbar-collapsed .pcoded-menu-caption:after {
@@ -25634,12 +25634,12 @@ pre[class*=language-]:before {
 }
 
 .pcoded-navbar.menu-light .pcoded-inner-navbar li.active > a, .pcoded-navbar.menu-light .pcoded-inner-navbar li.pcoded-trigger > a, .pcoded-navbar.menu-light .pcoded-inner-navbar li:hover > a {
-    color: #4f95fb;
+    color: #9b6b0a;
     background: transparent;
 }
 
 .pcoded-navbar.menu-light .pcoded-inner-navbar > li.active > a, .pcoded-navbar.menu-light .pcoded-inner-navbar > li.pcoded-trigger > a {
-    background: #4f95fb;
+    background: #9b6b0a;
     color: #fff;
 }
 
