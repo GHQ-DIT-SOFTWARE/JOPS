@@ -12,17 +12,19 @@
     <meta content="{{ config('app.name') }}" name="author" />
     <!-- Favicon icon -->
     <link rel="icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/x-icon">
+    
     <!-- vendor css -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 
     <style>
         body {
+            font-family: 'Montserrat', sans-serif !important;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             background: url('{{ asset('/upload/bg2.png') }}') no-repeat center center/cover;
-            font-family: monospace;
+            
         }
 
         .overlay {
