@@ -27,14 +27,7 @@
             
         }
 
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-        }
+        
 
         .login-container {
             position: relative;
@@ -52,8 +45,8 @@
         }
 
         .left-panel img {
-            width: 120px;
-            margin-bottom: 20px;
+            width: 150px;
+            margin-bottom: 5px;
         }
 
         .left-panel h2 {
@@ -121,7 +114,7 @@
     <div class="login-container">
         <!-- Left -->
         <div class="left-panel">
-            <img src="{{ asset('/upload/logo2.png') }}" alt="Logo">
+            <img src="{{ asset('/upload/ghq.gif') }}" alt="Logo">
             <h2>GHQ-JOPS</h2>
         </div>
 
