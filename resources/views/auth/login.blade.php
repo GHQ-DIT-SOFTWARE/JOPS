@@ -15,6 +15,9 @@
     
     <!-- vendor css -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <!-- Google Fonts CDN for Montserrat -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+
 
     <style>
         body {
