@@ -21,22 +21,22 @@
             </div>
             <div class="row">
                 <!--marquee-->
-                    <div class="card" style="width: 100%;">
-                        <div class="card-body py-2">
-                            <marquee behavior="scroll" direction="left" scrollamount="5" class="text-deep-brown">
-                                <b> Breaking: New policy update released. •
-                                    Reminder: Submit duty reports by end of day. •
-                                    Incoming mails processed successfully. •
-                                    Outgoing mails dispatch scheduled for tomorrow.</b>
-                            </marquee>
-                        </div>
+                <div class="card" style="width: 100%;">
+                    <div class="card-body py-2">
+                        <marquee behavior="scroll" direction="left" scrollamount="5" class="text-deep-brown">
+                            <b> Breaking: New policy update released. •
+                                Reminder: Submit duty reports by end of day. •
+                                Incoming mails processed successfully. •
+                                Outgoing mails dispatch scheduled for tomorrow.</b>
+                        </marquee>
                     </div>
+                </div>
 
             </div>
             <div class="row">
                 <!-- Cards -->
-                <div class="col-xl-3 col-md-6">
-                    <div class="card" style="border-radius: 10px">
+                 <div class="col-xl-3 col-md-6">
+                    <div class="card glass-card">
                         <div class="card-body">
                             <div class="row align-items-center m-l-0">
                                 <div class="col-auto">
@@ -53,7 +53,7 @@
                     </div>
                 </div>
                 <div class="col-xl-3 col-md-6">
-                   <div class="card" style="border-radius: 10px">
+                    <div class="card glass-card">
                         <div class="card-body">
                             <div class="row align-items-center m-l-0">
                                 <div class="col-auto">
@@ -69,8 +69,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-6">
-                    <div class="card" style="border-radius: 10px">
+                 <div class="col-xl-3 col-md-6">
+                    <div class="card glass-card">
                         <div class="card-body">
                             <div class="row align-items-center m-l-0">
                                 <div class="col-auto">
@@ -87,17 +87,15 @@
                     </div>
                 </div>
                 <div class="col-xl-3 col-md-6">
-                    <div class="card" style="border-radius: 10px">
+                    <div class="card glass-card">
                         <div class="card-body">
                             <div class="row align-items-center m-l-0">
                                 <div class="col-auto">
-                                    <!-- <i class="icon feather icon-award f-30 text-c-blue"></i> -->
                                     <img src="{{ asset('assets/images/vector 4.png') }}" alt="" width="75px"
                                         height="75px">
                                 </div>
                                 <div class="col-auto">
                                     <h6 class="text-muted m-b-10">Outgoing Mails</h6>
-
                                 </div>
                             </div>
                         </div>

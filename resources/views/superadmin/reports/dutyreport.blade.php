@@ -45,7 +45,7 @@
 
             <div class="row">
                 <div class="col-md-12 col-lg-4">
-                    <div class="card">
+                       <div class="card glass-card">
                         <div class="card-body text-center">
                             <i class="feather icon-mail text-c-green d-block f-40"></i>
                             <h4 class="m-t-20">Verified Reports</h4>
@@ -61,7 +61,7 @@
     line-height: 40px;
     font-size: 20px;
     font-weight: bold;
-    border-radius: 8px;
+    border-radius: 10px;
 ">
                                 2
                             </span>
@@ -70,7 +70,7 @@
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-4">
-                    <div class="card">
+                      <div class="card glass-card">
                         <div class="card-body text-center">
                             <i class="feather icon-twitter text-c-green d-block f-40"></i>
                             <h4 class="m-t-20">Pending Reports</h4>
@@ -86,7 +86,7 @@
     line-height: 40px;
     font-size: 20px;
     font-weight: bold;
-    border-radius: 8px;
+    border-radius: 10px;
 ">
                                 2
                             </span>
@@ -94,7 +94,7 @@
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-4">
-                    <div class="card">
+                    <div class="card glass-card">
                         <div class="card-body text-center">
                             <i class="feather icon-briefcase text-c-red d-block f-40"></i>
                             <h4 class="m-t-20">Declined Reports</h4>
@@ -110,7 +110,7 @@
     line-height: 40px;
     font-size: 20px;
     font-weight: bold;
-    border-radius: 8px;
+    border-radius: 10px;
 ">
                                 2
                             </span>
