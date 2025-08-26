@@ -28,7 +28,7 @@
     <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
-       
+
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('backend/assets/css/ui/_buttons.scss') }}">
@@ -60,24 +60,24 @@
             color: #000000;
         }
 
-       @keyframes scrollLeft {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
+        @keyframes scrollLeft {
+            0% {
+                transform: translateX(100%);
+            }
 
-#news-ticker {
-  display: inline-block;
-  white-space: nowrap;
-  animation: scrollLeft 20s linear infinite;
-  font-size: 18px;
-  color: #000000;
-}
+            100% {
+                transform: translateX(-100%);
+            }
+        }
 
-
+        #news-ticker {
+            display: inline-block;
+            white-space: nowrap;
+            animation: scrollLeft 20s linear infinite;
+            font-size: 18px;
+            color: #000000;
+        }
+        
     </style>
 
 </head>
@@ -106,7 +106,7 @@
     <script src="{{ asset('backend/assets/js/ripple.js') }}"></script>
     <script src="{{ asset('backend/assets/js/pcoded.min.js') }}"></script>
     <script src="{{ asset('backend/assets/js/menu-setting.min.js') }}"></script>
-    
+
 
     <!-- notification Js -->
     <script src="{{ asset('backend/assets/js/plugins/bootstrap-notify.min.js') }}"></script>
@@ -168,22 +168,22 @@
     </script>
 
     <script>
-  $(document).ready(function() {
-    // Example news items (replace with your dynamic data)
-    const newsItems = [
-      "Breaking: New policy update released.",
-      "Reminder: Submit duty reports by end of day.",
-      "Incoming mails processed successfully.",
-      "Outgoing mails dispatch scheduled for tomorrow."
-    ];
+        $(document).ready(function() {
+            // Example news items (replace with your dynamic data)
+            const newsItems = [
+                "Breaking: New policy update released.",
+                "Reminder: Submit duty reports by end of day.",
+                "Incoming mails processed successfully.",
+                "Outgoing mails dispatch scheduled for tomorrow."
+            ];
 
-    // Join items with some spacing and separators
-    const tickerText = newsItems.join("   •   ");
+            // Join items with some spacing and separators
+            const tickerText = newsItems.join("   •   ");
 
-    // Set the ticker text
-    $("#news-ticker").text(tickerText);
-  });
-</script>
+            // Set the ticker text
+            $("#news-ticker").text(tickerText);
+        });
+    </script>
 
 
 
