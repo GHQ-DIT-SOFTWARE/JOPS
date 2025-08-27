@@ -45,7 +45,7 @@
                                                             <div class="col-auto col pr-0">
                                                                 {{-- Always show default logo image --}}
                                                                 <img class="img-radius img-fluid wid-80"
-                                                                    src="{{ asset('upload/logo.png') }}"
+                                                                    src="{{ asset('upload/logo2.png') }}"
                                                                     alt="User image">
                                                             </div>
                                                         </div>
@@ -83,7 +83,7 @@
                                                     <h6 class="mb-1">Gender</h6>
                                                     <p class="mb-0">{{ $user->gender }}</p>
                                                 </div>
-                                                
+
                                             </div>
                                         </div>
                                     </div>

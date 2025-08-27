@@ -13,7 +13,7 @@
                         ->first();
                 @endphp
                 <div class="main-menu-header">
-                    <img class="img-radius" src="{{ asset('upload/logo2.gif') }}" alt="User-Profile-Image">
+                    <img class="img-radius" src="{{ asset('upload/ghq.gif') }}" alt="User-Profile-Image">
 
                 </div>
 
@@ -122,7 +122,7 @@
                             <span class="pcoded-micon"><i class="fa-solid fa-users"></i></span>
                             <span class="pcoded-mtext">Personnels</span>
                         </a>
-                        
+
                     </li> --}}
 
 
@@ -134,7 +134,7 @@
                             <span class="pcoded-micon"><i class="fa-solid fa-database"></i></span>
                             <span class="pcoded-mtext">Leave List</span>
                         </a>
-                        
+
                     </li> --}}
                 @elseif(Auth::user()->is_role == 5)
                     {{-- <li class="nav-item {{ $route == 'cell_head.dashboard' ? 'active' : '' }}">

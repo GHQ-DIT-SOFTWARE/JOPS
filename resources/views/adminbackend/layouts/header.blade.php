@@ -105,7 +105,7 @@
                             </a>
                         </div>
                         <ul class="pro-body">
-                            <li><a href="{{route('profile.index') }}" class="dropdown-item"><i
+                            <li><a href="{{ route('profile.index') }}" class="dropdown-item"><i
                                         class="feather icon-user"></i>
                                     Profile</a></li>
                             <li><a href="{{ route('logout') }}" class="dropdown-item"><i class="feather icon-lock"></i>
