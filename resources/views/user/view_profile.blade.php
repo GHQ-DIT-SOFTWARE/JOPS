@@ -33,8 +33,8 @@
                                         <div class="card-header border-0 p-2 pb-0">
                                             <div class="cover-img-block bg-color"
                                                 style="width: 100%; height: 300px; overflow: hidden;">
-                                                <img src="{{ asset('assets/images/widget/slider5.jpg') }}"
-                                                    alt="" class="img-fluid h-100 w-100">
+                                                <img src="{{ asset('upload/cover.jpg') }}" alt=""
+                                                    class="img-fluid h-100 w-100">
                                             </div>
                                         </div>
                                         <div class="card-body pt-0">
@@ -45,14 +45,14 @@
                                                             <div class="col-auto col pr-0">
                                                                 {{-- Always show default logo image --}}
                                                                 <img class="img-radius img-fluid wid-80"
-                                                                    src="{{ asset('upload/logo2.png') }}"
-                                                                    alt="User image">
+                                                                    src="{{ asset('upload/logo2.png') }}" alt="User image">
                                                             </div>
                                                         </div>
                                                         <div class="text-center">
-                                                            <h3 class="mb-1 mt-3">{{ $user->rank }} {{ $user->fname }}</h3>
+                                                            <h3 class="mb-1 mt-3">{{ $user->rank }} {{ $user->fname }}
+                                                            </h3>
 
-                                                            <p class="mb-3 text-muted">{{ $user->role_name  }}</p>
+                                                            <p class="mb-3 text-muted">{{ $user->role_name }}</p>
                                                             <p class="mb-3 text-muted">{{ $user->email }}</p>
 
                                                         </div>
@@ -68,14 +68,14 @@
                                         <div class="card-footer">
                                             <div class="row text-center">
                                                 <div class="col">
-                                                    <h6 class="mb-1">Arm Of Service</h6>
+                                                    <h6 class="mb-1">Arm of Service</h6>
                                                     <p class="mb-0">{{ $user->arm_of_service }}</p>
                                                 </div>
                                                 <div class="col">
                                                     <h6 class="mb-1">Unit</h6>
                                                     <p class="mb-0">{{ $user->unit }}</p>
                                                 </div>
-                                                 <div class="col">
+                                                <div class="col">
                                                     <h6 class="mb-1">Mobile No</h6>
                                                     <p class="mb-0">{{ $user->phone }}</p>
                                                 </div>
