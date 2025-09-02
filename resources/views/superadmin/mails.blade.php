@@ -9,7 +9,7 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h5 class="m-b-10">Duty Officer</h5>
+                                <h5 class="m-b-10">Mails</h5>
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center flex-wrap breadcrumb-white mt-2">
@@ -50,7 +50,7 @@
                         <div class="card-body text-center">
                             <i class="feather icon-mail text-c-green d-block f-40"></i>
                             <h4 class="m-t-20">Verified Reports</h4>
-                            <p class="m-b-20">Your main list is growing</p>
+                           <!-- <p class="m-b-20">Your main list is growing</p>-->
                             <span
                                 style="
     display: inline-block;
@@ -75,7 +75,7 @@
                         <div class="card-body text-center">
                             <i class="feather icon-twitter text-c-green d-block f-40"></i>
                             <h4 class="m-t-20">Pending Reports</h4>
-                            <p class="m-b-20">Your main list is growing</p>
+                            <!--<p class="m-b-20">Your main list is growing</p>-->
                             <span
                                 style="
     display: inline-block;
@@ -99,7 +99,7 @@
                         <div class="card-body text-center">
                             <i class="feather icon-briefcase text-c-red d-block f-40"></i>
                             <h4 class="m-t-20">Declined Reports</h4>
-                            <p class="m-b-20">This is your current active plan</p>
+                            <!--<p class="m-b-20">This is your current active plan</p>-->
                             <span
                                 style="
     display: inline-block;
@@ -150,16 +150,16 @@
                 </tr>
             </thead>
             <tbody>
-               
+
                     <tr>
                         <td>deggg</td>
-             
+
                         <td>
-                            <a href="#" 
+                            <a href="#"
                                class="btn btn-sm btn-info">View</a>
                         </td>
                     </tr>
-                
+
             </tbody>
         </table>
     </div>

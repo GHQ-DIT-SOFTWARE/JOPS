@@ -48,9 +48,11 @@
                 <div class="col-md-12 col-lg-4">
                        <div class="card glass-card">
                         <div class="card-body text-center">
-                            <i class="feather icon-mail text-c-green d-block f-40"></i>
+                           <!--<i class="feather icon-mail text-c-green d-block f-40"></i>-->
+                           <img src="{{ asset('assets/images/verify1.png') }}" alt="" width="70px"
+                                        height="75px">
                             <h4 class="m-t-20">Verified Reports</h4>
-                            <!--<p class="m-b-20">Your main list is growing</p>-->
+
                             <span
                                 style="
     display: inline-block;
@@ -73,7 +75,8 @@
                 <div class="col-md-6 col-lg-4">
                       <div class="card glass-card">
                         <div class="card-body text-center">
-                            <i class="feather icon-twitter text-c-green d-block f-40"></i>
+                         <img src="{{ asset('assets/images/pending1.png') }}" alt="" width="75px"
+                                        height="75px">
                             <h4 class="m-t-20">Pending Reports</h4>
                             <!--<p class="m-b-20">Your main list is growing</p>-->
                             <span
@@ -97,7 +100,8 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card glass-card">
                         <div class="card-body text-center">
-                            <i class="feather icon-briefcase text-c-red d-block f-40"></i>
+                            <img src="{{ asset('assets/images/decline1.png') }}" alt="" width="75px"
+                                        height="75px">
                             <h4 class="m-t-20">Declined Reports</h4>
                             <!--<p class="m-b-20">This is your current active plan</p>-->
                             <span
@@ -164,7 +168,7 @@
                         <td>{{ \Carbon\Carbon::parse($report->created_at)->format('Y-m-d h:i A') }}</td>
                         <td>{{ \Carbon\Carbon::parse($report->updated_at)->format('Y-m-d h:i A') }}</td>
                         <td>
-                            <a href="{{ route('superadmin.reports.view', $report->id) }}" 
+                            <a href="{{ route('superadmin.reports.view', $report->id) }}"
                                class="btn btn-sm btn-info">View</a>
                         </td>
                     </tr>
