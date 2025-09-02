@@ -8,7 +8,9 @@ class SchedulerController extends Controller
 {
     public function scheduler()
     {
-        $nav_title = "Scheduler";
+
+         $nav_title = "Scheduler";
         return view('superadmin.scheduler', compact('nav_title'));
     }
+
 }
