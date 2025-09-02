@@ -11,8 +11,11 @@ use App\Http\Controllers\MailsController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
-
-
+use App\Http\Controllers\PartoneController;
+use App\Http\Controllers\OperationController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\BroadcastController;
+use App\Http\Controllers\SchedulerController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -73,6 +76,12 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN])
     Route::get('/dailysitrep', [ReportsController::class, 'dailySitrep'])->name('dailysitrep'); // Add this line
    });
 
+   Route::get('/scheduler', [SchedulerController::class, 'scheduler'])->name('scheduler');
+   Route::get('/partone', [PartoneController::class, 'partone'])->name('partone');
+   Route::get('/setting', [SettingsController::class, 'setting'])->name('setting');
+   Route::get('/broadcast', [BroadcastController::class, 'broadcast'])->name('broadcast');
+
+   Route::get('/operation', [OperationController::class, 'operation'])->name('operation');
         // Users
         Route::prefix('users')->as('users.')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('list');
