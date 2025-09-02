@@ -11,7 +11,7 @@ use App\Http\Controllers\MailsController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
-
+use App\Http\Controllers\SchedulerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +63,7 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPPERADMIN])
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/mails', [MailsController::class, 'mails'])->name('mails');
+    Route::get('/scheduler', [SchedulerController::class, 'scheduler'])->name('scheduler');
 
     Route::prefix('reports')->group(function () {
         Route::get('/dutyreport', [ReportsController::class, 'dutyReport'])->name('dutyreport.view');

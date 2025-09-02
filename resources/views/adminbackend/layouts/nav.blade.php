@@ -54,8 +54,8 @@
                         </a>
                     </li>
 
-                    <li class="nav-item {{ $route == 'superadmin.mails' ? 'active' : '' }}">
-                        <a href="{{ route('superadmin.mails') }}" class="nav-link">
+                    <li class="nav-item {{ $route == 'superadmin.scheduler' ? 'active' : '' }}">
+                        <a href="{{ route('superadmin.scheduler') }}" class="nav-link">
                             <span class="pcoded-micon"><i class="fa-solid fa-calendar"></i></span>
                             <span class="pcoded-mtext">Scheduler</span>
                         </a>
