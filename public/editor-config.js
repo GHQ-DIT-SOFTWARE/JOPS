@@ -57,7 +57,7 @@ function InsertTemplatePlugin(editor) {
   <li>a. Main Gate.</li>
   <li>b. Comd Gate.</li>
   <li>c. Congo Junction.</li>
-  <li>d. GAFTO.</li>
+  <li>d. GAFPO.</li>
 </ul>
 
 <h3>Major Event</h3>

@@ -224,7 +224,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>GAFTO</label>
+                                            <label>GAFPO</label>
                                             <input type="text" name="sitrep_camp_gafto" class="form-control"
                                                 placeholder="e.g. NTR">
                                         </div>
@@ -542,7 +542,7 @@
                 html += `<p><strong>Main Gate:</strong> ${form.sitrep_camp_main_gate?.value || ''}</p>`;
                 html += `<p><strong>Comd Gate:</strong> ${form.sitrep_camp_command_gate?.value || ''}</p>`;
                 html += `<p><strong>Congo Junction:</strong> ${form.sitrep_camp_congo_junction?.value || ''}</p>`;
-                html += `<p><strong>GAFTO:</strong> ${form.sitrep_camp_gafto?.value || ''}</p>`;
+                html += `<p><strong>GAFPO:</strong> ${form.sitrep_camp_gafto?.value || ''}</p>`;
                 html += `<p><strong>Major Events:</strong> ${form.major_event?.value || ''}</p>`;
 
                 // Handle the others in a loop
