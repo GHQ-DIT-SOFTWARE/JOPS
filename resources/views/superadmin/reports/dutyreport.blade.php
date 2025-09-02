@@ -20,7 +20,8 @@
                                     <li class="breadcrumb-item"><a href="#!">Duty Report</a></li>
                                 </ul>
 
-                                <a href="{{ route('superadmin.add.report') }}" class="btn btn-sm btn-light mt-2 mt-md-0">
+                                <a href="{{ route('superadmin.reports.addreport') }}"
+                                    class="btn btn-sm btn-light mt-2 mt-md-0">
                                     + Add New Report
                                 </a>
                             </div>
@@ -130,31 +131,49 @@
                             <h5>Recent Duty Report</h5>
                         </div>
                         <div class="card-body">
-                            <table id="left-right-fix" class="table stripe row-border order-column">
-                                <thead>
-                                    <tr>
-                                        <th>Service No</th>
-                                        <th>Rank</th>
-                                        <th>Name</th>
-                                        <th>Dept/Dte</th>
-                                        <th>Reporting Time</th>
-                                        <th>Closing Time</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Tiger</td>
-                                        <td>Nixon</td>
-                                        <td>System Architect</td>
-                                        <td>Edinburgh</td>
-                                        <td>61</td>
-                                        <td>61</td>
-                                    </tr>
+    <div class="table-responsive">
+        <table id="left-right-fix" class="table table-striped table-bordered nowrap">
+            <thead>
+                <tr>
+                    <th>Service No</th>
+                    <th>Reporting Time</th>
+                    <th>Period Covered</th>
+                    <th>Ops Room Comm State</th>
+                    <th>Ops Room Messages</th>
+                    <th>Visit Ops Room</th>
+                    <th>Major Event</th>
+                    <th>Misc Duty Veh Note</th>
+                    <th>Additional Info</th>
+                    <th>Created At</th>
+                    <th>Updated At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($reports as $report)
+                    <tr>
+                        <td>{{ $report->user_service_no }}</td>
+                        <td>{{ \Carbon\Carbon::parse($report->reporting_time)->format('h:i A') }}</td>
+                        <td>{{ $report->period_covered }}</td>
+                        <td>{{ $report->ops_room_comm_state }}</td>
+                        <td>{{ Str::limit($report->ops_room_messages, 50) }}</td>
+                        <td>{{ $report->visit_ops_room }}</td>
+                        <td>{{ Str::limit($report->major_event, 50) }}</td>
+                        <td>{{ $report->misc_duty_veh_note }}</td>
+                        <td>{{ $report->additional_information }}</td>
+                        <td>{{ \Carbon\Carbon::parse($report->created_at)->format('Y-m-d h:i A') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($report->updated_at)->format('Y-m-d h:i A') }}</td>
+                        <td>
+                            <a href="{{ route('superadmin.reports.view', $report->id) }}" 
+                               class="btn btn-sm btn-info">View</a>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 
-
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
                 </div>
 

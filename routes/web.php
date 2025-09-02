@@ -56,31 +56,37 @@ Route::prefix('profile')->group(function () {
 });
 
 
-Route::middleware(['auth', 'role:' . User::ROLE_SUPPERADMIN])
+Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN])
     ->prefix('superadmin')
     ->as('superadmin.')
     ->group(function () {
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/mails', [MailsController::class, 'mails'])->name('mails');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/mails', [MailsController::class, 'mails'])->name('mails');
 
-    Route::prefix('reports')->group(function () {
-        Route::get('/dutyreport', [ReportsController::class, 'dutyReport'])->name('dutyreport.view');
-        Route::get('/dailysitrep', [ReportsController::class, 'dailySitrep'])->name('dailysitrep.view');
-        Route::get('/addreport', [ReportsController::class, 'add'])->name('add.report');
+        // Reports
+        Route::prefix('reports')->as('reports.')->group(function () {
+    Route::get('/dutyreport', [ReportsController::class, 'dutyReport'])->name('dutyreport');
+    Route::get('/addreport', [ReportsController::class, 'add'])->name('addreport');
+    Route::post('/store', [ReportsController::class, 'store'])->name('store');
+    Route::get('/{id}/view', [ReportsController::class, 'view'])->name('view');
+    Route::get('/dailysitrep', [ReportsController::class, 'dailySitrep'])->name('dailysitrep'); // Add this line
+   });
+
+        // Users
+        Route::prefix('users')->as('users.')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('list');
+            Route::get('/create', [UserController::class, 'create'])->name('create');
+            Route::post('/store', [UserController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [UserController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [UserController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('destroy');
+            Route::get('/ajax', [UserController::class, 'usersAjax'])->name('ajax');
+        });
+
     });
+    
 
-    Route::prefix('users')->as('users.')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('list');
-        Route::get('/create', [UserController::class, 'create'])->name('create');
-        Route::post('/store', [UserController::class, 'store'])->name('store');
-        Route::get('/edit/{id}', [UserController::class, 'edit'])->name('edit');
-        Route::put('/update/{id}', [UserController::class, 'update'])->name('update');
-        Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('destroy');
-        Route::get('/ajax', [UserController::class, 'usersAjax'])->name('ajax');
-    });
-
-});
 
 
 Route::middleware(['auth', 'role:' . User::ROLE_DG])

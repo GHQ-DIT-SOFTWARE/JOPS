@@ -38,12 +38,13 @@
                             <span class="pcoded-mtext">Reports</span>
                         </a>
                         <ul class="pcoded-submenu">
-                            <li class="{{ Request::is('superadmin/reports/dutyreport') ? 'active' : '' }}">
-                                <a href="{{ route('superadmin.dutyreport.view') }}">Duty Report</a>
-                            </li>
-                            <li class="{{ Request::is('superadmin/reports/dailysitrep') ? 'active' : '' }}">
-                                <a href="{{ route('superadmin.dailysitrep.view') }}">Daily Sitrep</a>
-                            </li>
+                           <li class="{{ Request::is('superadmin/reports/dutyreport') ? 'active' : '' }}">
+    <a href="{{ route('superadmin.reports.dutyreport') }}">Duty Report</a>
+</li>
+
+<li class="{{ Request::is('superadmin/reports/dailysitrep') ? 'active' : '' }}">
+    <a href="{{ route('superadmin.reports.dailysitrep') }}">Daily Sitrep</a>
+</li>
                         </ul>
                     </li>
 
