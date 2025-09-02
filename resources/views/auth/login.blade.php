@@ -12,27 +12,25 @@
     <meta content="{{ config('app.name') }}" name="author" />
     <!-- Favicon icon -->
     <link rel="icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/x-icon">
+    
     <!-- vendor css -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <!-- Google Fonts CDN for Montserrat -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+
 
     <style>
         body {
+            font-family: 'Montserrat', sans-serif !important;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             background: url('{{ asset('/upload/bg2.png') }}') no-repeat center center/cover;
-            font-family: monospace;
+            
         }
 
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-        }
+        
 
         .login-container {
             position: relative;
@@ -50,8 +48,8 @@
         }
 
         .left-panel img {
-            width: 120px;
-            margin-bottom: 20px;
+            width: 150px;
+            margin-bottom: 5px;
         }
 
         .left-panel h2 {
@@ -119,7 +117,7 @@
     <div class="login-container">
         <!-- Left -->
         <div class="left-panel">
-            <img src="{{ asset('/upload/logo2.png') }}" alt="Logo">
+            <img src="{{ asset('/upload/ghq.gif') }}" alt="Logo">
             <h2>GHQ-JOPS</h2>
         </div>
 

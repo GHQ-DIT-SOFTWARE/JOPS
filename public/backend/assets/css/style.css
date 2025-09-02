@@ -394,7 +394,7 @@ address {
 ol,
 ul,
 dl {
-    
+
     margin-bottom: 1rem;
 }
 
@@ -5226,7 +5226,7 @@ input[type="button"].btn-block {
     padding: 0.75rem 1rem;
     margin-bottom: 1rem;
     list-style: none;
-    
+
     border-radius: 0.25rem;
 }
 
@@ -20398,7 +20398,7 @@ body {
     font-weight: 400;
     background: #9b6b0a;
     position: relative;
-  
+
 }
 
 *:focus {
@@ -23318,7 +23318,7 @@ pre[class*=language-]:before {
   .pcoded-navbar .navbar-wrapper {
     width: 100%;
     height: 100%;
-    
+
 }
 
 .pcoded-navbar.navbar-collapsed {
@@ -25564,7 +25564,7 @@ pre[class*=language-]:before {
 .pcoded-navbar.menu-light {
     background-color: #fff;
     color: #535763;
-    
+
 }
 
 .pcoded-navbar.menu-light .header-logo {
@@ -32940,7 +32940,7 @@ new-task label input[type=checkbox] {
     align-items: center;
     padding-top: 10px; /* Adjust as needed */
     padding-bottom: 10px; /* Adjust as needed */
-    
+
 }
 .top-middle-profile img.user-img-style {
     width: 50px;
@@ -33014,6 +33014,24 @@ new-task label input[type=checkbox] {
     background: linear-gradient(135deg, #f48665 0, #d68e41 100%) !important;
     color: #fff;
 }
+
+/*glassmorphism*/
+.glass-card {
+    background: rgba(255, 255, 255, 0.15); /* transparent white */
+    backdrop-filter: blur(12px);           /* blur effect */
+    -webkit-backdrop-filter: blur(12px);   /* Safari support */
+    border-radius: 15px;                   /* smooth corners */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* subtle border */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);  /* soft shadow */
+    transition: all 0.3s ease-in-out;
+}
+.glass-card:hover {
+    transform: translateY(-6px);
+    background: rgba(214, 149, 97, 0.30); /* stronger blue tint on hover */
+    box-shadow: 0 12px 32px rgba(239, 209, 184, 0.9); /* glowing blue shadow */
+}
+
+
 .btn-hover {
     width: 130px;
     font-size: 13px;
