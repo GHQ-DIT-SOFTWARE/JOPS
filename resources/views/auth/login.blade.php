@@ -91,16 +91,23 @@
         }
 
         .login-btn {
-            padding: 12px;
-            width: 120px;
-            border: none;
-            border-radius: 4px;
+    padding: 12px;
+    width: 120px;
+    border: none;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+.login-btn:hover {
+    background-color: #000;  /* background turns black */
+    color: #fff;             /* text turns white */
+    transform: scale(1.05);  /* slight zoom effect */
+}
+
 
 
 

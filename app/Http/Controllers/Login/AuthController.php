@@ -79,7 +79,7 @@ class AuthController extends Controller
     protected function redirectUserByRole(User $user)
     {
         switch ($user->is_role) {
-            case User::ROLE_SUPPERADMIN:
+            case User::ROLE_SUPERADMIN:
                 return redirect()->route('superadmin.dashboard');
 
             case User::ROLE_DG:

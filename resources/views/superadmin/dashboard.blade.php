@@ -192,26 +192,7 @@
 
 
 
-            <div class="card">
-                <div class="card-body">
-                    <div class="row align-items-center m-l-0">
-                        <div class="dt-responsive table-responsive" id="id" style="margin-right: 1em">
-                            <table id="personnelsTable" class="table-striped table">
-                                <thead>
-                                    <tr>
-                                        <th>Service No</th>
-                                        <th>Rank</th>
-                                        <th>Name</th>
-                                        <th>Dept/Dte</th>
-                                        <th>Contact</th>
-
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
         </div>
 
 
