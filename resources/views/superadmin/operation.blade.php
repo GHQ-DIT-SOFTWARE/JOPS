@@ -15,9 +15,9 @@
                             <div class="d-flex justify-content-between align-items-center flex-wrap breadcrumb-white mt-2">
                                 <ul class="breadcrumb mb-0">
                                     <li class="breadcrumb-item">
-                                        <a href="index.html"><i class="feather icon-home"></i></a>
+                                        <a href="index.html"><i class="feather icon-crosshair"></i></a>
                                     </li>
-                                    <li class="breadcrumb-item"><a href="#!">Duty Report</a></li>
+                                    <li class="breadcrumb-item"><a href="#!">Operations</a></li>
                                 </ul>
 
                                 <a href="{{ route('superadmin.reports.addreport') }}"
@@ -150,16 +150,16 @@
                 </tr>
             </thead>
             <tbody>
-               
+
                     <tr>
                         <td>deggg</td>
-             
+
                         <td>
-                            <a href="#" 
+                            <a href="#"
                                class="btn btn-sm btn-info">View</a>
                         </td>
                     </tr>
-                
+
             </tbody>
         </table>
     </div>

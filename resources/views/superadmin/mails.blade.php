@@ -9,15 +9,15 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h5 class="m-b-10">Mails</h5>
+                                <h5 class="m-b-10">Duty Officer</h5>
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center flex-wrap breadcrumb-white mt-2">
                                 <ul class="breadcrumb mb-0">
                                     <li class="breadcrumb-item">
-                                        <a href="index.html"><i class="feather icon-home"></i></a>
+                                        <a href="index.html"><i class="feather icon-mail"></i></a>
                                     </li>
-                                    <li class="breadcrumb-item"><a href="#!">Duty Report</a></li>
+                                    <li class="breadcrumb-item"><a href="#!">Mail</a></li>
                                 </ul>
 
                                 <a href="{{ route('superadmin.reports.addreport') }}"
@@ -46,11 +46,12 @@
 
             <div class="row">
                 <div class="col-md-12 col-lg-4">
-                       <div class="card glass-card">
+                    <div class="card glass-card">
                         <div class="card-body text-center">
-                            <i class="feather icon-mail text-c-green d-block f-40"></i>
+                            <img src="{{ asset('assets/images/verify1.png') }}" alt="" width="70px"
+                                        height="75px">
                             <h4 class="m-t-20">Verified Reports</h4>
-                           <!-- <p class="m-b-20">Your main list is growing</p>-->
+                            <!-- <p class="m-b-20">Your main list is growing</p>-->
                             <span
                                 style="
     display: inline-block;
@@ -71,9 +72,10 @@
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-4">
-                      <div class="card glass-card">
+                    <div class="card glass-card">
                         <div class="card-body text-center">
-                            <i class="feather icon-twitter text-c-green d-block f-40"></i>
+                           <img src="{{ asset('assets/images/pending1.png') }}" alt="" width="75px"
+                                        height="75px">
                             <h4 class="m-t-20">Pending Reports</h4>
                             <!--<p class="m-b-20">Your main list is growing</p>-->
                             <span
@@ -97,7 +99,8 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card glass-card">
                         <div class="card-body text-center">
-                            <i class="feather icon-briefcase text-c-red d-block f-40"></i>
+                            <img src="{{ asset('assets/images/decline1.png') }}" alt="" width="75px"
+                                        height="75px">
                             <h4 class="m-t-20">Declined Reports</h4>
                             <!--<p class="m-b-20">This is your current active plan</p>-->
                             <span
@@ -131,39 +134,38 @@
                             <h5>Recent Duty Report</h5>
                         </div>
                         <div class="card-body">
-    <div class="table-responsive">
-        <table id="left-right-fix" class="table table-striped table-bordered nowrap">
-            <thead>
-                <tr>
-                    <th>Service No</th>
-                    <th>Reporting Time</th>
-                    <th>Period Covered</th>
-                    <th>Ops Room Comm State</th>
-                    <th>Ops Room Messages</th>
-                    <th>Visit Ops Room</th>
-                    <th>Major Event</th>
-                    <th>Misc Duty Veh Note</th>
-                    <th>Additional Info</th>
-                    <th>Created At</th>
-                    <th>Updated At</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
+                            <div class="table-responsive">
+                                <table id="left-right-fix" class="table table-striped table-bordered nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>Service No</th>
+                                            <th>Reporting Time</th>
+                                            <th>Period Covered</th>
+                                            <th>Ops Room Comm State</th>
+                                            <th>Ops Room Messages</th>
+                                            <th>Visit Ops Room</th>
+                                            <th>Major Event</th>
+                                            <th>Misc Duty Veh Note</th>
+                                            <th>Additional Info</th>
+                                            <th>Created At</th>
+                                            <th>Updated At</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
 
-                    <tr>
-                        <td>deggg</td>
+                                        <tr>
+                                            <td>deggg</td>
 
-                        <td>
-                            <a href="#"
-                               class="btn btn-sm btn-info">View</a>
-                        </td>
-                    </tr>
+                                            <td>
+                                                <a href="#" class="btn btn-sm btn-info">View</a>
+                                            </td>
+                                        </tr>
 
-            </tbody>
-        </table>
-    </div>
-</div>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
                     </div>
                 </div>
