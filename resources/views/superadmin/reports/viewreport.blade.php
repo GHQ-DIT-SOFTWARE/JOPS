@@ -2,7 +2,9 @@
 
 
 <style>
-
+.card{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+}
 </style>
 @section('main')
     <section class="pcoded-main-container">
@@ -31,225 +33,199 @@
 
             <div class="card">
                 <div class="container mt-4">
-                    <h4 class="text-center mb-4">DUTY OFFICER REPORT</h4>
+                <h4 class="text-center mb-4">DUTY OFFICER REPORT</h4>
+                <hr>
+                {{-- DETAILS --}}
 
-                    {{-- DETAILS --}}
+                <table class="table table-bordered table-sm">
+                    <tr>
+                        <th>Duty Officer</th>
+                        <td>{{ $report->user->rank }} {{ $report->user->fname }}</td>
+                        <th>Dept/DTE</th>
+                        <td>{{ $report->user->unit }}</td>
+                    </tr>
+                    <tr>
+                        <th>Contact Number</th>
+                        <td>{{ $report->user->phone }}</td>
+                        <th>Reporting Time</th>
+                        <td>{{ $report->reporting_time }}</td>
+                    </tr>
+                    <tr>
+                        <th>Period Covered</th>
+                        <td colspan="3">{{ $report->period_covered }}</td>
+                    </tr>
+                </table>
 
-                    <table class="table table-bordered table-sm">
-                        <tr>
-                            <th>Duty Officer</th>
-                            <td>{{ $report->user->rank }} {{ $report->user->fname }}</td>
-                            <th>Dept/DTE</th>
-                            <td>{{ $report->user->unit }}</td>
-                        </tr>
-                        <tr>
-                            <th>Contact Number</th>
-                            <td>{{ $report->user->phone }}</td>
-                            <th>Reporting Time</th>
-                            <td>{{ $report->reporting_time }}</td>
-                        </tr>
-                        <tr>
-                            <th>Period Covered</th>
-                            <td colspan="3">{{ $report->period_covered }}</td>
-                        </tr>
-                    </table>
+                {{-- GENERAL --}}
 
-                    {{-- GENERAL --}}
+                <label class="mt-4" style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
+    GENERAL</label>
+                <table class="table table-bordered table-sm">
+                    <tr>
+                        <th width="25%">1. Security General</th>
+                        <td>{{ $report->gen_sy_gen }}</td>
+                    </tr>
+                    <tr>
+                        <th>2. Significant Event</th>
+                        <td>{!! nl2br(e($report->gen_sig_events)) !!}</td>
+                    </tr>
+                </table>
 
-                    <label class="mt-4"
-                        style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.5em">
-                        GENERAL</label>
-                    <table class="table table-bordered table-sm">
-                        <tr>
-                            <th width="25%">1. Sy Gen</th>
-                            <td>{{ $report->gen_sy_gen }}</td>
-                        </tr>
-                        <tr>
-                            <th>2. Significant Event</th>
-                            <td>{!! nl2br(e($report->gen_sig_events)) !!}</td>
-                        </tr>
-                    </table>
+                {{-- OPS ROOM --}}
+                 <label class="mt-4" style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
+    OPS ROOM</label>
+                <table class="table table-bordered table-sm">
+                    <tr>
+                        <th width="25%">3. Comm State</th>
+                        <td>{{ $report->ops_room_comm_state }}</td>
+                    </tr>
+                    <tr>
+                        <th width="25%">4. Messages/Correspondence</th>
+                        <td>{!! nl2br(e($report->ops_room_messages)) !!}</td>
+                    </tr>
+                    <tr>
+                        <th>5. Visit to the Ops Room</th>
+                        <td>{!! nl2br(e($report->visit_ops_room)) !!}</td>
+                    </tr>
+                </table>
 
-                    {{-- OPS ROOM --}}
-                    <label class="mt-4"
-                        style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.5em">
-                        OPS ROOM</label>
-                    <table class="table table-bordered table-sm">
-                        <tr>
-                            <th width="25%">3. Comm State</th>
-                            <td>{{ $report->ops_room_comm_state }}</td>
-                        </tr>
-                        <tr>
-                            <th width="25%">4. Messages/Correspondence</th>
-                            <td>{!! nl2br(e($report->ops_room_messages)) !!}</td>
-                        </tr>
-                        <tr>
-                            <th>5. Visit to the Ops Room</th>
-                            <td>{!! nl2br(e($report->visit_ops_room)) !!}</td>
-                        </tr>
-                    </table>
+                {{-- CAMP SITREP --}}
+                <label class="mt-4" style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
+    SITREP - CAMP</label>
+                <table class="table table-bordered table-sm">
+                    <tr>
+                        <th>6. Security General</th>
+                        <td>{{ $report->sitrep_camp_sy_gen }}</td>
+                    </tr>
+                    <tr>
+                        <th>a. Main Gate</th>
+                        <td>{{ $report->sitrep_camp_main_gate }}</td>
+                        <th>b. Comd Gate</th>
+                        <td>{{ $report->sitrep_camp_command_gate }}</td>
+                    </tr>
+                    <tr>
+                        <th>c. Congo Junction</th>
+                        <td>{{ $report->sitrep_camp_congo_junction }}</td>
+                        <th>d. GAFPO</th>
+                        <td>{{ $report->sitrep_camp_gafto }}</td>
+                    </tr>
+                </table>
 
-                    {{-- CAMP SITREP --}}
-                    <label class="mt-4"
-                        style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.5em">
-                        SITREP-CAMP</label>
-                    <table class="table table-bordered table-sm">
-                        <tr>
-                            <th>6. Sy Gen</th>
-                            <td>{{ $report->sitrep_camp_sy_gen }}</td>
-                        </tr>
-                        <tr>
-                            <th>a. Main Gate</th>
-                            <td>{{ $report->sitrep_camp_main_gate }}</td>
-                            <th>b. Comd Gate</th>
-                            <td>{{ $report->sitrep_camp_command_gate }}</td>
-                        </tr>
-                        <tr>
-                            <th>c. Congo Junction</th>
-                            <td>{{ $report->sitrep_camp_congo_junction }}</td>
-                            <th>d. GAFPO</th>
-                            <td>{{ $report->sitrep_camp_gafto }}</td>
-                        </tr>
-                    </table>
+                {{-- MAJOR EVENT --}}
+                <h5 class="mt-4">Major Event</h5>
+                <div class="border p-2">{!! nl2br(e($report->major_event)) !!}</div>
 
-                    {{-- MAJOR EVENT --}}
-                    <h5 class="mt-4">Major Event</h5>
-                    <div class="border p-2">{!! nl2br(e($report->major_event)) !!}</div>
+                {{-- SITREP - ARMY/NAVY/AIRFORCE --}}
+                 <label class="mt-4" style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
+    SITREP - ARMY</label>
+                 <table class="table table-bordered table-sm">
+                    <tr>
+                        <th width="25%">7. Security General</th>
+                        <td>{{ $report->gen_sy_gen }}</td>
+                    </tr>
+                    <tr>
+                        <th>8. Significant Event</th>
+                        <td>{!! nl2br(e($report->gen_sig_events)) !!}</td>
+                    </tr>
+                </table>
+               <label class="mt-4" style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
+    SITREP - NAVY</label>
+                     <table class="table table-bordered table-sm">
+                    <tr>
+                        <th width="25%">9. Security General</th>
+                        <td>{{ $report->gen_sy_gen }}</td>
+                    </tr>
+                    <tr>
+                        <th>10. Significant Event</th>
+                        <td>{!! nl2br(e($report->gen_sig_events)) !!}</td>
+                    </tr>
+                </table>
+           <label class="mt-4" style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
+    SITREP - AIRFORCE</label>
+                <table class="table table-bordered table-sm">
+                    <tr>
+                        <th width="25%">11. Security General</th>
+                        <td>{{ $report->gen_sy_gen }}</td>
+                    </tr>
+                    <tr>
+                        <th>12. Significant Event</th>
+                        <td>{!! nl2br(e($report->gen_sig_events)) !!}</td>
+                    </tr>
+                </table>
+                {{-- MISC --}}
+               <label class="mt-4" style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
+    MISC</label>
+                <table class="table table-bordered table-sm">
 
-                    {{-- SITREP - ARMY/NAVY/AIRFORCE --}}
-                    <label class="mt-4"
-                        style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.5em">
-                        SITREP - ARMY</label>
-                    <table class="table table-bordered table-sm">
-                        <tr>
-                            <th>7. Army Sy Gen</th>
-                            <td>{{ $report->sitrep_army_sy_gen }}</td>
-                            <th>8. Army Sig Event</th>
-                            <td>{!! nl2br(e($report->sitrep_army_sig_event)) !!}</td>
-                        </tr>
-                        <tr>
-                            <th>9. Navy Sy Gen</th>
-                            <td>{{ $report->sitrep_navy_sy_gen }}</td>
-                            <th>10. Navy Sig Event</th>
-                            <td>{!! nl2br(e($report->sitrep_navy_sig_event)) !!}</td>
-                        </tr>
-                        <tr>
-                            <th>11. Airforce Sy Gen</th>
-                            <td>{{ $report->sitrep_airforce_sy_gen }}</td>
-                            <th>12. Airforce Sig Event</th>
-                            <td>{!! nl2br(e($report->sitrep_airforce_sig_event)) !!}</td>
-                        </tr>
-                    </table>
-                    <label class="mt-4"
-                        style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.5em">
-                        SITREP - NAVY</label>
-                    <table class="table table-bordered table-sm">
-                        <tr>
-                            <th>7. Army Sy Gen</th>
-                            <td>{{ $report->sitrep_army_sy_gen }}</td>
-                            <th>8. Army Sig Event</th>
-                            <td>{!! nl2br(e($report->sitrep_army_sig_event)) !!}</td>
-                        </tr>
-                        <tr>
-                            <th>9. Navy Sy Gen</th>
-                            <td>{{ $report->sitrep_navy_sy_gen }}</td>
-                            <th>10. Navy Sig Event</th>
-                            <td>{!! nl2br(e($report->sitrep_navy_sig_event)) !!}</td>
-                        </tr>
-                        <tr>
-                            <th>11. Airforce Sy Gen</th>
-                            <td>{{ $report->sitrep_airforce_sy_gen }}</td>
-                            <th>12. Airforce Sig Event</th>
-                            <td>{!! nl2br(e($report->sitrep_airforce_sig_event)) !!}</td>
-                        </tr>
-                    </table> <label class="mt-4"
-                        style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.5em">
-                        SITREP - AIRFORCE</label>
-                    <table class="table table-bordered table-sm">
-                        <tr>
-                            <th>7. Army Sy Gen</th>
-                            <td>{{ $report->sitrep_army_sy_gen }}</td>
-                            <th>8. Army Sig Event</th>
-                            <td>{!! nl2br(e($report->sitrep_army_sig_event)) !!}</td>
-                        </tr>
-                        <tr>
-                            <th>9. Navy Sy Gen</th>
-                            <td>{{ $report->sitrep_navy_sy_gen }}</td>
-                            <th>10. Navy Sig Event</th>
-                            <td>{!! nl2br(e($report->sitrep_navy_sig_event)) !!}</td>
-                        </tr>
-                        <tr>
-                            <th>11. Airforce Sy Gen</th>
-                            <td>{{ $report->sitrep_airforce_sy_gen }}</td>
-                            <th>12. Airforce Sig Event</th>
-                            <td>{!! nl2br(e($report->sitrep_airforce_sig_event)) !!}</td>
-                        </tr>
-                    </table>
-                    {{-- MISC --}}
-                    <label class="mt-4"
-                        style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.5em">
-                        MISC</label>
-                    <table class="table table-bordered table-sm">
-                        <tr>
-                            <th>13. Duty Veh Note</th>
-                            <td>{!! nl2br(e($report->misc_duty_veh_note)) !!}</td>
-                        </tr>
-                        <tr>
-                            <th>Taking Over Veh</th>
-                            <td>{{ $report->misc_duty_veh_taking_over }}</td>
-                            <th>Handing Over Veh</th>
-                            <td>{{ $report->misc_duty_veh_handing_over }}</td>
-                        </tr>
-                    </table>
 
-                    <h5 class="mt-4">14. Major News of Military Importance</h5>
-                    <div class="border p-2">{!! nl2br(e($report->major_news_of_military)) !!}</div>
+    <!-- MISC -->
+    <tr>
+        <th width="25%">13. Duty Veh Note</th>
+        <td colspan="3">{!! nl2br(e($report->misc_duty_veh_note)) !!}</td>
+    </tr>
+    <tr>
+        <th>Taking Over Veh</th>
+        <td>{{ $report->misc_duty_veh_taking_over }}</td>
+        <th>Handing Over Veh</th>
+        <td>{{ $report->misc_duty_veh_handing_over }}</td>
+    </tr>
+    <tr>
+        <th>14. Major News of Military Importance</th>
+        <td colspan="3">{!! nl2br(e($report->major_news_of_military)) !!}</td>
+    </tr>
 
-                    {{-- ADMIN GEN --}}
-                    <h5 class="mt-4">15. Admin Gen</h5>
-                    <table class="table table-bordered table-sm">
-                        <tr>
-                            <th>a. Lighting</th>
-                            <td>{{ $report->admin_gen_lighting }}</td>
-                            <th>b. Feeding</th>
-                            <td>{{ $report->admin_gen_feeding }}</td>
-                            <th>c. Welfare</th>
-                            <td>{{ $report->admin_gen_welfare }}</td>
-                        </tr>
-                    </table>
+    <!-- ADMIN GEN -->
+    <tr class="table-secondary">
+        <th colspan="4">15. Admin Gen</th>
+    </tr>
+    <tr>
+        <th>a. Lighting</th>
+        <td>{{ $report->admin_gen_lighting }}</td>
+        <th>b. Feeding</th>
+        <td>{{ $report->admin_gen_feeding }}</td>
+    </tr>
+    <tr>
+        <th>c. Welfare</th>
+        <td colspan="3">{{ $report->admin_gen_welfare }}</td>
+    </tr>
 
-                    <h5 class="mt-4">16. GHQ Office Keys</h5>
-                    <div class="border p-2">{!! nl2br(e($report->ghq_office_keys)) !!}</div>
+    <!-- GHQ Office Keys -->
+    <tr>
+        <th>16. GHQ Office Keys</th>
+        <td colspan="3">{!! nl2br(e($report->ghq_office_keys)) !!}</td>
+    </tr>
 
-                    <h5 class="mt-4">17. GAF Fire Station</h5>
-                    <div class="border p-2">{!! nl2br(e($report->gaf_fire_station)) !!}</div>
+    <!-- GAF Fire Station -->
+    <tr>
+        <th>17. GAF Fire Station</th>
+        <td colspan="3">{!! nl2br(e($report->gaf_fire_station)) !!}</td>
+    </tr>
 
-                    <h5 class="mt-4">18. Ops Room Photocopier</h5>
-                    <table class="table table-bordered table-sm">
-                        <tr>
-                            <th>a. Taking Over</th>
-                            <td>{{ $report->photocopier_taking_over }}</td>
-                            <th>b. Handing Over</th>
-                            <td>{{ $report->photocopier_handing_over }}</td>
-                        </tr>
-                    </table>
+    <!-- OPS ROOM PHOTOCOPIER -->
+    <tr class="table-secondary">
+        <th colspan="4">18. Ops Room Photocopier</th>
+    </tr>
+    <tr>
+        <th>a. Taking Over</th>
+        <td>{{ $report->photocopier_taking_over }}</td>
+        <th>b. Handing Over</th>
+        <td>{{ $report->photocopier_handing_over }}</td>
+    </tr>
+</table>
 
-                    {{-- FINAL REMARKS --}}
-                    <label class="mt-4"
-                        style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.5em">
-                        ADDITIONAL INFORMATION</label>
-                    <div class="border p-2">{!! nl2br(e($report->additional_information)) !!}</div>
+                {{-- FINAL REMARKS --}}
+                <label class="mt-4" style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
+    ADDITIONAL INFORMATION</label>
+                <div class="border p-2">{!! nl2br(e($report->additional_information)) !!}</div>
 
-                    <label class="mt-4"
-                        style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.5em">
-                        D LANDS OPS COMMENT</label>
-                    <div class="border p-2">{!! nl2br(e($report->d_land_ops_comment)) !!}</div>
+                <label class="mt-4" style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
+    D LANDS OPS COMMENT</label>
+                <div class="border p-2">{!! nl2br(e($report->d_land_ops_comment)) !!}</div>
 
-                    <label class="mt-4"
-                        style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.5em">
-                        DG REMARKS</label>
-                    <div class="border p-2">{!! nl2br(e($report->dg_remarks)) !!}</div>
-                </div>
+               <label class="mt-4" style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
+    DG REMARKS</label>
+                <div class="border p-2">{!! nl2br(e($report->dg_remarks)) !!}</div>
+            </div>
             </div>
 
         </div>
