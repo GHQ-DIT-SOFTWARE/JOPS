@@ -39,10 +39,11 @@
                         </a>
                         <ul class="pcoded-submenu">
                             <li class="{{ Request::is('superadmin/reports/dutyreport') ? 'active' : '' }}">
-                                <a href="{{ route('superadmin.dutyreport.view') }}">Duty Report</a>
+                                <a href="{{ route('superadmin.reports.dutyreport') }}">Duty Report</a>
                             </li>
+
                             <li class="{{ Request::is('superadmin/reports/dailysitrep') ? 'active' : '' }}">
-                                <a href="{{ route('superadmin.dailysitrep.view') }}">Daily Sitrep</a>
+                                <a href="{{ route('superadmin.reports.dailysitrep') }}">Daily Sitrep</a>
                             </li>
                         </ul>
                     </li>
@@ -54,18 +55,32 @@
                         </a>
                     </li>
 
-                    <li class="nav-item {{ $route == 'superadmin.mails' ? 'active' : '' }}">
-                        <a href="{{ route('superadmin.mails') }}" class="nav-link">
+                    <li class="nav-item {{ $route == 'superadmin.scheduler' ? 'active' : '' }}">
+                        <a href="{{ route('superadmin.scheduler') }}" class="nav-link">
                             <span class="pcoded-micon"><i class="fa-solid fa-calendar"></i></span>
                             <span class="pcoded-mtext">Scheduler</span>
                         </a>
                     </li>
-                    <li class="nav-item {{ $route == 'superadmin.mails' ? 'active' : '' }}">
-                        <a href="{{ route('superadmin.mails') }}" class="nav-link">
+                    <li class="nav-item {{ $route == 'superadmin.partone' ? 'active' : '' }}">
+                        <a href="{{ route('superadmin.partone') }}" class="nav-link">
                             <span class="pcoded-micon"><i class="fa-solid fa-list"></i></span>
                             <span class="pcoded-mtext">Part One Orders</span>
                         </a>
                     </li>
+
+                    <li class="nav-item {{ $route == 'superadmin.operation' ? 'active' : '' }}">
+                    <a href="{{ route('superadmin.operation') }}" class="nav-link">
+                        <span class="pcoded-micon"><i class="fa-solid fa-person-rifle"></i></span>
+                        <span class="pcoded-mtext">Operations</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ $route == 'superadmin.broadcast' ? 'active' : '' }}">
+                    <a href="{{ route('superadmin.broadcast') }}" class="nav-link">
+                        <span class="pcoded-micon"><i class="fa-solid fa-tower-broadcast"></i></span>
+                        <span class="pcoded-mtext">Broadcast</span>
+                    </a>
+                </li>
+                
 
                     {{-- USER MANAGEMENT --}}
                     <li class="nav-item pcoded-hasmenu {{ $prefix == '/users' ? 'active pcoded-trigger' : '' }}">
@@ -80,6 +95,12 @@
                         </ul>
                     </li>
 
+                    <li class="nav-item {{ $route == 'superadmin.setting' ? 'active' : '' }}">
+                    <a href="{{ route('superadmin.setting') }}" class="nav-link">
+                        <span class="pcoded-micon"><i class="fa-solid fa-gears"></i></span>
+                        <span class="pcoded-mtext">Settings</span>
+                    </a>
+                </li>
 
 
                     {{-- DASHBOARDS --}}
@@ -173,24 +194,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item {{ $route == 'superadmin.mails' ? 'active' : '' }}">
-                    <a href="{{ route('superadmin.mails') }}" class="nav-link">
-                        <span class="pcoded-micon"><i class="fa-solid fa-person-rifle"></i></span>
-                        <span class="pcoded-mtext">Operations</span>
-                    </a>
-                </li>
-                 <li class="nav-item {{ $route == 'superadmin.mails' ? 'active' : '' }}">
-                    <a href="{{ route('superadmin.mails') }}" class="nav-link">
-                        <span class="pcoded-micon"><i class="fa-solid fa-tower-broadcast"></i></span>
-                        <span class="pcoded-mtext">Broadcast</span>
-                    </a>
-                </li>
-                 <li class="nav-item {{ $route == 'superadmin.mails' ? 'active' : '' }}">
-                    <a href="{{ route('superadmin.mails') }}" class="nav-link">
-                        <span class="pcoded-micon"><i class="fa-solid fa-gears"></i></span>
-                        <span class="pcoded-mtext">Settings</span>
-                    </a>
-                </li>
+                
 
                 {{-- LOGOUT --}}
                 <li class="nav-item">

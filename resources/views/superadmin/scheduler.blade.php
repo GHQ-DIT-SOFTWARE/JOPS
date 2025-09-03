@@ -48,11 +48,9 @@
                 <div class="col-md-12 col-lg-4">
                        <div class="card glass-card">
                         <div class="card-body text-center">
-                           <!--<i class="feather icon-mail text-c-green d-block f-40"></i>-->
-                           <img src="{{ asset('assets/images/verify1.png') }}" alt="" width="70px"
-                                        height="75px">
+                            <i class="feather icon-mail text-c-green d-block f-40"></i>
                             <h4 class="m-t-20">Verified Reports</h4>
-
+                            <p class="m-b-20">Your main list is growing</p>
                             <span
                                 style="
     display: inline-block;
@@ -75,10 +73,9 @@
                 <div class="col-md-6 col-lg-4">
                       <div class="card glass-card">
                         <div class="card-body text-center">
-                         <img src="{{ asset('assets/images/pending1.png') }}" alt="" width="75px"
-                                        height="75px">
+                            <i class="feather icon-twitter text-c-green d-block f-40"></i>
                             <h4 class="m-t-20">Pending Reports</h4>
-                            <!--<p class="m-b-20">Your main list is growing</p>-->
+                            <p class="m-b-20">Your main list is growing</p>
                             <span
                                 style="
     display: inline-block;
@@ -100,10 +97,9 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card glass-card">
                         <div class="card-body text-center">
-                            <img src="{{ asset('assets/images/decline1.png') }}" alt="" width="75px"
-                                        height="75px">
+                            <i class="feather icon-briefcase text-c-red d-block f-40"></i>
                             <h4 class="m-t-20">Declined Reports</h4>
-                            <!--<p class="m-b-20">This is your current active plan</p>-->
+                            <p class="m-b-20">This is your current active plan</p>
                             <span
                                 style="
     display: inline-block;
@@ -154,25 +150,16 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($reports as $report)
+               
                     <tr>
-                        <td>{{ $report->user_service_no }}</td>
-                        <td>{{ \Carbon\Carbon::parse($report->reporting_time)->format('h:i A') }}</td>
-                        <td>{{ $report->period_covered }}</td>
-                        <td>{{ $report->ops_room_comm_state }}</td>
-                        <td>{{ Str::limit($report->ops_room_messages, 50) }}</td>
-                        <td>{{ $report->visit_ops_room }}</td>
-                        <td>{{ Str::limit($report->major_event, 50) }}</td>
-                        <td>{{ $report->misc_duty_veh_note }}</td>
-                        <td>{{ $report->additional_information }}</td>
-                        <td>{{ \Carbon\Carbon::parse($report->created_at)->format('Y-m-d h:i A') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($report->updated_at)->format('Y-m-d h:i A') }}</td>
+                        <td>deggg</td>
+             
                         <td>
-                            <a href="{{ route('superadmin.reports.view', $report->id) }}"
+                            <a href="#" 
                                class="btn btn-sm btn-info">View</a>
                         </td>
                     </tr>
-                @endforeach
+                
             </tbody>
         </table>
     </div>

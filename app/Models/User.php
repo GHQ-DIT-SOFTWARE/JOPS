@@ -12,7 +12,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     // Define role constants
-    public const ROLE_SUPPERADMIN = 0;
+    public const ROLE_SUPERADMIN = 0;
     public const ROLE_DG = 1;
     public const ROLE_DLAND = 2;
     public const ROLE_DADMIN = 3;
@@ -24,7 +24,7 @@ class User extends Authenticatable
 
     // Map role IDs to names
     public static $roleNames = [
-        self::ROLE_SUPPERADMIN => 'Superadmin',
+        self::ROLE_SUPERADMIN => 'Superadmin',
         self::ROLE_DG => 'DG',
         self::ROLE_DLAND => 'DLand',
         self::ROLE_DADMIN => 'Dadmin',
@@ -119,6 +119,11 @@ class User extends Authenticatable
     return self::$roleNames[$this->is_role] ?? 'Unknown';
 }
 
+
+public function opsRooms()
+{
+    return $this->hasMany(OpsRoom::class);
+}
 
 }
 

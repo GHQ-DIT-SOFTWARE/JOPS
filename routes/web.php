@@ -11,8 +11,11 @@ use App\Http\Controllers\MailsController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
-
-
+use App\Http\Controllers\PartoneController;
+use App\Http\Controllers\OperationController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\BroadcastController;
+use App\Http\Controllers\SchedulerController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -56,31 +59,43 @@ Route::prefix('profile')->group(function () {
 });
 
 
-Route::middleware(['auth', 'role:' . User::ROLE_SUPPERADMIN])
+Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN])
     ->prefix('superadmin')
     ->as('superadmin.')
     ->group(function () {
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/mails', [MailsController::class, 'mails'])->name('mails');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/mails', [MailsController::class, 'mails'])->name('mails');
 
-    Route::prefix('reports')->group(function () {
-        Route::get('/dutyreport', [ReportsController::class, 'dutyReport'])->name('dutyreport.view');
-        Route::get('/dailysitrep', [ReportsController::class, 'dailySitrep'])->name('dailysitrep.view');
-        Route::get('/addreport', [ReportsController::class, 'add'])->name('add.report');
+        // Reports
+        Route::prefix('reports')->as('reports.')->group(function () {
+    Route::get('/dutyreport', [ReportsController::class, 'dutyReport'])->name('dutyreport');
+    Route::get('/addreport', [ReportsController::class, 'add'])->name('addreport');
+    Route::post('/store', [ReportsController::class, 'store'])->name('store');
+    Route::get('/{id}/view', [ReportsController::class, 'view'])->name('view');
+    Route::get('/dailysitrep', [ReportsController::class, 'dailySitrep'])->name('dailysitrep'); // Add this line
+   });
+
+   Route::get('/scheduler', [SchedulerController::class, 'scheduler'])->name('scheduler');
+   Route::get('/partone', [PartoneController::class, 'partone'])->name('partone');
+   Route::get('/setting', [SettingsController::class, 'setting'])->name('setting');
+   Route::get('/broadcast', [BroadcastController::class, 'broadcast'])->name('broadcast');
+
+   Route::get('/operation', [OperationController::class, 'operation'])->name('operation');
+        // Users
+        Route::prefix('users')->as('users.')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('list');
+            Route::get('/create', [UserController::class, 'create'])->name('create');
+            Route::post('/store', [UserController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [UserController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [UserController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('destroy');
+            Route::get('/ajax', [UserController::class, 'usersAjax'])->name('ajax');
+        });
+
     });
+    
 
-    Route::prefix('users')->as('users.')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('list');
-        Route::get('/create', [UserController::class, 'create'])->name('create');
-        Route::post('/store', [UserController::class, 'store'])->name('store');
-        Route::get('/edit/{id}', [UserController::class, 'edit'])->name('edit');
-        Route::put('/update/{id}', [UserController::class, 'update'])->name('update');
-        Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('destroy');
-        Route::get('/ajax', [UserController::class, 'usersAjax'])->name('ajax');
-    });
-
-});
 
 
 Route::middleware(['auth', 'role:' . User::ROLE_DG])

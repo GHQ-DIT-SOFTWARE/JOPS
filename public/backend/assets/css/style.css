@@ -3080,8 +3080,9 @@ fieldset:disabled a.btn {
 
 .btn-light {
   color: #fff;
-  background-color: #b5992b;
-  border-color: #b5992b;
+  background-color: #171613;
+  border-color: #10100f;
+  border-radius: 20rem;
 }
 
 .btn-light:hover {
@@ -33026,9 +33027,10 @@ new-task label input[type=checkbox] {
     transition: all 0.3s ease-in-out;
 }
 .glass-card:hover {
-    transform: translateY(-6px);
-    background: rgba(214, 149, 97, 0.30); /* stronger blue tint on hover */
-    box-shadow: 0 12px 32px rgba(239, 209, 184, 0.9); /* glowing blue shadow */
+    transform: translateY(-5px);
+    background: rgba(156, 107, 9, 0.30); /* stronger blue tint on hover */
+    /*box-shadow: 0 12px 32px rgba(239, 209, 184, 0.9); /* glowing blue shadow */
+
 }
 
 
@@ -33043,12 +33045,12 @@ new-task label input[type=checkbox] {
     text-align: center;
     border: none;
     background-size: 300% 100%;
-    moz-transition: all 0.4s ease-in-out;
-    transition: all 0.4s ease-in-out;
+    moz-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
     &:hover {
         background-position: 100% 0;
-        moz-transition: all 0.4s ease-in-out;
-        transition: all 0.4s ease-in-out;
+        moz-transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
     }
     &:focus {
         outline: none;
