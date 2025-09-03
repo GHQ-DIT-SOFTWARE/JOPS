@@ -1,5 +1,103 @@
 @extends('adminbackend.layouts.master')
 
+    <style>
+
+.wizard-icons .nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 10px;
+    border-radius: 12px;
+    background: #f8f9fa;
+    color: #495057;
+    font-weight: 500;
+    transition: all 0.3s ease-in-out;
+}
+
+.wizard-icons .nav-link .wizard-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    padding: 10px;
+    background: #e9ecef;
+    transition: all 0.3s ease-in-out;
+}
+
+.wizard-icons .nav-link.active {
+    background: #28a745;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.wizard-icons .nav-link.active .wizard-icon {
+    background: #218838; /* darker green */
+    filter: brightness(0) invert(1); /* turn png icons white */
+}
+
+.wizard-icons .nav-link:hover {
+    transform: translateY(-2px);
+    background: #e2f0e9;
+}
+
+.tab-pane .form-section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.tab-pane label {
+    font-weight: 600;
+    color: #333;
+}
+
+.progress {
+    background: #e9ecef;
+    border-radius: 50px;
+    overflow: hidden;
+}
+.progress-bar {
+    background: linear-gradient(90deg, #28a745, #20c997);
+    transition: width 0.4s ease;
+}
+
+
+#summary_content {
+    background: #fdfdfd;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+#summary_content h6 {
+    color: #28a745;
+    font-weight: 700;
+    margin-top: 15px;
+}
+
+/* Wizard Nav Tabs (active step) */
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+    background-color: #93939382 !important; /* SaddleBrown */
+    color: #fff !important;
+}
+
+
+
+
+.wizard-icons .wizard-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+
+
+
+</style>
 
 @section('main')
     <section class="pcoded-main-container">
@@ -40,116 +138,142 @@
 
                             <div id="progresswizard" class="bt-wizard">
 
-                                <!-- Wizard Nav Tabs -->
-                                <ul class="nav nav-pills nav-fill mb-3">
-                                    <li class="nav-item"><a href="#tab1" class="nav-link active" data-toggle="tab">1. Duty
-                                            Officer Info</a></li>
-                                    <li class="nav-item"><a href="#tab2" class="nav-link" data-toggle="tab">2. General</a>
-                                    </li>
-                                    <li class="nav-item"><a href="#tab3" class="nav-link" data-toggle="tab">3. Ops
-                                            Room</a></li>
-                                    <li class="nav-item"><a href="#tab4" class="nav-link" data-toggle="tab">4. Sitrep</a>
-                                    </li>
-                                    <li class="nav-item"><a href="#tab5" class="nav-link" data-toggle="tab">5. Misc</a>
-                                    </li>
-                                    <li class="nav-item"><a href="#tab6" class="nav-link" data-toggle="tab">6. Additional
-                                            Info</a></li>
-                                    <li class="nav-item"><a href="#summary" class="nav-link" data-toggle="tab">Summary</a>
-                                    </li>
-                                </ul>
+
+                                <ul class="nav nav-pills nav-fill mb-3 wizard-icons">
+    <li class="nav-item">
+        <a href="#tab1" class="nav-link active" data-toggle="tab">
+            <img src="{{ asset('assets/images/dashicons/work.png') }}" alt="Duty" class="wizard-icon">
+            Duty Officer Info
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#tab2" class="nav-link" data-toggle="tab">
+            <img src="{{ asset('assets/images/dashicons/security.png') }}" alt="General" class="wizard-icon">
+            General
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#tab3" class="nav-link" data-toggle="tab">
+            <img src="{{ asset('assets/images/dashicons/opsroom.png') }}" alt="Ops" class="wizard-icon">
+            Ops Room
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#tab4" class="nav-link" data-toggle="tab">
+            <img src="{{ asset('assets/images/dashicons/reporting.png') }}" alt="Sitrep" class="wizard-icon">
+            Sitrep
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#tab5" class="nav-link" data-toggle="tab">
+            <img src="{{ asset('assets/images/dashicons/cotton.png') }}" alt="Misc" class="wizard-icon">
+            Misc
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#tab6" class="nav-link" data-toggle="tab">
+            <img src="{{ asset('assets/images/dashicons/addinfo.png') }}" alt="Additional" class="wizard-icon">
+            Additional Info
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#summary" class="nav-link" data-toggle="tab">
+            <img src="{{ asset('assets/images/dashicons/summary.png') }}" alt="Summary" class="wizard-icon">
+            Summary
+        </a>
+    </li>
+</ul>
+
 
                                 <!-- Progress Bar -->
                                 <div id="bar" class="progress mb-3" style="height: 6px;">
                                     <div class="progress-bar bg-success" style="width: 5%;"></div>
                                 </div>
 
+
+
                                 <!-- Tab Content -->
                                 <div class="tab-content">
                                     <!-- === TAB 1: Duty Officer Info === -->
                                     <div class="tab-pane active show" id="tab1">
                                         <!-- Duty Officer (readonly, prefilled, submitted via hidden input) -->
-                                        <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Duty Officer</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control"
-                                                    value="{{ $user->rank }} {{ $user->fname }}" readonly>
-                                                <input type="hidden" name="duty_officer"
-                                                    value="{{ $user->rank }} {{ $user->fname }}">
-                                            </div>
-                                        </div>
 
-                                        <!-- Dept/DTE (readonly, prefilled, submitted via hidden input) -->
-                                        <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Dept/DTE</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" value="{{ $user->unit }}"
-                                                    readonly>
-                                                <input type="hidden" name="unit" value="{{ $user->unit }}">
-                                            </div>
-                                        </div>
+                                       <div class="row">
+            <!-- Duty Officer -->
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Duty Officer</label>
+                <input type="text" class="form-control"
+                       value="{{ $user->rank }} {{ $user->fname }}" readonly>
+                <input type="hidden" name="duty_officer"
+                       value="{{ $user->rank }} {{ $user->fname }}">
+            </div>
 
-                                        <!-- Contact Number (readonly, submitted via hidden input) -->
-                                        <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Contact Number</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" value="{{ $user->phone }}"
-                                                    readonly>
-                                                <input type="hidden" name="phone" value="{{ $user->phone }}">
-                                            </div>
-                                        </div>
+            <!-- Dept/DTE -->
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Dept/DTE</label>
+                <input type="text" class="form-control"
+                       value="{{ $user->unit }}" readonly>
+                <input type="hidden" name="unit" value="{{ $user->unit }}">
+            </div>
 
+            <!-- Contact Number -->
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Contact Number</label>
+                <input type="text" class="form-control"
+                       value="{{ $user->phone }}" readonly>
+                <input type="hidden" name="phone" value="{{ $user->phone }}">
+            </div>
 
-                                        <!-- Reporting Time (editable, submitted) -->
-                                        <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Reporting Time</label>
-                                            <div class="col-sm-9">
-                                                <input type="time" class="form-control" id="reporting_time"
-                                                    name="reporting_time">
-                                            </div>
-                                        </div>
+            <!-- Reporting Time -->
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Reporting Time</label>
+                <input type="time" class="form-control"
+                       id="reporting_time" name="reporting_time">
+            </div>
 
-
-
-                                        <!-- Period Covered (editable, submitted) -->
-                                        <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Period Covered</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="period_covered" class="form-control"
-                                                    placeholder="e.g. 011330Z - 020730Z AUG 25">
-                                            </div>
-                                        </div>
-                                    </div>
+            <!-- Period Covered -->
+            <div class="col-md-12 mb-3">
+                <label class="form-label">Period Covered</label>
+                <input type="text" name="period_covered" class="form-control"
+                       placeholder="e.g. 011330Z - 020730Z AUG 25">
+            </div>
+        </div>
+        </div>
 
 
 
                                     <!-- === TAB 2: General === -->
                                     <div class="tab-pane" id="tab2">
                                         <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Sy Gen</label>
+                                            <label class="col-sm-3 col-form-label">Security General</label>
                                             <div class="col-sm-9">
-                                                <textarea name="gen_sy_gen" class="form-control" rows="4"
-                                                    placeholder="e.g. 
-                                                Calm">{{ old('gen_sy_gen') }}</textarea>
-                                                <small class="form-text text-muted">Enter each item on a new line.</small>
+                                                <input type="text" name="admin_gen_welfare" class="form-control"
+                                                        placeholder="e.g. Calm">
+
                                             </div>
                                         </div>
 
                                         <div class="form-group">
                                             <label>Significant Events</label>
-                                            <textarea name="gen_sig_events" class="form-control" rows="6"
-                                                placeholder="e.g. 
-                                                Event A
-                                                Event B">{{ old('gen_sig_events') }}</textarea>
-                                            <small class="form-text text-muted">Enter each event on a new line.</small>
+
+                                        <div id="remarksWrapper">
+                                            <div class="input-group mb-2 remark-row">
+                                                <input type="text" name="remarks[]" class="form-control" placeholder="Add Event">
+                                                <button type="button" class="btn btn-success addRow">+</button>
+                                            </div>
                                         </div>
+                                        {{-- <button type="submit" class="btn btn-sm btn-primary mt-1">Add Event</button> --}}
+                                    </form>
+                                </div>
                                     </div>
+
 
 
 
                                     <!-- === TAB 3: Ops Room === -->
                                     <div class="tab-pane" id="tab3">
                                         <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Comm State</label>
+                                            <label class="col-sm-3 col-form-label">Communication State</label>
                                             <div class="col-sm-9">
                                                 <input type="text" name="ops_room_comm_state" class="form-control"
                                                     placeholder="Satisfactory">
@@ -195,110 +319,132 @@
 
                                     <!-- === TAB 4: SITREP - CAMP === -->
                                     <div class="tab-pane" id="tab4">
-                                        <label><strong>SITREP - Camp</strong></label>
-
-                                        <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Sy Gen</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="sitrep_camp_sy_gen" class="form-control"
-                                                    placeholder="e.g. Calm">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Main Gate</label>
-                                            <input type="text" name="sitrep_camp_main_gate" class="form-control"
-                                                placeholder="e.g. NTR">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Comd Gate</label>
-                                            <input type="text" name="sitrep_camp_command_gate" class="form-control"
-                                                placeholder="e.g. NTR">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Congo Junction</label>
-                                            <input type="text" name="sitrep_camp_congo_junction" class="form-control"
-                                                placeholder="e.g. NTR">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>GAFPO</label>
-                                            <input type="text" name="sitrep_camp_gafto" class="form-control"
-                                                placeholder="e.g. NTR">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Major Events</label>
-                                            <textarea name="major_event" class="form-control" rows="4" placeholder="e.g. Nil">{{ old('major_event') }}</textarea>
-                                        </div>
-
+                                     <div class="row">
+        <div class="col-md-12 mb-3">
+            <label>Security General</label>
+            <input type="text" name="sitrep_camp_sy_gen" class="form-control" placeholder="e.g. Calm">
+        </div>
+        <div class="col-md-6 mb-3">
+            <label>Main Gate</label>
+            <input type="text" name="sitrep_camp_main_gate" class="form-control" placeholder="e.g. NTR">
+        </div>
+        <div class="col-md-6 mb-3">
+            <label>Comd Gate</label>
+            <input type="text" name="sitrep_camp_command_gate" class="form-control" placeholder="e.g. NTR">
+        </div>
+        <div class="col-md-6 mb-3">
+            <label>Congo Junction</label>
+            <input type="text" name="sitrep_camp_congo_junction" class="form-control" placeholder="e.g. NTR">
+        </div>
+        <div class="col-md-6 mb-3">
+            <label>GAFPO</label>
+            <input type="text" name="sitrep_camp_gafto" class="form-control" placeholder="e.g. NTR">
+        </div>
+        <div class="col-12 mb-3">
+            <label>Major Events</label>
+            <textarea name="major_event" class="form-control" rows="3" placeholder="e.g. Nil">{{ old('major_event') }}</textarea>
+        </div>
+    </div>
                                         <!-- SITREP - Army -->
                                         <label><strong>SITREP - Army</strong></label>
                                         <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Sy Gen</label>
+                                            <label class="col-sm-3 col-form-label">Security General</label>
                                             <div class="col-sm-9">
                                                 <input type="text" name="sitrep_army_sy_gen" class="form-control"
                                                     placeholder="e.g. Calm">
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
+                                          <div class="form-group">
                                             <label>Army Significant Events</label>
-                                            <textarea name="sitrep_army_sig_event" class="form-control" rows="4" placeholder="e.g. Army Event">{{ old('sitrep_army_sig_event') }}</textarea>
-                                            <small class="form-text text-muted">Enter each event on a new line.</small>
+
+                                        <div id="remarksWrapper">
+                                            <div class="input-group mb-2 remark-row">
+                                                <input type="text" name="remarks[]" class="form-control" placeholder="Add Event">
+                                                <button type="button" class="btn btn-success addRow">+</button>
+                                            </div>
                                         </div>
+                                        {{-- <button type="submit" class="btn btn-sm btn-primary mt-1">Add Event</button> --}}
+                                    </form>
+                                </div>
 
                                         <!-- SITREP - Navy -->
                                         <label><strong>SITREP - Navy</strong></label>
                                         <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Sy Gen</label>
+                                            <label class="col-sm-3 col-form-label">Security General</label>
                                             <div class="col-sm-9">
                                                 <input type="text" name="sitrep_navy_sy_gen" class="form-control"
                                                     placeholder="e.g. Calm">
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
+                                            <div class="form-group">
                                             <label>Navy Significant Events</label>
-                                            <textarea name="sitrep_navy_sig_event" class="form-control" rows="4" placeholder="e.g. Navy Event">{{ old('sitrep_navy_sig_event') }}</textarea>
-                                            <small class="form-text text-muted">Enter each event on a new line.</small>
+
+                                        <div id="remarksWrapper">
+                                            <div class="input-group mb-2 remark-row">
+                                                <input type="text" name="remarks[]" class="form-control" placeholder="Add Event">
+                                                <button type="button" class="btn btn-success addRow">+</button>
+                                            </div>
                                         </div>
+                                        {{-- <button type="submit" class="btn btn-sm btn-primary mt-1">Add Event</button> --}}
+                                    </form>
+                                </div>
 
                                         <!-- SITREP - Airforce -->
                                         <label><strong>SITREP - Airforce</strong></label>
                                         <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Sy Gen</label>
+                                            <label class="col-sm-3 col-form-label">Security General</label>
                                             <div class="col-sm-9">
                                                 <input type="text" name="sitrep_airforce_sy_gen" class="form-control"
                                                     placeholder="e.g. Calm">
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label>Air Force Significant Events</label>
-                                            <textarea name="sitrep_airforce_sig_event" class="form-control" rows="4" placeholder="e.g. Air Force Event">{{ old('sitrep_airforce_sig_event') }}</textarea>
-                                            <small class="form-text text-muted">Enter each event on a new line.</small>
+                                          <div class="form-group">
+                                            <label>Significant Events</label>
+
+                                        <div id="remarksWrapper">
+                                            <div class="input-group mb-2 remark-row">
+                                                <input type="text" name="remarks[]" class="form-control" placeholder="Add Event">
+                                                <button type="button" class="btn btn-success addRow">+</button>
+                                            </div>
                                         </div>
+                                        {{-- <button type="submit" class="btn btn-sm btn-primary mt-1">Add Event</button> --}}
+                                    </form>
+                                </div>
                                     </div>
 
                                     <!-- === TAB 5: MISC === -->
                                     <div class="tab-pane" id="tab5">
+                                         <div class="col-md-12 mb-3">
                                         <div class="form-group">
-                                            <label>Duty Veh</label>
+                                            <label>Duty Vehicle</label>
                                             <textarea name="misc_duty_veh_note" class="form-control" rows="3">{{ old('misc_duty_veh_note') }}</textarea>
                                         </div>
+                                         </div>
 
-                                        <div class="form-group">
-                                            <label>Taking Over</label>
-                                            <textarea name="misc_duty_veh_taking_over" class="form-control" rows="2" placeholder="Taking over - 163724">{{ old('misc_duty_veh_taking_over') }}</textarea>
+                                                      <div class="form-group">
+
+                                            <div class="form-group row align-items-center mb-2">
+                                                <label class="col-sm-1 col-form-label text-right">a.</label>
+                                                <label class="col-sm-2 col-form-label">Taking Over</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" name="misc_duty_veh_taking_over"
+                                                        class="form-control" placeholder="e.g. Taking Over - 453425635">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row align-items-center mb-2">
+                                                <label class="col-sm-1 col-form-label text-right">b.</label>
+                                                <label class="col-sm-2 col-form-label">Handing Over</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" name="misc_duty_veh_handing_over"
+                                                        class="form-control" placeholder="e.g. Handing Over - 453425709">
+                                                </div>
+                                            </div>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label>Handing Over</label>
-                                            <textarea name="misc_duty_veh_handing_over" class="form-control" rows="2" placeholder="Handing over - 163724">{{ old('misc_duty_veh_handing_over') }}</textarea>
-                                        </div>
 
                                         <div class="form-group">
                                             <label>Major News of Military Importance (print/electronic)</label>
@@ -306,7 +452,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label><strong>Admin Gen</strong></label>
+                                            <label><strong>Admin General</strong></label>
 
                                             <div class="form-group row align-items-center mb-2">
                                                 <label class="col-sm-1 col-form-label text-right">a.</label>
@@ -350,11 +496,20 @@
 
                                     <!-- === TAB 6: Additional Information === -->
                                     <div class="tab-pane" id="tab6">
-                                        <div class="form-group">
+                                   
+
+                                          <div class="form-group">
                                             <label>Additional Information</label>
-                                            <textarea name="additional_information" class="form-control" rows="4"
-                                                placeholder="Enter any additional information here...">{{ old('additional_information') }}</textarea>
+
+                                        <div id="remarksWrapper">
+                                            <div class="input-group mb-2 remark-row">
+                                                <input type="text" name="additional_information" class="form-control" placeholder="Enter any additional information here ...">
+                                                <button type="button" class="btn btn-success addRow">+</button>
+                                            </div>
                                         </div>
+                                        {{-- <button type="submit" class="btn btn-sm btn-primary mt-1">Add Event</button> --}}
+                                    </form>
+                                </div>
                                     </div>
 
                                     <!-- === SUMMARY TAB === -->
