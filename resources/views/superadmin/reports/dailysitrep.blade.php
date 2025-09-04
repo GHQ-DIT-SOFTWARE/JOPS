@@ -46,7 +46,7 @@
 
             <div class="row">
                 <div class="col-md-12 col-lg-4">
-                       <div class="card glass-card">
+                    <div class="card glass-card">
                         <div class="card-body text-center">
                             <i class="feather icon-mail text-c-green d-block f-40"></i>
                             <h4 class="m-t-20">Verified Reports</h4>
@@ -71,7 +71,7 @@
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-4">
-                      <div class="card glass-card">
+                    <div class="card glass-card">
                         <div class="card-body text-center">
                             <i class="feather icon-twitter text-c-green d-block f-40"></i>
                             <h4 class="m-t-20">Pending Reports</h4>
@@ -131,48 +131,51 @@
                             <h5>Recent Duty Report</h5>
                         </div>
                         <div class="card-body">
-    <div class="table-responsive">
-        <table id="left-right-fix" class="table table-striped table-bordered nowrap">
-            <thead>
-                <tr>
-                    <th>Service No</th>
-                    <th>Reporting Time</th>
-                    <th>Period Covered</th>
-                    <th>Ops Room Comm State</th>
-                    <th>Ops Room Messages</th>
-                    <th>Visit Ops Room</th>
-                    <th>Major Event</th>
-                    <th>Misc Duty Veh Note</th>
-                    <th>Additional Info</th>
-                    <th>Created At</th>
-                    <th>Updated At</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($reports as $report)
-                    <tr>
-                        <td>{{ $report->user_service_no }}</td>
-                        <td>{{ \Carbon\Carbon::parse($report->reporting_time)->format('h:i A') }}</td>
-                        <td>{{ $report->period_covered }}</td>
-                        <td>{{ $report->ops_room_comm_state }}</td>
-                        <td>{{ Str::limit($report->ops_room_messages, 50) }}</td>
-                        <td>{{ $report->visit_ops_room }}</td>
-                        <td>{{ Str::limit($report->major_event, 50) }}</td>
-                        <td>{{ $report->misc_duty_veh_note }}</td>
-                        <td>{{ $report->additional_information }}</td>
-                        <td>{{ \Carbon\Carbon::parse($report->created_at)->format('Y-m-d h:i A') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($report->updated_at)->format('Y-m-d h:i A') }}</td>
-                        <td>
-                            <a href="{{ route('superadmin.reports.view', $report->id) }}" 
-                               class="btn btn-sm btn-info">View</a>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-</div>
+                            <div class="table-responsive">
+                                <table id="left-right-fix" class="table table-striped table-bordered nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>Service No</th>
+                                            <th>Reporting Time</th>
+                                            <th>Period Covered</th>
+                                            <th>Ops Room Comm State</th>
+                                            <th>Ops Room Messages</th>
+                                            <th>Visit Ops Room</th>
+                                            <th>Major Event</th>
+                                            <th>Misc Duty Veh Note</th>
+                                            <th>Additional Info</th>
+                                            <th>Created At</th>
+                                            <th>Updated At</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($reports as $report)
+                                            <tr>
+                                                <td>{{ $report->user_service_no }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($report->reporting_time)->format('h:i A') }}
+                                                </td>
+                                                <td>{{ $report->period_covered }}</td>
+                                                <td>{{ $report->ops_room_comm_state }}</td>
+                                                <td>{{ Str::limit($report->ops_room_messages, 50) }}</td>
+                                                <td>{{ $report->visit_ops_room }}</td>
+                                                <td>{{ Str::limit($report->major_event, 50) }}</td>
+                                                <td>{{ $report->misc_duty_veh_note }}</td>
+                                                <td>{{ $report->additional_information }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($report->created_at)->format('Y-m-d h:i A') }}
+                                                </td>
+                                                <td>{{ \Carbon\Carbon::parse($report->updated_at)->format('Y-m-d h:i A') }}
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('superadmin.reports.view', $report->id) }}"
+                                                        class="btn btn-sm btn-info">View</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
                     </div>
                 </div>

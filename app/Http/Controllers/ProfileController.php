@@ -30,18 +30,18 @@ class ProfileController extends Controller
     public function ProfileStore(Request $request)
 {
     $request->validate([
-        
         'rank'            => 'required|string|max:50',
         'fname'           => 'required|string|max:255',
-        'unit'            => 'required|string|max:255',
+        'unit_id'         => 'required|exists:units,id',   // ✅ foreign key validation
         'gender'          => 'nullable|in:Male,Female',
         'arm_of_service'  => 'nullable|in:ARMY,NAVY,AIRFORCE',
         'phone'           => 'nullable|string|max:20',
+        'email'           => 'nullable|email|max:255',
     ]);
     
     $user = Auth::user();
     $user->fill($request->only([
-    'rank', 'fname', 'unit',
+        'rank', 'fname', 'unit_id',  // ✅ store unit_id instead of unit string
         'arm_of_service', 'gender', 'email', 'phone'
     ]));
     $user->save();
@@ -51,6 +51,7 @@ class ProfileController extends Controller
         'alert-type' => 'success'
     ]);
 }
+
 
 
     // View Change Password Page

@@ -48,17 +48,37 @@ class OpsRoom extends Model
         'additional_information',
         'd_land_ops_comment',
         'dg_remarks',
+        'd_land_signature',
+        'dg_signature',
+        'submitted_at',
     ];
 
     // Remove $casts array entirely or empty it
     protected $casts = [
-        // none
-    ];
+    'gen_sig_events' => 'array',
+    'ops_room_messages' => 'array',
+    'visit_ops_room' => 'array',
+    'major_event' => 'array',
+    'sitrep_army_sig_event' => 'array',
+    'sitrep_navy_sig_event' => 'array',
+    'sitrep_airforce_sig_event' => 'array',
+    'major_news_of_military' => 'array',
+    'ghq_office_keys' => 'array',
+    'gaf_fire_station' => 'array',
+    'additional_information' => 'array',
+];
+
 
     public function user()
     {
         return $this->belongsTo(User::class, 'user_service_no', 'service_no');
     }
+
+    public function getIsSubmittedAttribute(): bool
+{
+    return !is_null($this->submitted_at);
+}
+
 }
 
 

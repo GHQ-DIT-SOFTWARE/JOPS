@@ -22,9 +22,33 @@ class RedirectIfAuthenticated
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
-            }
+           if (Auth::guard($guard)->check()) {
+    $user = Auth::user();
+
+    switch ($user->is_role) {
+        case \App\Models\User::ROLE_SUPERADMIN:
+            return redirect()->route('superadmin.dashboard');
+        case \App\Models\User::ROLE_DG:
+            return redirect()->route('dg.dashboard');
+        case \App\Models\User::ROLE_DLAND:
+            return redirect()->route('dland.dashboard');
+        case \App\Models\User::ROLE_DADMIN:
+            return redirect()->route('dadmin.dashboard');
+        case \App\Models\User::ROLE_DOFFR:
+            return redirect()->route('doffr.dashboard');
+        case \App\Models\User::ROLE_DCLERK:
+            return redirect()->route('dclerk.dashboard');
+        case \App\Models\User::ROLE_DWO:
+            return redirect()->route('dwo.dashboard');
+        case \App\Models\User::ROLE_DDRIVER:
+            return redirect()->route('ddriver.dashboard');
+        case \App\Models\User::ROLE_DRADIO:
+            return redirect()->route('dradio.dashboard');
+        default:
+            return redirect('/'); // fallback
+    }
+}
+
         }
 
         return $next($request);

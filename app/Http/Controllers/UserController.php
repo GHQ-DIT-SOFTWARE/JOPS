@@ -21,7 +21,18 @@ class UserController extends Controller
 
     public function usersAjax(Request $request)
 {
-    $users = User::query();
+    // Join units so DataTables can sort & search by unit name
+    $users = User::select([
+            'users.id',
+            'users.service_no',
+            'users.rank',
+            'users.fname',
+            'users.is_role',
+            'users.email',
+            'users.phone',
+            'units.unit as unit_name'
+        ])
+        ->leftJoin('units', 'users.unit_id', '=', 'units.id');
 
     return DataTables::of($users)
         ->addIndexColumn()
@@ -53,39 +64,42 @@ class UserController extends Controller
         ->rawColumns(['action'])
         ->make(true);
 }
+
+
     // ✅ Show create user form
     public function create()
-    {
-        $nav_title = "Add Users";
-        return view('superadmin.users.add', compact('nav_title'));
-    }
+{
+    $nav_title = "Add Users";
+    $units = \App\Models\Unit::orderBy('unit')->get();
+    return view('superadmin.users.add', compact('nav_title', 'units'));
+}
+
 
     // ✅ Store new user
-    public function store(Request $request)
+   public function store(Request $request)
 {
     $request->validate([
         'service_no'       => 'required|string|unique:users',
         'rank'             => 'required|string|max:50',
         'fname'            => 'required|string|max:255',
-        'unit'             => 'required|string|max:255',
+        'unit_id'          => 'required|exists:units,id', // ✅ foreign key validation
         'arm_of_service'   => 'nullable|in:ARMY,NAVY,AIRFORCE',
         'gender'           => 'nullable|in:Male,Female',
         'email'            => 'required|email|unique:users',
         'phone'            => 'nullable|string|max:20',
         'is_role'          => 'required|integer',
-        // Removed password validation here
     ]);
 
     User::create([
         'service_no'       => trim($request->service_no),
         'rank'             => trim($request->rank),
         'fname'            => trim($request->fname),
-        'unit'             => trim($request->unit),
+        'unit_id'          => $request->unit_id,   // ✅ store foreign key
         'arm_of_service'   => $request->arm_of_service,
         'gender'           => $request->gender,
         'email'            => trim($request->email),
         'phone'            => trim($request->phone),
-        'password'         => Hash::make('123456'),  // default password
+        'password'         => Hash::make('123456'),
         'is_role'          => $request->is_role,
         'remember_token'   => Str::random(50),
     ]);
@@ -97,13 +111,17 @@ class UserController extends Controller
 }
 
 
+
     // ✅ Show edit form
     public function edit($id)
-    {
-        $user = User::findOrFail($id);
-        $nav_title = "Edit Users";
-        return view('superadmin.users.edit', compact('user','nav_title'));
-    }
+{
+    $user = User::findOrFail($id);
+    $nav_title = "Edit User";
+    $units = \App\Models\Unit::orderBy('unit')->get();
+
+    return view('superadmin.users.edit', compact('user', 'nav_title', 'units'));
+}
+
 
     // ✅ Update user
     public function update(Request $request, $id)
@@ -114,7 +132,7 @@ class UserController extends Controller
         'service_no'       => 'required|string|unique:users,service_no,' . $user->id,
         'rank'             => 'required|string|max:50',
         'fname'            => 'required|string|max:255',
-        'unit'             => 'required|string|max:255',
+        'unit_id'          => 'required|exists:units,id', // ✅ foreign key validation
         'arm_of_service'   => 'nullable|in:ARMY,NAVY,AIRFORCE',
         'gender'           => 'nullable|in:Male,Female',
         'email'            => 'required|email|unique:users,email,' . $user->id,
@@ -127,7 +145,7 @@ class UserController extends Controller
         'service_no'       => trim($request->service_no),
         'rank'             => trim($request->rank),
         'fname'            => trim($request->fname),
-        'unit'             => trim($request->unit),
+        'unit_id'          => $request->unit_id,  // ✅ update unit_id
         'arm_of_service'   => $request->arm_of_service,
         'gender'           => $request->gender,
         'email'            => trim($request->email),
@@ -137,7 +155,7 @@ class UserController extends Controller
 
     if ($request->filled('password')) {
         $user->password = Hash::make($request->password);
-        $user->save(); // Save again if password is updated
+        $user->save();
     }
 
     return redirect()->route('superadmin.users.list')->with([
