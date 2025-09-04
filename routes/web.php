@@ -16,6 +16,9 @@ use App\Http\Controllers\OperationController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\BroadcastController;
 use App\Http\Controllers\SchedulerController;
+
+use App\Http\Controllers\DG\DGController;
+use App\Http\Controllers\DLAND\DLANDController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -48,16 +51,6 @@ Route::group(['prefix' => 'profile', 'as' => 'profile.'], function () {
     Route::get('/signature', [ProfileController::class, 'signature'])->name('signature');
 });
 
-Route::prefix('profile')->group(function () {
-
-    Route::get('/view', [ProfileController::class, 'ProfileView'])->name('profile.view');
-    Route::get('/edit', [ProfileController::class, 'ProfileEdit'])->name('profile.edit');
-    Route::post('/store', [ProfileController::class, 'ProfileStore'])->name('profile.store');
-    Route::get('/password/view', [ProfileController::class, 'PasswordView'])->name('password.view');
-    Route::post('/password/update', [ProfileController::class, 'PasswordUpdate'])->name('password.update');
-
-});
-
 
 Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN])
     ->prefix('superadmin')
@@ -68,20 +61,33 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN])
         Route::get('/mails', [MailsController::class, 'mails'])->name('mails');
 
         // Reports
-        Route::prefix('reports')->as('reports.')->group(function () {
+       Route::prefix('reports')->as('reports.')->group(function () {
+    // Report Views
     Route::get('/dutyreport', [ReportsController::class, 'dutyReport'])->name('dutyreport');
     Route::get('/addreport', [ReportsController::class, 'add'])->name('addreport');
-    Route::post('/store', [ReportsController::class, 'store'])->name('store');
     Route::get('/{id}/view', [ReportsController::class, 'view'])->name('view');
-    Route::get('/dailysitrep', [ReportsController::class, 'dailySitrep'])->name('dailysitrep'); // Add this line
-   });
+    Route::get('/dailysitrep', [ReportsController::class, 'dailySitrep'])->name('dailysitrep');
 
-   Route::get('/scheduler', [SchedulerController::class, 'scheduler'])->name('scheduler');
-   Route::get('/partone', [PartoneController::class, 'partone'])->name('partone');
-   Route::get('/setting', [SettingsController::class, 'setting'])->name('setting');
-   Route::get('/broadcast', [BroadcastController::class, 'broadcast'])->name('broadcast');
+    // Report Step Saving
+    Route::post('/save-step', [ReportsController::class, 'saveStep'])->name('saveStep');  
+    Route::post('/submit', [ReportsController::class, 'submit'])->name('submit');  
 
-   Route::get('/operation', [OperationController::class, 'operation'])->name('operation');
+    // Report Store (for non-AJAX submit)
+    Route::post('/store', [ReportsController::class, 'store'])->name('store');  
+
+    // Report Edit + Update
+    Route::get('/{id}/edit', [ReportsController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [ReportsController::class, 'update'])->name('update');
+});
+
+
+        Route::get('/scheduler', [SchedulerController::class, 'scheduler'])->name('scheduler');
+        Route::get('/partone', [PartoneController::class, 'partone'])->name('partone');
+        Route::get('/setting', [SettingsController::class, 'setting'])->name('setting');
+        Route::get('/broadcast', [BroadcastController::class, 'broadcast'])->name('broadcast');
+
+        Route::get('/operation', [OperationController::class, 'operation'])->name('operation');
+        
         // Users
         Route::prefix('users')->as('users.')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('list');
@@ -94,7 +100,42 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN])
         });
 
     });
-    
+
+
+Route::prefix('profile')->group(function () {
+
+    Route::get('/view', [ProfileController::class, 'ProfileView'])->name('profile.view');
+    Route::get('/edit', [ProfileController::class, 'ProfileEdit'])->name('profile.edit');
+    Route::post('/store', [ProfileController::class, 'ProfileStore'])->name('profile.store');
+    Route::get('/password/view', [ProfileController::class, 'PasswordView'])->name('password.view');
+    Route::post('/password/update', [ProfileController::class, 'PasswordUpdate'])->name('password.update');
+
+});
+
+
+
+
+
+
+Route::middleware(['auth', 'role:' . User::ROLE_DLAND])
+    ->prefix('dland')
+    ->as('dland.')
+    ->group(function () {
+        Route::get('/dashboard', [DLANDController::class, 'dashboard'])->name('dashboard');
+
+        Route::get('/reports/pending', [DLANDController::class, 'pendingReports'])->name('reports.pending');
+        Route::get('/reports/awaiting', [DLANDController::class, 'awaitingReports'])->name('reports.awaiting');
+        Route::get('/reports/approved', [DLANDController::class, 'approvedReports'])->name('reports.approved'); // <--- added
+        Route::get('/reports/{id}/view', [DLANDController::class, 'viewReport'])->name('reports.view');
+        Route::post('/reports/{id}/review', [DLANDController::class, 'reviewReport'])->name('reports.review');
+        Route::put('/reports/{id}/update-comment', [DLANDController::class, 'updateComment'])->name('reports.updateComment');
+
+    });
+
+
+
+
+
 
 
 
@@ -102,7 +143,14 @@ Route::middleware(['auth', 'role:' . User::ROLE_DG])
     ->prefix('dg')
     ->as('dg.')
     ->group(function () {
-        Route::get('/dashboard', [DGDashboardController::class, 'index'])->name('dashboard');
+
+        Route::get('/dashboard', [DGController::class, 'dashboard'])->name('dashboard');
+
+        Route::get('/reports/awaiting-approval', [DGController::class, 'awaitingReports'])->name('reports.awaiting');
+
+        Route::get('/reports/{id}/view', [DGController::class, 'viewReport'])->name('reports.view');
+
+        Route::post('/reports/{id}/approve', [DGController::class, 'approveReport'])->name('reports.approve');
     });
 
 
@@ -110,4 +158,7 @@ Route::middleware(['auth', 'role:' . User::ROLE_DG])
 
 Route::get('/ck', function () {
     return view('dutyofficer');
+
+
+
 });

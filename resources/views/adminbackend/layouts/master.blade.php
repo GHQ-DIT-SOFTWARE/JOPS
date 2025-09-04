@@ -16,7 +16,7 @@
     <link rel="icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/x-icon">
 
     <!-- Font Awesome -->
-    <script src="https://kit.fontawesome.com/22b05698b3.js" crossorigin="anonymous"></script>
+    {{-- <script src="https://kit.fontawesome.com/22b05698b3.js" crossorigin="anonymous"></script> --}}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />

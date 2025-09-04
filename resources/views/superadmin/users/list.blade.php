@@ -116,10 +116,8 @@
                         data: 'fname',
                         name: 'fname'
                     },
-                    {
-                        data: 'unit',
-                        name: 'unit'
-                    },
+                    { data: 'unit_name', 
+                    name: 'units.unit' },
                     {
                         data: 'role',
                         name: 'role',

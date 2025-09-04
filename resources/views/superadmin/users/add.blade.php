@@ -56,11 +56,19 @@
                                 <div class="text-danger">{{ $errors->first('fname') }}</div>
                             </div>
 
-                            <div class="form-group col-md-6">
-                                <label>Unit <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="unit" value="{{ old('unit') }}" required placeholder="Unit">
-                                <div class="text-danger">{{ $errors->first('unit') }}</div>
-                            </div>
+                           <div class="form-group col-md-6">
+    <label>Unit <span class="text-danger">*</span></label>
+    <select class="form-control" name="unit_id" required>
+        <option value="">-- Select Unit --</option>
+        @foreach($units as $unit)
+            <option value="{{ $unit->id }}" {{ old('unit_id') == $unit->id ? 'selected' : '' }}>
+                {{ $unit->unit }}
+            </option>
+        @endforeach
+    </select>
+    <div class="text-danger">{{ $errors->first('unit_id') }}</div>
+</div>
+
 
                             <div class="form-group col-md-6">
                                 <label>Arm of Service</label>

@@ -44,7 +44,7 @@ class User extends Authenticatable
         'service_no',
         'rank',
         'fname',
-        'unit',
+        'unit_id',
         'phone',
         'arm_of_service',
         'email',
@@ -123,6 +123,11 @@ class User extends Authenticatable
 public function opsRooms()
 {
     return $this->hasMany(OpsRoom::class);
+}
+
+public function unit()
+{
+    return $this->belongsTo(Unit::class, 'unit_id');
 }
 
 }

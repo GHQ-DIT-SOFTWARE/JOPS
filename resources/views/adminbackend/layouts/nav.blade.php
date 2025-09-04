@@ -69,18 +69,18 @@
                     </li>
 
                     <li class="nav-item {{ $route == 'superadmin.operation' ? 'active' : '' }}">
-                    <a href="{{ route('superadmin.operation') }}" class="nav-link">
-                        <span class="pcoded-micon"><i class="fa-solid fa-person-rifle"></i></span>
-                        <span class="pcoded-mtext">Operations</span>
-                    </a>
-                </li>
-                <li class="nav-item {{ $route == 'superadmin.broadcast' ? 'active' : '' }}">
-                    <a href="{{ route('superadmin.broadcast') }}" class="nav-link">
-                        <span class="pcoded-micon"><i class="fa-solid fa-tower-broadcast"></i></span>
-                        <span class="pcoded-mtext">Broadcast</span>
-                    </a>
-                </li>
-                
+                        <a href="{{ route('superadmin.operation') }}" class="nav-link">
+                            <span class="pcoded-micon"><i class="fa-solid fa-person-rifle"></i></span>
+                            <span class="pcoded-mtext">Operations</span>
+                        </a>
+                    </li>
+                    <li class="nav-item {{ $route == 'superadmin.broadcast' ? 'active' : '' }}">
+                        <a href="{{ route('superadmin.broadcast') }}" class="nav-link">
+                            <span class="pcoded-micon"><i class="fa-solid fa-tower-broadcast"></i></span>
+                            <span class="pcoded-mtext">Broadcast</span>
+                        </a>
+                    </li>
+
 
                     {{-- USER MANAGEMENT --}}
                     <li class="nav-item pcoded-hasmenu {{ $prefix == '/users' ? 'active pcoded-trigger' : '' }}">
@@ -96,88 +96,69 @@
                     </li>
 
                     <li class="nav-item {{ $route == 'superadmin.setting' ? 'active' : '' }}">
-                    <a href="{{ route('superadmin.setting') }}" class="nav-link">
-                        <span class="pcoded-micon"><i class="fa-solid fa-gears"></i></span>
-                        <span class="pcoded-mtext">Settings</span>
-                    </a>
-                </li>
+                        <a href="{{ route('superadmin.setting') }}" class="nav-link">
+                            <span class="pcoded-micon"><i class="fa-solid fa-gears"></i></span>
+                            <span class="pcoded-mtext">Settings</span>
+                        </a>
+                    </li>
 
 
-                    {{-- DASHBOARDS --}}
-                @elseif(Auth::user()->is_role == 1)
-                    <li class="nav-item {{ $route == 'director.dashboard' ? 'active' : '' }}">
-                        <a href="{{ route('director.dashboard') }}" class="nav-link">
+
+                    {{-- DG Sidebar --}}
+                @elseif (Auth::user()->is_role == 1)
+                    <li class="nav-item {{ $route == 'dg.dashboard' ? 'active' : '' }}">
+                        <a href="{{ route('dg.dashboard') }}" class="nav-link">
                             <span class="pcoded-micon"><i class="fa-solid fa-display"></i></span>
                             <span class="pcoded-mtext">Dashboard</span>
                         </a>
                     </li>
 
-                    {{-- LEAVE MANAGEMENT --}}
-                    {{-- <li
-                        class="nav-item pcoded-hasmenu {{ $prefix == 'director/leave' ? 'active pcoded-trigger' : '' }}">
-                        <a href="#" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-database"></i></span>
-                            <span class="pcoded-mtext">Leave Management</span>
+                    <li class="nav-item {{ $route == 'dg.reports.pending' ? 'active' : '' }}">
+                        <a href="{{ route('dg.reports.pending') }}" class="nav-link">
+                            <span class="pcoded-micon"><i class="fa-solid fa-file"></i></span>
+                            <span class="pcoded-mtext">Pending Reports</span>
                         </a>
-                        <ul class="pcoded-submenu">
-                            <li class="{{ $route == 'director.leave.requests' ? 'active' : '' }}">
-                                <a href="{{ route('director.leave.requests') }}">Requested Leaves</a>
-                            </li>
-                            <li class="{{ $route == 'director.leave.view' ? 'active' : '' }}">
-                                <a href="{{ route('director.leave.view') }}">Leave List</a>
-                            </li>
-                        </ul>
-                    </li> --}}
-                @elseif (Auth::user()->is_role == 2)
-                    {{-- <li class="nav-item {{ $route == 'deputy_director.dashboard' ? 'active' : '' }}">
-                        <a href="{{ route('deputy_director.dashboard') }}" class="nav-link">
+                    </li>
+
+                    <li class="nav-item {{ $route == 'dg.reports.approved' ? 'active' : '' }}">
+                        <a href="{{ route('dg.reports.approved') }}" class="nav-link">
+                            <span class="pcoded-micon"><i class="fa-solid fa-check"></i></span>
+                            <span class="pcoded-mtext">Approved Reports</span>
+                        </a>
+                    </li>
+
+                    {{-- DLAND Sidebar --}}
+                @elseif(Auth::user()->is_role == 2)
+                    <li class="nav-item {{ $route == 'dland.dashboard' ? 'active' : '' }}">
+                        <a href="{{ route('dland.dashboard') }}" class="nav-link">
                             <span class="pcoded-micon"><i class="fa-solid fa-display"></i></span>
                             <span class="pcoded-mtext">Dashboard</span>
                         </a>
-                    </li> --}}
-                @elseif(Auth::user()->is_role == 3)
-                    {{-- <li class="nav-item {{ $route == 'adminofficer.dashboard' ? 'active' : '' }}">
-                        <a href="{{ route('adminofficer.dashboard') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-display"></i></span>
-                            <span class="pcoded-mtext">Dashboard</span>
+                    </li>
+
+                    <li class="nav-item {{ $route == 'dland.reports.pending' ? 'active' : '' }}">
+                        <a href="{{ route('dland.reports.pending') }}" class="nav-link">
+                            <span class="pcoded-micon"><i class="fa-solid fa-file"></i></span>
+                            <span class="pcoded-mtext">Pending Reports</span>
                         </a>
-                    </li> --}}
-                @elseif(Auth::user()->is_role == 4)
-                    {{-- <li class="nav-item {{ $route == 'chief_clerk.dashboard' ? 'active' : '' }}">
-                        <a href="{{ route('chief_clerk.dashboard') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-display"></i></span>
-                            <span class="pcoded-mtext">Dashboard</span>
+                    </li>
+
+                    <li class="nav-item {{ $route == 'dland.reports.awaiting' ? 'active' : '' }}">
+                        <a href="{{ route('dland.reports.awaiting') }}" class="nav-link">
+                            <span class="pcoded-micon"><i class="fa-solid fa-hourglass-half"></i></span>
+                            <span class="pcoded-mtext">Awaiting Approval</span>
                         </a>
-                    </li> --}}
+                    </li>
 
-                    {{-- USER MANAGEMENT --}}
-                    {{-- <li class="{{ $route == 'chiefclerk.personnels.list' ? 'active' : '' }}">
-                        <a href="{{ route('chiefclerk.personnels.list') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-users"></i></span>
-                            <span class="pcoded-mtext">Personnels</span>
+                    <li class="nav-item {{ $route == 'dland.reports.approved' ? 'active' : '' }}">
+                        <a href="{{ route('dland.reports.approved') }}" class="nav-link">
+                            <span class="pcoded-micon"><i class="fa-solid fa-check"></i></span>
+                            <span class="pcoded-mtext">Approved Reports</span>
                         </a>
-
-                    </li> --}}
-
-
-                    {{-- LEAVE MANAGEMENT --}}
-
-
-                    {{-- <li class="{{ $route == 'chiefclerk.leave.index' ? 'active' : '' }}">
-                        <a href="{{ route('chiefclerk.leave.index') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-database"></i></span>
-                            <span class="pcoded-mtext">Leave List</span>
-                        </a>
-
-                    </li> --}}
-                @elseif(Auth::user()->is_role == 5)
-                    {{-- <li class="nav-item {{ $route == 'cell_head.dashboard' ? 'active' : '' }}">
-                        <a href="{{ route('cell_head.dashboard') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-display"></i></span>
-                            <span class="pcoded-mtext">Dashboard</span>
-                        </a>
-                    </li> --}}
+                    </li>
                 @endif
+
+
 
                 {{-- MANAGE PROFILE --}}
                 <li class="nav-item pcoded-hasmenu {{ $prefix == '/profile' ? 'active pcoded-trigger' : '' }}">
@@ -194,7 +175,7 @@
                         </li>
                     </ul>
                 </li>
-                
+
 
                 {{-- LOGOUT --}}
                 <li class="nav-item">
