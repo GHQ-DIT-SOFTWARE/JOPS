@@ -109,8 +109,8 @@
 
 
     <!-- notification Js -->
-    <script src="{{ asset('backend/assets/js/plugins/bootstrap-notify.min.js') }}"></script>
-    <script src="{{ asset('backend/assets/js/pages/ac-notification.js') }}"></script>
+    {{-- <script src="{{ asset('backend/assets/js/plugins/bootstrap-notify.min.js') }}"></script>
+    <script src="{{ asset('backend/assets/js/pages/ac-notification.js') }}"></script> --}}
 
 
     <!-- DataTables -->

@@ -50,7 +50,7 @@
                         <div class="card-body text-center">
                             <i class="feather icon-mail text-c-green d-block f-40"></i>
                             <h4 class="m-t-20">Verified Reports</h4>
-                            <p class="m-b-20">Your main list is growing</p>
+                            <!--<p class="m-b-20">Your main list is growing</p>-->
                             <span
                                 style="
     display: inline-block;
@@ -75,7 +75,7 @@
                         <div class="card-body text-center">
                             <i class="feather icon-twitter text-c-green d-block f-40"></i>
                             <h4 class="m-t-20">Pending Reports</h4>
-                            <p class="m-b-20">Your main list is growing</p>
+                            <!--<p class="m-b-20">Your main list is growing</p>-->
                             <span
                                 style="
     display: inline-block;
@@ -99,7 +99,7 @@
                         <div class="card-body text-center">
                             <i class="feather icon-briefcase text-c-red d-block f-40"></i>
                             <h4 class="m-t-20">Declined Reports</h4>
-                            <p class="m-b-20">This is your current active plan</p>
+                            <!--<p class="m-b-20">This is your current active plan</p>-->
                             <span
                                 style="
     display: inline-block;
