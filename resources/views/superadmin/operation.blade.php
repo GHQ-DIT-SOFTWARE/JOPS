@@ -15,7 +15,7 @@
                             <div class="d-flex justify-content-between align-items-center flex-wrap breadcrumb-white mt-2">
                                 <ul class="breadcrumb mb-0">
                                     <li class="breadcrumb-item">
-                                        <a href="index.html"><i class="feather icon-crosshair"></i></a>
+                                        <a href="index.html"><i class="feather icon-users"></i></a>
                                     </li>
                                     <li class="breadcrumb-item"><a href="#!">Operations</a></li>
                                 </ul>

@@ -68,9 +68,9 @@
                         </a>
                     </li>
 
-                    <li class="nav-item {{ $route == 'superadmin.operation' ? 'active' : '' }}">
+                   <li class="nav-item {{ $route == 'superadmin.operation' ? 'active' : '' }}">
                         <a href="{{ route('superadmin.operation') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-person-rifle"></i></span>
+                            <span class="pcoded-micon"><i class="fa-solid fa-diagram-project"></i></span>
                             <span class="pcoded-mtext">Operations</span>
                         </a>
                     </li>
