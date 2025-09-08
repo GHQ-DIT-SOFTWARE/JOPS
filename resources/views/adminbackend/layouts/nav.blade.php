@@ -24,7 +24,7 @@
                 @if (Auth::user()->is_role == 0)
                     <li class="nav-item {{ $route == 'superadmin.dashboard' ? 'active' : '' }}">
                         <a href="{{ route('superadmin.dashboard') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-display"></i></span>
+                            <span class="pcoded-micon"><i class="fa-solid fa-desktop"></i></span>
                             <span class="pcoded-mtext">Dashboard</span>
                         </a>
                     </li>
@@ -180,7 +180,7 @@
                 {{-- LOGOUT --}}
                 <li class="nav-item">
                     <a href="{{ route('logout') }}" class="nav-link {{ $route == 'logout' ? 'active' : '' }}">
-                        <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
+                        <span class="pcoded-micon"><i class="fa-solid fa-right-from-bracket"></i></span>
                         <span class="pcoded-mtext">Logout</span>
                     </a>
                 </li>
