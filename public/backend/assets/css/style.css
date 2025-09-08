@@ -20397,7 +20397,7 @@ body {
     font-size: 14px;
     color: #373a3c;
     font-weight: 400;
-    background: #53421f;
+    background: #534c15;
     position: relative;
 
 }
@@ -25635,12 +25635,12 @@ pre[class*=language-]:before {
 }
 
 .pcoded-navbar.menu-light .pcoded-inner-navbar li.active > a, .pcoded-navbar.menu-light .pcoded-inner-navbar li.pcoded-trigger > a, .pcoded-navbar.menu-light .pcoded-inner-navbar li:hover > a {
-    color: #53421f;
+    color: #534c15;
     background: transparent;
 }
 
 .pcoded-navbar.menu-light .pcoded-inner-navbar > li.active > a, .pcoded-navbar.menu-light .pcoded-inner-navbar > li.pcoded-trigger > a {
-    background: #53421f;
+    background: #534c15;
     color: #fff;
 }
 

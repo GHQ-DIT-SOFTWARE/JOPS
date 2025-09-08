@@ -26,29 +26,38 @@
                                     <li class="breadcrumb-item"><a href="#!">Duty Report</a></li>
                                 </ul>
 
-                                @php
-                                    $user = auth()->user();
-                                    $hasPendingReport =
-                                        $reports->whereIn('status', ['pending_dland', 'awaiting_approval'])->count() >
-                                        0;
-                                @endphp
-
-                                @if (!$hasPendingReport)
-                                    <a href="{{ route('superadmin.reports.addreport') }}"
+                                @if (Auth::user()->is_role == 0 || Auth::user()->is_role == 4)
+                                    <a href="{{ route('doffr.reports.addreport') }}"
                                         class="btn btn-sm btn-light mt-2 mt-md-0">
                                         + Add New Report
                                     </a>
-                                @else
-                                    <button class="btn btn-sm btn-light mt-2 mt-md-0" disabled
-                                        title="You have a pending report that needs approval before submitting a new one">
-                                        + Add New Report
-                                    </button>
                                 @endif
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Notification Section - Fixed to handle both success and notification arrays -->
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            @endif
+
+            @if (session('notification'))
+                <div class="alert alert-{{ session('notification')['alert-type'] }} alert-dismissible fade show"
+                    role="alert">
+                    {{ session('notification')['message'] }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            @endif
 
             <div class="row">
                 <div class="col-md-6 col-lg-4">
@@ -93,24 +102,6 @@
                     </div>
                 </div>
             </div>
-
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            @endif
 
             <div class="row">
                 <div class="col-xl-12 col-md-12">
@@ -179,12 +170,12 @@
                                                 <td>{{ \Carbon\Carbon::parse($report->updated_at)->format('Y-m-d h:i A') }}
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('superadmin.reports.view', $report->id) }}"
+                                                    <a href="{{ route('doffr.reports.view', $report->id) }}"
                                                         class="btn btn-sm btn-info">
                                                         <i class="feather icon-eye"></i> View
                                                     </a>
                                                     @if (!$report->submitted_at)
-                                                        <a href="{{ route('superadmin.reports.edit', $report->id) }}"
+                                                        <a href="{{ route('doffr.reports.edit', $report->id) }}"
                                                             class="btn btn-sm btn-warning">
                                                             <i class="feather icon-edit"></i> Edit
                                                         </a>
@@ -194,7 +185,7 @@
                                         @empty
                                             <tr>
                                                 <td colspan="7" class="text-center">No duty reports found. <a
-                                                        href="{{ route('superadmin.reports.addreport') }}">Create your
+                                                        href="{{ route('doffr.reports.addreport') }}">Create your
                                                         first report</a></td>
                                             </tr>
                                         @endforelse
@@ -208,7 +199,7 @@
         </div>
     </section>
 
-<script>
+    <script>
         $(document).ready(function() {
             $('#left-right-fix').DataTable({
                 "order": [
@@ -238,4 +229,3 @@
         });
     </script>
 @endsection
-

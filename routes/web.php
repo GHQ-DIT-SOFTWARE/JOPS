@@ -19,6 +19,8 @@ use App\Http\Controllers\SchedulerController;
 
 use App\Http\Controllers\DG\DGController;
 use App\Http\Controllers\DLAND\DLANDController;
+use App\Http\Controllers\Doffr\DoffrController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -52,6 +54,41 @@ Route::group(['prefix' => 'profile', 'as' => 'profile.'], function () {
 });
 
 
+
+
+
+// For DG routes
+Route::middleware(['auth', 'role:' . User::ROLE_DG . ',' . User::ROLE_SUPERADMIN])
+    ->prefix('dg')
+    ->as('dg.')
+    ->group(function () {
+        Route::get('/dashboard', [DGController::class, 'dashboard'])->name('dashboard');
+        Route::get('/reports/awaiting-approval', [DGController::class, 'awaitingReports'])->name('reports.awaiting');
+        Route::get('/reports/approved', [DGController::class, 'approvedReports'])->name('reports.approved');
+        Route::get('/reports/{id}/view', [DGController::class, 'viewReport'])->name('reports.view');
+        Route::get('/reports/{id}/approve-form', [DGController::class, 'showApproveForm'])->name('reports.approve-form');
+        Route::post('/reports/{id}/approve', [DGController::class, 'approveReport'])->name('reports.approve');
+        Route::post('/reports/{id}/comment', [DGController::class, 'addComment'])->name('reports.comment');
+
+        Route::put('/reports/{id}/update-comment', [DGController::class, 'updateComment'])->name('reports.updateComment');
+
+    });
+
+// For DLAND routes
+Route::middleware(['auth', 'role:' . User::ROLE_DLAND . ',' . User::ROLE_SUPERADMIN])
+    ->prefix('dland')
+    ->as('dland.')
+    ->group(function () {
+        Route::get('/dashboard', [DLANDController::class, 'dashboard'])->name('dashboard');
+        Route::get('/reports/pending', [DLANDController::class, 'pendingReports'])->name('reports.pending'); 
+        Route::get('/reports/awaiting', [DLANDController::class, 'awaitingReports'])->name('reports.awaiting'); 
+        Route::get('/reports/approved', [DLANDController::class, 'approvedReports'])->name('reports.approved');
+        Route::get('/reports/{id}/view', [DLANDController::class, 'viewReport'])->name('reports.view'); 
+        Route::post('/reports/{id}/review', [DLANDController::class, 'reviewReport'])->name('reports.review');
+         Route::put('/reports/{id}/update-comment', [DLANDController::class, 'updateComment'])->name('reports.updateComment');
+    });
+
+
 Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN])
     ->prefix('superadmin')
     ->as('superadmin.')
@@ -60,25 +97,7 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN])
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/mails', [MailsController::class, 'mails'])->name('mails');
 
-        // Reports
-       Route::prefix('reports')->as('reports.')->group(function () {
-    // Report Views
-    Route::get('/dutyreport', [ReportsController::class, 'dutyReport'])->name('dutyreport');
-    Route::get('/addreport', [ReportsController::class, 'add'])->name('addreport');
-    Route::get('/{id}/view', [ReportsController::class, 'view'])->name('view');
-    Route::get('/dailysitrep', [ReportsController::class, 'dailySitrep'])->name('dailysitrep');
-
-    // Report Step Saving
-    Route::post('/save-step', [ReportsController::class, 'saveStep'])->name('saveStep');  
-    Route::post('/submit', [ReportsController::class, 'submit'])->name('submit');  
-
-    // Report Store (for non-AJAX submit)
-    Route::post('/store', [ReportsController::class, 'store'])->name('store');  
-
-    // Report Edit + Update
-    Route::get('/{id}/edit', [ReportsController::class, 'edit'])->name('edit');
-    Route::put('/{id}', [ReportsController::class, 'update'])->name('update');
-});
+    
 
 
         Route::get('/scheduler', [SchedulerController::class, 'scheduler'])->name('scheduler');
@@ -112,46 +131,36 @@ Route::prefix('profile')->group(function () {
 
 });
 
-
-
-
-
-
-Route::middleware(['auth', 'role:' . User::ROLE_DLAND])
-    ->prefix('dland')
-    ->as('dland.')
+Route::middleware(['auth', 'role:' . User::ROLE_DOFFR . ',' . User::ROLE_SUPERADMIN])
+    ->prefix('doffr')
+    ->as('doffr.')
     ->group(function () {
-        Route::get('/dashboard', [DLANDController::class, 'dashboard'])->name('dashboard');
+        Route::get('/dashboard', [DOFFRController::class, 'dashboard'])->name('dashboard');
+           // Reports
+       Route::prefix('reports')->as('reports.')->group(function () {
+    // Report Views
+    Route::get('/dutyreport', [DOFFRController::class, 'dutyReport'])->name('dutyreport');
+    Route::get('/addreport', [DOFFRController::class, 'add'])->name('addreport');
+    Route::get('/{id}/view', [DOFFRController::class, 'view'])->name('view');
+    Route::get('/dailysitrep', [DOFFRController::class, 'dailySitrep'])->name('dailysitrep');
 
-        Route::get('/reports/pending', [DLANDController::class, 'pendingReports'])->name('reports.pending');
-        Route::get('/reports/awaiting', [DLANDController::class, 'awaitingReports'])->name('reports.awaiting');
-        Route::get('/reports/approved', [DLANDController::class, 'approvedReports'])->name('reports.approved'); // <--- added
-        Route::get('/reports/{id}/view', [DLANDController::class, 'viewReport'])->name('reports.view');
-        Route::post('/reports/{id}/review', [DLANDController::class, 'reviewReport'])->name('reports.review');
-        Route::put('/reports/{id}/update-comment', [DLANDController::class, 'updateComment'])->name('reports.updateComment');
+    // Report Step Saving
+    Route::post('/save-step', [DOFFRController::class, 'saveStep'])->name('saveStep');  
+    Route::post('/submit', [DOFFRController::class, 'submit'])->name('submit');  
 
+    // Report Store (for non-AJAX submit)
+    Route::post('/store', [DOFFRController::class, 'store'])->name('store');  
+
+    // Report Edit + Update
+    Route::get('/{id}/edit', [DOFFRController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [DOFFRController::class, 'update'])->name('update');
+});
     });
 
 
 
 
 
-
-
-
-Route::middleware(['auth', 'role:' . User::ROLE_DG])
-    ->prefix('dg')
-    ->as('dg.')
-    ->group(function () {
-
-        Route::get('/dashboard', [DGController::class, 'dashboard'])->name('dashboard');
-
-        Route::get('/reports/awaiting-approval', [DGController::class, 'awaitingReports'])->name('reports.awaiting');
-
-        Route::get('/reports/{id}/view', [DGController::class, 'viewReport'])->name('reports.view');
-
-        Route::post('/reports/{id}/approve', [DGController::class, 'approveReport'])->name('reports.approve');
-    });
 
 
 

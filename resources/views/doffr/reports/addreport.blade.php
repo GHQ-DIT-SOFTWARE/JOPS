@@ -135,7 +135,7 @@
                         <h5>Duty Officer Report</h5>
                     </div>
                     <div class="card-body">
-                        <form id="dutyReportForm" action="{{ route('superadmin.reports.store') }}" method="POST">
+                        <form id="dutyReportForm" action="{{ route('doffr.reports.store') }}" method="POST">
                             @csrf
                             <!-- Hidden field to store the draft report ID -->
                             <input type="hidden" name="report_id" id="report_id" value="{{ $report->id ?? '' }}">
@@ -761,7 +761,7 @@ function handleStepChange(targetIndex, callback) {
                 if (reportId) formData.append('report_id', reportId); // important!
 
                 $.ajax({
-                    url: '{{ route('superadmin.reports.saveStep') }}',
+                    url: '{{ route('doffr.reports.saveStep') }}',
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -941,7 +941,7 @@ function handleStepChange(targetIndex, callback) {
                 if (reportId) formData.append('report_id', reportId);
 
                 $.ajax({
-                    url: '{{ route('superadmin.reports.submit') }}',
+                    url: '{{ route('doffr.reports.submit') }}',
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'

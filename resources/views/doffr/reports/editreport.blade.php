@@ -135,7 +135,7 @@
                         <h5>Duty Officer Report</h5>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('superadmin.reports.update', $report->id) }}" method="POST"
+                        <form action="{{ route('doffr.reports.update', $report->id) }}" method="POST"
                             id="reportWizardForm">
                             @csrf
                             @method('PUT')
@@ -1209,7 +1209,7 @@ $(function() {
         contentType: false,
         success: function(res) {
             // Step 2: Submit the report (mark as submitted)
-            $.post('{{ route("superadmin.reports.submit") }}', { report_id: reportId, _token: '{{ csrf_token() }}' }, function(submitRes) {
+            $.post('{{ route("doffr.reports.submit") }}', { report_id: reportId, _token: '{{ csrf_token() }}' }, function(submitRes) {
                 if (submitRes.success) {
                     window.location.href = submitRes.redirect;
                 } else {

@@ -23,18 +23,14 @@
                                 </ul>
                                 <div
                                     class="d-flex justify-content-between align-items-center flex-wrap breadcrumb-white mt-2">
-                                    <ul class="breadcrumb mb-0">
-                                        <li class="breadcrumb-item"><a href="#"><i class="feather icon-home"></i></a>
-                                        </li>
-                                        <li class="breadcrumb-item"><a href="#!">Report</a></li>
-                                    </ul>
+                                    
 
                                     <div class="d-flex gap-2">
-                                        <a href="{{ route('superadmin.reports.dutyreport') }}"
+                                        <a href="{{ route('doffr.reports.dutyreport') }}"
                                             class="btn btn-secondary">Back</a>
 
                                         @if (!$report->is_submitted)
-                                            <a href="{{ route('superadmin.reports.edit', $report->id) }}"
+                                            <a href="{{ route('doffr.reports.edit', $report->id) }}"
                                                 class="btn btn-primary">Edit</a>
                                         @endif
                                     </div>
@@ -315,44 +311,47 @@
                             </ol>
                         @endif
 
-                       {{-- D LANDS OPS COMMENT (Read-only) --}}
-<label class="mt-4"
-    style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
-    D LANDS OPS COMMENT
-</label>
-<div class="border p-2">
-    {!! nl2br(e($report->d_land_ops_comment)) !!}
-</div>
+                        {{-- D LANDS OPS COMMENT (Read-only) --}}
+                        <label class="mt-4"
+                            style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
+                            D LANDS OPS COMMENT
+                        </label>
+                        <div class="border p-2">
+                            {!! nl2br(e($report->d_land_ops_comment)) !!}
+                        </div>
 
-{{-- D LANDS Signature --}}
-<label class="mt-2">D LANDS Signature</label>
-<div class="mb-2">
-    @if($report->d_land_signature)
-        <img src="{{ asset('upload/' . $report->d_land_signature) }}" alt="DLAND Signature" height="80">
-    @else
-        <p><em>No signature provided</em></p>
-    @endif
-</div>
+                        {{-- D LANDS Signature --}}
+                        <label class="mt-2">D LANDS Signature</label>
+                        <div class="mb-2">
+                            @if ($report->d_land_signature)
+                                <img src="{{ asset('upload/' . $report->d_land_signature) }}" alt="DLAND Signature"
+                                    height="80">
+                            @else
+                                <p><em>No signature provided</em></p>
+                            @endif
+                        </div>
 
-{{-- DG REMARKS (Read-only) --}}
-<label class="mt-4"
-    style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
-    DG REMARKS
-</label>
-<div class="border p-2">
-    {!! nl2br(e($report->dg_remarks)) !!}
-</div>
+                     
 
-{{-- DG Signature --}}
-<label class="mt-2">DG Signature</label>
-<div class="mb-2">
-    @if($report->dg_signature)
-        <img src="{{ asset('upload/' . $report->dg_signature) }}" alt="DG Signature" height="80">
-    @else
-        <p><em>No signature provided</em></p>
-    @endif
-</div>
 
+                        {{-- DG REMARKS (Read-only) --}}
+                        <label class="mt-4"
+                            style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
+                            DG REMARKS
+                        </label>
+
+                        <div class="border p-2"> {!! nl2br(e($report->dg_remarks)) !!} </div>
+                        {{-- DG Signature --}}
+                        <label class="mt-2">DG Signature</label>
+
+                        <div class="mb-2">
+                            @if ($report->dg_signature)
+                                <img src="{{ asset('upload/' . $report->dg_signature) }}" alt="DG Signature"
+                                    height="80">
+                            @else
+                                <p><em>No signature provided</em></p>
+                            @endif
+                        </div>
 
                     </div>
                 </div>
