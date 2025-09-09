@@ -9,7 +9,7 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h5 class="m-b-10">Duty Officer</h5>
+                                <h5 class="m-b-10">DG Reports</h5>
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center flex-wrap breadcrumb-white mt-2">
@@ -17,10 +17,13 @@
                                     <li class="breadcrumb-item">
                                         <a href="index.html"><i class="feather icon-home"></i></a>
                                     </li>
-                                    <li class="breadcrumb-item"><a href="#!">Duty Report</a></li>
+                                    <li class="breadcrumb-item"><a href="#!">Awaiting Approval</a></li>
                                 </ul>
 
-                                
+                                {{-- <a href="{{ route('superadmin.reports.addreport') }}"
+                                    class="btn btn-sm btn-light mt-2 mt-md-0">
+                                    + Add New Report
+                                </a> --}}
                             </div>
 
                         </div>
@@ -38,7 +41,7 @@
                 <div class="col-xl-12 col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <h1>Pending Reports</h1>
+                            <h1>Reports Awaiting DG Approval</h1>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -58,7 +61,7 @@
                                                 <td>{{ $report->user->fname ?? 'N/A' }}</td>
                                                 <td>{{ $report->status }}</td>
                                                 <td>
-                                                    <a href="{{ route('dland.reports.view', $report->id) }}"
+                                                    <a href="{{ route('dg.reports.view', $report->id) }}"
                                                         class="btn btn-primary btn-sm">Review</a>
                                                 </td>
                                             </tr>

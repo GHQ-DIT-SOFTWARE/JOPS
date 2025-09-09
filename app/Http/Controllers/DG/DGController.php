@@ -5,6 +5,7 @@ namespace App\Http\Controllers\DG;
 use App\Http\Controllers\Controller;
 use App\Models\OpsRoom;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class DGController extends Controller
 {
@@ -24,7 +25,8 @@ class DGController extends Controller
             ->whereDate('dg_approved_at', $today)
             ->count();
 
-        $role = 'dg';
+        // Determine role for view logic
+        $role = auth()->user()->is_role == User::ROLE_SUPERADMIN ? 'superadmin' : 'dg';
 
         return view('dg.dashboard', compact(
             'nav_title', 
@@ -43,7 +45,7 @@ class DGController extends Controller
         $nav_title = "Reports Awaiting Approval";
         $reports = OpsRoom::where('status', 'awaiting_approval')
             ->with('user')
-            ->orderBy('dland_approved_at', 'desc') // Sort by when DLAND approved them
+            ->orderBy('dland_approved_at', 'desc')
             ->get();
 
         return view('dg.reports.awaiting', compact('reports', 'nav_title'));
@@ -92,10 +94,16 @@ class DGController extends Controller
     }
 
     /**
-     * Approve report
+     * Approve report (only for DG role, not superadmin)
      */
     public function approveReport(Request $request, $id)
     {
+        // Prevent superadmin from approving reports (optional)
+        if (auth()->user()->is_role == User::ROLE_SUPERADMIN) {
+            return redirect()->back()
+                ->with('error', 'Superadmin cannot approve reports. Please log in as DG.');
+        }
+
         $request->validate([
             'dg_remarks' => 'required|string|max:2000',
             'dg_signature' => 'required|string',
@@ -119,6 +127,37 @@ class DGController extends Controller
         return redirect()->route('dg.reports.awaiting')
             ->with('success', 'Report approved successfully.');
     }
+
+    public function updateComment(Request $request, $id)
+{
+    $request->validate([
+        'dg_remarks' => 'required|string|max:2000',
+        'dg_signature' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    $report = OpsRoom::findOrFail($id);
+
+    // Update DG comment
+    $report->dg_remarks = $request->dg_remarks;
+
+    // Handle DG signature upload
+    if ($request->hasFile('dg_signature')) {
+        $file = $request->file('dg_signature');
+        $filename = time() . '_dg_' . $file->getClientOriginalName();
+        $file->move(public_path('upload'), $filename);
+        $report->dg_signature = $filename;
+    }
+
+    // Change status to 'approved'
+    $report->status = 'approved';
+
+    // Record DG approval timestamp
+    $report->dg_approved_at = now();
+
+    $report->save();
+
+    return redirect()->back()->with('success', 'Comment and DG signature updated. Report approved.');
+}
 
     /**
      * Get reports statistics for dashboard
