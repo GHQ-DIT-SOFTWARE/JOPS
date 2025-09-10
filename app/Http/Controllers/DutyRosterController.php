@@ -30,16 +30,16 @@ class DutyRosterController extends Controller
     $dutyMonth = "$year-$month-01";
     
     // Get available duty officers for this month with their units and ranks
-    $availableOfficers = AvailableDutyOfficer::with(['user.unit', 'user.rankRelation'])
+    $availableOfficers = AvailableDutyOfficer::with(['user.unit', 'user.rank'])
         ->where('duty_month', $dutyMonth)
         ->where('is_available', true)
         ->get()
         ->pluck('user');
     
     // Get all D Offr users as fallback (for initial setup) with units and ranks
-    $allOfficers = User::with(['unit', 'rankRelation'])
+    $allOfficers = User::with(['unit', 'rank'])
         ->where('is_role', User::ROLE_DOFFR)
-        ->orderBy('rank')
+        ->orderBy('rank_code')
         ->orderBy('fname')
         ->get();
         
@@ -47,7 +47,7 @@ class DutyRosterController extends Controller
     $users = $availableOfficers->count() > 0 ? $availableOfficers : $allOfficers;
     
     // FIXED: Group by formatted date string instead of raw date
-    $dutyRosters = DutyRoster::with(['user.unit', 'user.rankRelation'])
+    $dutyRosters = DutyRoster::with(['user.unit', 'user.rank'])
         ->whereBetween('duty_date', [$startDate, $endDate])
         ->get()
         ->groupBy(function($item) {
@@ -79,9 +79,9 @@ class DutyRosterController extends Controller
         $dutyMonth = "$year-$month-01";
         
         // Get all D Offr users with their units and ranks
-        $allOfficers = User::with(['unit', 'rankRelation'])
+        $allOfficers = User::with(['unit', 'rank'])
             ->where('is_role', User::ROLE_DOFFR)
-            ->orderBy('rank')
+            ->orderBy('rank_code')
             ->orderBy('fname')
             ->get();
             

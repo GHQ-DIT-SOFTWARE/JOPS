@@ -19,47 +19,23 @@ class UserController extends Controller
         return view('superadmin.users.list', compact('users','nav_title'));
     }
 
-    public function usersAjax(Request $request)
+    public function ajax(Request $request)
 {
-    // Join units so DataTables can sort & search by unit name
-    $users = User::select([
-            'users.id',
-            'users.service_no',
-            'users.rank',
-            'users.fname',
-            'users.is_role',
-            'users.email',
-            'users.phone',
-            'units.unit as unit_name'
-        ])
-        ->leftJoin('units', 'users.unit_id', '=', 'units.id');
+    $users = User::with(['unit', 'rank'])->select('users.*'); // Don't list specific columns
 
     return DataTables::of($users)
         ->addIndexColumn()
-        ->addColumn('role', function ($user) {
-            $roles = [
-                0 => 'Super Admin',
-                1 => 'Director General',
-                2 => 'Director Lands',
-                3 => 'Director Admin',
-                4 => 'Duty Officer',
-                5 => 'Duty Clerk',
-                6 => 'Duty Wo',
-                7 => 'Duty Driver',
-                8 => 'Duty Radio',
-            ];
-            return $roles[$user->is_role] ?? 'Unknown';
+        ->editColumn('rank', function ($user) {
+            return $user->display_rank; // This is computed in PHP, not selected from DB
+        })
+        ->editColumn('unit_name', function ($user) {
+            return $user->unit->unit ?? 'N/A';
+        })
+        ->editColumn('role', function ($user) {
+            return $this->getRoleName($user->is_role);
         })
         ->addColumn('action', function ($user) {
-            $edit = route('superadmin.users.edit', $user->id);
-            $delete = route('superadmin.users.destroy', $user->id);
-
-            return '
-                <a href="' . $edit . '" class="btn btn-sm btn-primary">Edit</a>
-                <form action="' . $delete . '" method="POST" style="display:inline-block;">
-                    ' . csrf_field() . method_field('DELETE') . '
-                    <button class="btn btn-sm btn-danger" id="delete")">Delete</button>
-                </form>';
+            return view('adminbackend.users.partials.actions', compact('user'))->render();
         })
         ->rawColumns(['action'])
         ->make(true);
