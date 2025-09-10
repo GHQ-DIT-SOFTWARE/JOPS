@@ -86,10 +86,10 @@ Route::middleware(['auth', 'role:' . User::ROLE_DLAND . ',' . User::ROLE_SUPERAD
     ->as('dland.')
     ->group(function () {
         Route::get('/dashboard', [DLANDController::class, 'dashboard'])->name('dashboard');
-        Route::get('/reports/pending', [DLANDController::class, 'pendingReports'])->name('reports.pending'); 
-        Route::get('/reports/awaiting', [DLANDController::class, 'awaitingReports'])->name('reports.awaiting'); 
+        Route::get('/reports/pending', [DLANDController::class, 'pendingReports'])->name('reports.pending');
+        Route::get('/reports/awaiting', [DLANDController::class, 'awaitingReports'])->name('reports.awaiting');
         Route::get('/reports/approved', [DLANDController::class, 'approvedReports'])->name('reports.approved');
-        Route::get('/reports/{id}/view', [DLANDController::class, 'viewReport'])->name('reports.view'); 
+        Route::get('/reports/{id}/view', [DLANDController::class, 'viewReport'])->name('reports.view');
         Route::post('/reports/{id}/review', [DLANDController::class, 'reviewReport'])->name('reports.review');
          Route::put('/reports/{id}/update-comment', [DLANDController::class, 'updateComment'])->name('reports.updateComment');
     });
@@ -103,7 +103,7 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN])
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/mails', [MailsController::class, 'mails'])->name('mails');
 
-    
+
 
 
         Route::get('/scheduler', [SchedulerController::class, 'scheduler'])->name('scheduler');
@@ -112,7 +112,7 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN])
         Route::get('/broadcast', [BroadcastController::class, 'broadcast'])->name('broadcast');
 
         Route::get('/operation', [OperationController::class, 'operation'])->name('operation');
-        
+
         // Users
         Route::prefix('users')->as('users.')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('list');
@@ -151,11 +151,11 @@ Route::middleware(['auth', 'role:' . User::ROLE_DOFFR . ',' . User::ROLE_SUPERAD
     Route::get('/dailysitrep', [DOFFRController::class, 'dailySitrep'])->name('dailysitrep');
 
     // Report Step Saving
-    Route::post('/save-step', [DOFFRController::class, 'saveStep'])->name('saveStep');  
-    Route::post('/submit', [DOFFRController::class, 'submit'])->name('submit');  
+    Route::post('/save-step', [DOFFRController::class, 'saveStep'])->name('saveStep');
+    Route::post('/submit', [DOFFRController::class, 'submit'])->name('submit');
 
     // Report Store (for non-AJAX submit)
-    Route::post('/store', [DOFFRController::class, 'store'])->name('store');  
+    Route::post('/store', [DOFFRController::class, 'store'])->name('store');
 
     // Report Edit + Update
     Route::get('/{id}/edit', [DOFFRController::class, 'edit'])->name('edit');
@@ -195,7 +195,7 @@ Route::prefix('dclerk')->group(function () {
 Route::post('/dclerk/send-sms/{user}', [CommunicationController::class, 'sendSms'])
     ->name('dclerk.sendSms');
 
-// Bulk communication route  
+// Bulk communication route
 Route::post('/dclerk/send-bulk', [CommunicationController::class, 'sendBulk'])
     ->name('dclerk.sendBulkCommunication');
 
