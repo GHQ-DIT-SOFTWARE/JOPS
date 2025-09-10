@@ -16,10 +16,16 @@ use App\Http\Controllers\OperationController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\BroadcastController;
 use App\Http\Controllers\SchedulerController;
+use App\Http\Controllers\DutyRosterController;
+
 
 use App\Http\Controllers\DG\DGController;
 use App\Http\Controllers\DLAND\DLANDController;
 use App\Http\Controllers\Doffr\DoffrController;
+use App\Http\Controllers\DclerkController;
+use App\Http\Controllers\CommunicationController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -158,8 +164,40 @@ Route::middleware(['auth', 'role:' . User::ROLE_DOFFR . ',' . User::ROLE_SUPERAD
     });
 
 
+Route::middleware(['auth'])->group(function () {
+    // Duty Roster Routes (only roster management)
+    Route::get('duty-roster', [DutyRosterController::class, 'index'])->name('duty-roster.index');
+    Route::post('duty-roster', [DutyRosterController::class, 'store'])->name('duty-roster.store');
+    Route::post('duty-roster/submit', [DutyRosterController::class, 'submitRoster'])->name('duty-roster.submit');
+    Route::post('duty-roster/publish', [DutyRosterController::class, 'publishRoster'])->name('duty-roster.publish');
+    Route::delete('duty-roster/{id}', [DutyRosterController::class, 'destroy'])->name('duty-roster.destroy');
+    Route::get('duty-roster/account-status', [DutyRosterController::class, 'getAccountStatus'])->name('duty-roster.account-status');
+
+    Route::get('duty-roster/manage-officers', [DutyRosterController::class, 'manageOfficers'])->name('duty-roster.manage-officers');
+    Route::post('duty-roster/add-officer', [DutyRosterController::class, 'addOfficer'])->name('duty-roster.add-officer');
+    Route::post('duty-roster/update-available-officers', [DutyRosterController::class, 'updateAvailableOfficers'])->name('duty-roster.update-available-officers');
+});
+
+// D Clerk Routes (only account management)
+Route::prefix('dclerk')->group(function () {
+    Route::get('/dashboard', [DclerkController::class, 'dashboard'])->name('dclerk.dashboard');
+    Route::get('/accounts', [DclerkController::class, 'manageAccounts'])->name('dclerk.accounts');
+    Route::post('/create-accounts', [DclerkController::class, 'createAccounts'])->name('dclerk.create-accounts');
+    Route::get('/communication', [DclerkController::class, 'officerCommunication'])->name('dclerk.communication');
+    Route::get('/reports', [DclerkController::class, 'accountReports'])->name('dclerk.reports');
+    Route::get('/password-list', [DclerkController::class, 'showPasswordList'])->name('dclerk.password-list');
+    Route::get('/roster', [DclerkController::class, 'viewRoster'])->name('dclerk.roster.view'); // Fixed duplicate 'dclerk' prefix
+});
 
 
+
+// Single SMS route
+Route::post('/dclerk/send-sms/{user}', [CommunicationController::class, 'sendSms'])
+    ->name('dclerk.sendSms');
+
+// Bulk communication route  
+Route::post('/dclerk/send-bulk', [CommunicationController::class, 'sendBulk'])
+    ->name('dclerk.sendBulkCommunication');
 
 
 

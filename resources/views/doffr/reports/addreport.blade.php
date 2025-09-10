@@ -214,9 +214,9 @@
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label">Duty Officer</label>
                                                 <input type="text" class="form-control"
-                                                    value="{{ $user->rank }} {{ $user->fname }}" readonly>
+                                                    value="{{ $user->display_rank  }} {{ $user->fname }}" readonly>
                                                 <input type="hidden" name="duty_officer"
-                                                    value="{{ $user->rank }} {{ $user->fname }}">
+                                                    value="{{ $user->display_rank  }} {{ $user->fname }}">
                                             </div>
 
                                             <!-- Dept/DTE -->

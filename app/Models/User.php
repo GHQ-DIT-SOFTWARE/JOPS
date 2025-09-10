@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
+use Carbon\Carbon;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
@@ -130,5 +130,119 @@ public function unit()
     return $this->belongsTo(Unit::class, 'unit_id');
 }
 
+
+public function dutyRosters()
+    {
+        return $this->hasMany(DutyRoster::class);
+    }
+
+    public function dutyOfficerAccounts()
+    {
+        return $this->hasMany(DutyOfficerAccount::class);
+    }
+    
+    public function canAccessDutyRoster()
+    {
+        return in_array($this->is_role, [
+            self::ROLE_SUPERADMIN,
+            self::ROLE_DG,
+            self::ROLE_DLAND,
+            self::ROLE_DADMIN,
+            self::ROLE_DOFFR,
+            self::ROLE_DCLERK
+        ]);
+    }
+    
+    public function canManageDutyRoster()
+    {
+        return in_array($this->is_role, [
+            self::ROLE_SUPERADMIN,
+            self::ROLE_DG,
+            self::ROLE_DLAND,
+            self::ROLE_DADMIN
+        ]);
+    }
+    
+    public function canCreateAccounts()
+    {
+        return in_array($this->is_role, [
+            self::ROLE_SUPERADMIN,
+            self::ROLE_DCLERK
+        ]);
+    }
+    
+    public function isDutyOfficer()
+    {
+        return in_array($this->is_role, [
+            self::ROLE_DOFFR,
+            self::ROLE_DCLERK,
+            self::ROLE_DWO,
+            self::ROLE_DDRIVER,
+            self::ROLE_DRADIO
+        ]);
+    }
+
+    public function rank()
+{
+    return $this->belongsTo(Rank::class, 'rank_code', 'rank_code');
+}
+
+    public function getDisplayRankAttribute()
+{
+    if ($this->rank) {
+        return $this->rank->getDisplayForService($this->arm_of_service);
+    }
+
+    return $this->rank_code;
+}
+
+public function getFullRankAttribute()
+{
+    if ($this->rank) {
+        $arm = strtolower(str_replace(' ', '', $this->arm_of_service));
+
+        if (in_array($arm, ['navy', 'nv'])) {
+            return $this->rank->navy_full ?? $this->rank->navy_display ?? $this->rank_code;
+        }
+
+        if (in_array($arm, ['airforce', 'air', 'af'])) {
+            return $this->rank->airforce_full ?? $this->rank->airforce_display ?? $this->rank_code;
+        }
+
+        return $this->rank->army_full ?? $this->rank->army_display ?? $this->rank_code;
+    }
+
+    return $this->rank_code;
+}
+
+
+  
+
+    /**
+     * Get account status for a specific month and year
+     * Returns: 'created', 'needed', or 'none'
+     */
+    public function getAccountStatusForMonth($month, $year)
+    {
+        // Assuming you have a DutyOfficerAccount model that tracks account status
+        // Adjust this based on your actual database structure
+        
+        $dutyMonth = Carbon::createFromDate($year, $month, 1)->format('Y-m-01');
+        
+        // Check if this user has an account record for the specified month
+        $account = DutyOfficerAccount::where('user_id', $this->id)
+                    ->where('duty_month', $dutyMonth)
+                    ->first();
+        
+        if ($account) {
+            if ($account->account_created) {
+                return 'created';
+            } elseif ($account->needs_account) {
+                return 'needed';
+            }
+        }
+        
+        return 'none';
+    }
 }
 

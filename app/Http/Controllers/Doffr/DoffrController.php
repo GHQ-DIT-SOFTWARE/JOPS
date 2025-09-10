@@ -9,8 +9,21 @@ use App\Models\OpsRoom;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
+
 class DoffrController extends Controller
 {
+
+     public function dashboard()
+    {
+        $user = Auth::user();
+
+        $nav_title = "Duty Report";
+        return view('doffr.dashboard', compact('user','nav_title'));
+    }
     public function dutyReport()
     {
         $nav_title = "Duty Report";

@@ -16,7 +16,7 @@
                                     <li class="breadcrumb-item"><a href="#!">Report</a></li>
                                 </ul>
                                 <div class="d-flex gap-2">
-                                    <a href="{{ route('superadmin.reports.dutyreport') }}"
+                                    <a href="{{ route('dland.dashboard') }}"
                                         class="btn btn-secondary">Back</a>
                                 </div>
                             </div>

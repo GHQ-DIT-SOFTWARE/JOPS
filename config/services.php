@@ -30,4 +30,8 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'mnotify' => [
+    'api_key' => env('MNOTIFY_API_KEY'),
+    'sender_id' => env('MNOTIFY_SENDER_ID'),
+],
 ];
