@@ -13,7 +13,7 @@
                             </div>
                             <ul class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
-                                <li class="breadcrumb-item"><a href="#!">Duty Report</a></li>
+                                <li class="breadcrumb-item"><a href="#!">Home</a></li>
                             </ul>
                         </div>
                     </div>
@@ -35,7 +35,7 @@
             </div>
             <div class="row">
                 <!-- Cards -->
-                 <div class="col-xl-3 col-md-6">
+                <div class="col-xl-3 col-md-6">
                     <div class="card glass-card">
                         <div class="card-body">
                             <div class="row align-items-center m-l-0">
@@ -69,7 +69,7 @@
                         </div>
                     </div>
                 </div>
-                 <div class="col-xl-3 col-md-6">
+                <div class="col-xl-3 col-md-6">
                     <div class="card glass-card">
                         <div class="card-body">
                             <div class="row align-items-center m-l-0">
@@ -104,9 +104,9 @@
 
             </div>
 
-  <div class="row">
+            <div class="row">
                 <!-- Cards -->
-                 <div class="col-xl-3 col-md-6">
+                <div class="col-xl-3 col-md-6">
                     <div class="card glass-card">
                         <div class="card-body">
                             <div class="row align-items-center m-l-0">
@@ -140,7 +140,7 @@
                         </div>
                     </div>
                 </div>
-                 <div class="col-xl-3 col-md-6">
+                <div class="col-xl-3 col-md-6">
                     <div class="card glass-card">
                         <div class="card-body">
                             <div class="row align-items-center m-l-0">
@@ -192,7 +192,7 @@
 
 
 
-            
+
         </div>
 
 
