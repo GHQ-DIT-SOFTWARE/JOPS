@@ -19,23 +19,58 @@ class UserController extends Controller
         return view('superadmin.users.list', compact('users','nav_title'));
     }
 
-    public function ajax(Request $request)
+    public function usersAjax(Request $request)
 {
-    $users = User::with(['unit', 'rank'])->select('users.*'); // Don't list specific columns
+    // Join units so DataTables can sort & search by unit name
+    // Also eager load the rank relationship
+    $users = User::select([
+            'users.id',
+            'users.service_no',
+            'users.rank_code',
+            'users.fname',
+            'users.is_role',
+            'users.email',
+            'users.phone',
+            'units.unit as unit_name',
+            'users.arm_of_service',
+            'users.unit_id' // Add this for the relationship
+        ])
+        ->leftJoin('units', 'users.unit_id', '=', 'units.id')
+        ->with('rank'); // Eager load the rank relationship
 
     return DataTables::of($users)
         ->addIndexColumn()
-        ->editColumn('rank', function ($user) {
-            return $user->display_rank; // This is computed in PHP, not selected from DB
+        ->addColumn('rank', function ($user) {
+            // Use the rank relationship to get the display name
+            if ($user->rank) {
+                return $user->rank->getDisplayForService($user->arm_of_service);
+            }
+            return $user->rank_code; // Fallback to code if no rank found
         })
-        ->editColumn('unit_name', function ($user) {
-            return $user->unit->unit ?? 'N/A';
-        })
-        ->editColumn('role', function ($user) {
-            return $this->getRoleName($user->is_role);
+        ->addColumn('role', function ($user) {
+            $roles = [
+                0 => 'Super Admin',
+                1 => 'Director General',
+                2 => 'Director Lands',
+                3 => 'Director Admin',
+                4 => 'Duty Officer',
+                5 => 'Duty Clerk',
+                6 => 'Duty Wo',
+                7 => 'Duty Driver',
+                8 => 'Duty Radio',
+            ];
+            return $roles[$user->is_role] ?? 'Unknown';
         })
         ->addColumn('action', function ($user) {
-            return view('adminbackend.users.partials.actions', compact('user'))->render();
+            $edit = route('superadmin.users.edit', $user->id);
+            $delete = route('superadmin.users.destroy', $user->id);
+
+            return '
+                <a href="' . $edit . '" class="btn btn-sm btn-primary">Edit</a>
+                <form action="' . $delete . '" method="POST" style="display:inline-block;">
+                    ' . csrf_field() . method_field('DELETE') . '
+                    <button class="btn btn-sm btn-danger" id="delete")">Delete</button>
+                </form>';
         })
         ->rawColumns(['action'])
         ->make(true);

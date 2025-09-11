@@ -55,7 +55,7 @@
                                         @foreach ($reports as $report)
                                             <tr>
                                                 <td>{{ $report->id }}</td>
-                                                <td>{{ $report->user->fname ?? 'N/A' }}</td>
+                                                <td>{{ $report->user->display_rank  }} {{ $report->user->fname }}</td>
                                                 <td>{{ $report->status }}</td>
                                                 <td>
                                                     <a href="{{ route('dland.reports.view', $report->id) }}"

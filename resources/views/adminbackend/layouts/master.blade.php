@@ -99,6 +99,7 @@
     <!-- Main Content -->
     @yield('main')
 
+    
     <!-- Required Js -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('backend/assets/js/vendor-all.min.js') }}"></script>

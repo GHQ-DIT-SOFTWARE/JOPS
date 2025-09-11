@@ -24,7 +24,7 @@ use App\Http\Controllers\DLAND\DLANDController;
 use App\Http\Controllers\Doffr\DoffrController;
 use App\Http\Controllers\DclerkController;
 use App\Http\Controllers\CommunicationController;
-
+use App\Http\Controllers\Auth\PasswordChangeController;
 
 
 /*
@@ -47,6 +47,7 @@ Auth::routes();
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::post('/login', [App\Http\Controllers\Login\AuthController::class, 'Login'])->name('login');
 Route::get('/logout', [App\Http\Controllers\Login\AuthController::class, 'Logout'])->name('logout');
+
 
 Route::group(['namespace' => 'Dashboard', 'prefix' => 'dashboard', 'as' => 'dashboard.'], function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
@@ -127,69 +128,86 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN])
     });
 
 
-Route::prefix('profile')->group(function () {
-
+Route::prefix('profile')->middleware('auth')->group(function () {
     Route::get('/view', [ProfileController::class, 'ProfileView'])->name('profile.view');
     Route::get('/edit', [ProfileController::class, 'ProfileEdit'])->name('profile.edit');
     Route::post('/store', [ProfileController::class, 'ProfileStore'])->name('profile.store');
+
     Route::get('/password/view', [ProfileController::class, 'PasswordView'])->name('password.view');
     Route::post('/password/update', [ProfileController::class, 'PasswordUpdate'])->name('password.update');
-
 });
 
+
+
+// For DOFFR routes
 Route::middleware(['auth', 'role:' . User::ROLE_DOFFR . ',' . User::ROLE_SUPERADMIN])
     ->prefix('doffr')
     ->as('doffr.')
     ->group(function () {
-        Route::get('/dashboard', [DOFFRController::class, 'dashboard'])->name('dashboard');
-           // Reports
-       Route::prefix('reports')->as('reports.')->group(function () {
-    // Report Views
-    Route::get('/dutyreport', [DOFFRController::class, 'dutyReport'])->name('dutyreport');
-    Route::get('/addreport', [DOFFRController::class, 'add'])->name('addreport');
-    Route::get('/{id}/view', [DOFFRController::class, 'view'])->name('view');
-    Route::get('/dailysitrep', [DOFFRController::class, 'dailySitrep'])->name('dailysitrep');
+        Route::get('/dashboard', [DoffrController::class, 'dashboard'])->name('dashboard');
+        
+        // Doffr notifications routes (using DoffrController)
+        Route::get('/notifications', [DoffrController::class, 'getNotifications'])->name('notifications');
+        Route::post('/notification/{id}/read', [DoffrController::class, 'markNotificationRead'])->name('notification.read');
 
-    // Report Step Saving
-    Route::post('/save-step', [DOFFRController::class, 'saveStep'])->name('saveStep');  
-    Route::post('/submit', [DOFFRController::class, 'submit'])->name('submit');  
+        
+        
+        // Reports
+        Route::prefix('reports')->as('reports.')->group(function () {
+            // Report Views
+            Route::get('/dutyreport', [DoffrController::class, 'dutyReport'])->name('dutyreport');
+            Route::get('/addreport', [DoffrController::class, 'add'])->name('addreport');
+            Route::get('/{id}/view', [DoffrController::class, 'view'])->name('view');
+            Route::get('/dailysitrep', [DoffrController::class, 'dailySitrep'])->name('dailysitrep');
 
-    // Report Store (for non-AJAX submit)
-    Route::post('/store', [DOFFRController::class, 'store'])->name('store');  
+            // Report Step Saving
+            Route::post('/save-step', [DoffrController::class, 'saveStep'])->name('saveStep');  
+            Route::post('/submit', [DoffrController::class, 'submit'])->name('submit');  
 
-    // Report Edit + Update
-    Route::get('/{id}/edit', [DOFFRController::class, 'edit'])->name('edit');
-    Route::put('/{id}', [DOFFRController::class, 'update'])->name('update');
-});
+            // Report Store (for non-AJAX submit)
+            Route::post('/store', [DoffrController::class, 'store'])->name('store');  
+
+            // Report Edit + Update
+            Route::get('/{id}/edit', [DoffrController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [DoffrController::class, 'update'])->name('update');
+        });
     });
 
 
-Route::middleware(['auth'])->group(function () {
-    // Duty Roster Routes (only roster management)
-    Route::get('duty-roster', [DutyRosterController::class, 'index'])->name('duty-roster.index');
-    Route::post('duty-roster', [DutyRosterController::class, 'store'])->name('duty-roster.store');
-    Route::post('duty-roster/submit', [DutyRosterController::class, 'submitRoster'])->name('duty-roster.submit');
-    Route::post('duty-roster/publish', [DutyRosterController::class, 'publishRoster'])->name('duty-roster.publish');
-    Route::delete('duty-roster/{id}', [DutyRosterController::class, 'destroy'])->name('duty-roster.destroy');
-    Route::get('duty-roster/account-status', [DutyRosterController::class, 'getAccountStatus'])->name('duty-roster.account-status');
+Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN . ',' . User::ROLE_DCLERK])
+    ->group(function () {
+        Route::get('duty-roster', [DutyRosterController::class, 'index'])->name('duty-roster.index');
+        Route::post('duty-roster', [DutyRosterController::class, 'store'])->name('duty-roster.store');
+        Route::post('duty-roster/submit', [DutyRosterController::class, 'submitRoster'])->name('duty-roster.submit');
+        Route::post('duty-roster/publish', [DutyRosterController::class, 'publishRoster'])->name('duty-roster.publish');
+        Route::delete('duty-roster/{id}', [DutyRosterController::class, 'destroy'])->name('duty-roster.destroy');
+        Route::get('duty-roster/account-status', [DutyRosterController::class, 'getAccountStatus'])->name('duty-roster.account-status');
 
-    Route::get('duty-roster/manage-officers', [DutyRosterController::class, 'manageOfficers'])->name('duty-roster.manage-officers');
-    Route::post('duty-roster/add-officer', [DutyRosterController::class, 'addOfficer'])->name('duty-roster.add-officer');
-    Route::post('duty-roster/update-available-officers', [DutyRosterController::class, 'updateAvailableOfficers'])->name('duty-roster.update-available-officers');
-});
+        Route::get('duty-roster/manage-officers', [DutyRosterController::class, 'manageOfficers'])->name('duty-roster.manage-officers');
+        Route::post('duty-roster/add-officer', [DutyRosterController::class, 'addOfficer'])->name('duty-roster.add-officer');
+        Route::post('duty-roster/update-available-officers', [DutyRosterController::class, 'updateAvailableOfficers'])->name('duty-roster.update-available-officers');
+        
+        // Duty Roster extra duty and notifications (using DutyRosterController)
+        Route::post('/duty-roster/extra-duty', [DutyRosterController::class, 'addExtraDuty'])->name('duty-roster.extra-duty');
+        Route::get('/duty-roster/notifications', [DutyRosterController::class, 'getNotifications'])->name('duty-roster.notifications');
+        Route::post('/duty-roster/notification/{id}/read', [DutyRosterController::class, 'markNotificationRead'])->name('duty-roster.notification.read');
+    
 
-// D Clerk Routes (only account management)
+
 Route::prefix('dclerk')->group(function () {
     Route::get('/dashboard', [DclerkController::class, 'dashboard'])->name('dclerk.dashboard');
     Route::get('/accounts', [DclerkController::class, 'manageAccounts'])->name('dclerk.accounts');
     Route::post('/create-accounts', [DclerkController::class, 'createAccounts'])->name('dclerk.create-accounts');
     Route::get('/communication', [DclerkController::class, 'officerCommunication'])->name('dclerk.communication');
     Route::get('/reports', [DclerkController::class, 'accountReports'])->name('dclerk.reports');
-    Route::get('/password-list', [DclerkController::class, 'showPasswordList'])->name('dclerk.password-list');
-    Route::get('/roster', [DclerkController::class, 'viewRoster'])->name('dclerk.roster.view'); // Fixed duplicate 'dclerk' prefix
+    Route::get('/roster', [DclerkController::class, 'viewRoster'])->name('dclerk.roster.view');
+    Route::get('/password-list', [DclerkController::class, 'showPasswords'])->name('dclerk.password-list');
 });
 
+});
 
+Route::post('/dclerk/regenerate-temp-password/{userId}', [DclerkController::class, 'regenerateTempPassword'])
+    ->name('dclerk.regenerate-temp-password');
 
 // Single SMS route
 Route::post('/dclerk/send-sms/{user}', [CommunicationController::class, 'sendSms'])
@@ -199,13 +217,8 @@ Route::post('/dclerk/send-sms/{user}', [CommunicationController::class, 'sendSms
 Route::post('/dclerk/send-bulk', [CommunicationController::class, 'sendBulk'])
     ->name('dclerk.sendBulkCommunication');
 
-
-
-
-
 Route::get('/ck', function () {
     return view('dutyofficer');
-
-
-
 });
+
+

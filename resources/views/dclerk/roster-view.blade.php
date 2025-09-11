@@ -12,7 +12,7 @@ use Carbon\Carbon;
                 <div class="row align-items-center">
                     <div class="col-md-12">
                         <div class="page-header-title">
-                            <h5 class="m-b-10">Duty Roster View</h5>
+                            <h5 class="m-b-10">{{ $nav_title }}</h5>
                         </div>
                         <div class="d-flex justify-content-between align-items-center flex-wrap breadcrumb-white">
                             <ul class="breadcrumb mb-0">
@@ -125,7 +125,7 @@ use Carbon\Carbon;
                                                                                     $accountStatus = $duty->user->getAccountStatusForMonth($month, $year);
                                                                                 @endphp
                                                                                 @if($accountStatus === 'created')
-                                                                                    <span class="badge bg-success ms-1">Account Ready</span>
+                                                                                    <span class="badge bg-success ms-1">Available</span>
                                                                                 @elseif($accountStatus === 'needed')
                                                                                     <span class="badge bg-warning ms-1">Needs Account</span>
                                                                                 @else
@@ -166,7 +166,7 @@ use Carbon\Carbon;
                                             <span>Extra Duty</span>
                                         </div>
                                         <div class="d-flex align-items-center">
-                                            <span class="badge bg-success me-2">Account Ready</span>
+                                            <span class="badge bg-success me-2">Available</span>
                                             <span>Account Created</span>
                                         </div>
                                         <div class="d-flex align-items-center">
