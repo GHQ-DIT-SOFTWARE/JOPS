@@ -1,126 +1,240 @@
+<!-- resources/views/dclerk/password-list.blade.php -->
+
 @php
-use Carbon\Carbon;
+    use Carbon\Carbon;
 @endphp
 @extends('adminbackend.layouts.master')
 
 @section('main')
-<section class="pcoded-main-container">
-    <div class="pcoded-content">
-        <!-- Page Header -->
-        <div class="page-header">
-            <div class="page-block">
-                <div class="row align-items-center">
-                    <div class="col-md-12">
-                        <div class="page-header-title">
-                            <h5 class="m-b-10">Temporary Passwords</h5>
+    <style>
+        /* Button tweaks */
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .password-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        code.password-text {
+            font-family: monospace;
+            font-size: 1rem;
+            user-select: text;
+        }
+
+        button.toggle-password {
+            cursor: pointer;
+        }
+
+        button.copy-password {
+            transition: background-color 0.3s ease;
+        }
+
+        button.copy-password.btn-success {
+            background-color: #28a745 !important;
+            color: white !important;
+            border-color: #28a745 !important;
+        }
+
+        /* Search box styling */
+        #password-search {
+            margin-bottom: 1rem;
+            max-width: 300px;
+        }
+    </style>
+
+    <section class="pcoded-main-container">
+        <div class="pcoded-content">
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5 class="m-b-10">{{ $nav_title }}</h5>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center flex-wrap breadcrumb-white">
-                            <ul class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="#"><i class="feather icon-home"></i></a></li>
-                                <li class="breadcrumb-item"><a href="{{ route('dclerk.dashboard') }}">D Clerk Dashboard</a></li>
-                                <li class="breadcrumb-item"><a href="{{ route('dclerk.accounts') }}">Manage Accounts</a></li>
-                                <li class="breadcrumb-item"><a href="#!">Temporary Passwords</a></li>
-                            </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Temporary Passwords for {{ Carbon::create($year, $month, 1)->format('F Y') }}</h5>
+                        <p class="text-muted mb-0">Generated for {{ $processedCount }} officers</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning">
+                            <i class="feather icon-alert-triangle"></i>
+                            <strong>Important:</strong> These passwords are temporary and will expire.
+                            Officers should change their password after first login.
+                        </div>
+
+                        @if (count($passwords) > 0)
+                            <!-- Search input -->
+                            <input type="search" id="password-search" class="form-control"
+                                placeholder="Search by Service No, Officer, Rank, or Unit..." aria-label="Search passwords">
+
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="password-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Service No</th>
+                                            <th>Officer</th>
+                                            <th>Rank</th>
+                                            <th>Unit</th>
+                                            <th>Temporary Password</th>
+                                            <th>Expires At</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($passwords as $account)
+    <tr>
+        <td>{{ $account->user->service_no }}</td>
+        <td>{{ $account->user->fname }}</td>
+        <td>{{ $account->user->display_rank }}</td>
+        <td>{{ $account->user->unit->unit ?? 'N/A' }}</td>
+        <td>
+            <code class="text-primary password-text" id="password-{{ $loop->index }}">
+                {{ $account->temp_password }}
+            </code>
+        </td>
+        <td>{{ $account->expires_at ? $account->expires_at->format('M j, Y H:i') : 'N/A' }}</td>
+        <td class="password-actions">
+            <button class="btn btn-sm btn-outline-secondary toggle-password"
+                    type="button" data-target="password-{{ $loop->index }}"
+                    aria-label="Toggle password visibility" title="Show/Hide Password">
+                <i class="feather icon-eye"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-primary copy-password"
+                    data-target="password-{{ $loop->index }}"
+                    aria-label="Copy password to clipboard" title="Copy Password">
+                <i class="feather icon-copy"></i>
+            </button>
+
+            @if ($account->expires_at && $account->expires_at->isPast())
+                <form action="{{ route('dclerk.regenerate-temp-password', $account->user->id) }}"
+                      method="POST" style="display:inline">
+                    @csrf
+                    <button type="submit" class="btn btn-warning btn-sm">Regenerate Password</button>
+                </form>
+            @endif
+        </td>
+    </tr>
+@endforeach
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="alert alert-info">
+                                <i class="feather icon-info"></i> No active temporary passwords found.
+                            </div>
+                        @endif
+
+                        <div class="mt-4">
+                            <a href="{{ route('dclerk.accounts') }}" class="btn btn-secondary">
+                                <i class="feather icon-arrow-left"></i> Back to Accounts
+                            </a>
+                            <a href="{{ route('dclerk.communication') }}" class="btn btn-primary">
+                                <i class="feather icon-message-circle"></i> Send Communications
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- End Page Header -->
+    </section>
 
-        <!-- Main Content -->
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Temporary Passwords for {{ Carbon::create($year, $month, 1)->format('F Y') }}</h5>
-                    <p class="text-success"><i class="feather icon-check-circle"></i> Processed {{ $processedCount }} accounts</p>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-info">
-                        <i class="feather icon-info"></i> 
-                        Please communicate these temporary passwords to the respective officers. 
-                        They should change their password after first login.
-                    </div>
+    <script>
+        // Copy password button handler
+        document.querySelectorAll('.copy-password').forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const passwordElement = document.getElementById(targetId);
+                const password = passwordElement.textContent;
 
-                    @if(count($passwords) > 0)
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Officer</th>
-                                    <th>Service</th>
-                                    <th>Unit</th>
-                                    <th>Temporary Password</th>
-                                    <th>Login Instructions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($passwords as $item)
-                                <tr>
-                                    <td>{{ $item['officer'] }}</td>
-                                    <td>{{ $item['arm_of_service'] }}</td>
-                                    <td>{{ $item['unit'] }}</td>
-                                    <td>
-                                        <code class="bg-light p-1 rounded">{{ $item['temp_password'] }}</code>
-                                        <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyToClipboard('{{ $item['temp_password'] }}')">
-                                            <i class="feather icon-copy"></i>
-                                        </button>
-                                    </td>
-                                    <td>
-                                        <small>
-                                            Service No: <strong>{{ explode('(', $item['officer'])[1] ?? '' }}</strong><br>
-                                            Use temporary password for first login
-                                        </small>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    @else
-                    <div class="alert alert-warning">
-                        <i class="feather icon-alert-triangle"></i> 
-                        No passwords were generated. All officers already had accounts.
-                    </div>
-                    @endif
+                navigator.clipboard.writeText(password).then(() => {
+                    // Show feedback
+                    const originalHtml = this.innerHTML;
+                    this.innerHTML = '<i class="feather icon-check"></i> Copied!';
+                    this.classList.add('btn-success');
 
-                    <div class="mt-4">
-                        <a href="{{ route('dclerk.accounts') }}" class="btn btn-primary">
-                            <i class="feather icon-arrow-left"></i> Back to Accounts
-                        </a>
-                        <button class="btn btn-success" onclick="window.print()">
-                            <i class="feather icon-printer"></i> Print List
-                        </button>
-                        <button class="btn btn-info" id="copyAllPasswords">
-                            <i class="feather icon-copy"></i> Copy All Passwords
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<script>
-    function copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(() => {
-            alert('Password copied to clipboard: ' + text);
-        }).catch(err => {
-            console.error('Failed to copy: ', err);
+                    setTimeout(() => {
+                        this.innerHTML = originalHtml;
+                        this.classList.remove('btn-success');
+                    }, 2000);
+                });
+            });
         });
-    }
 
-    document.getElementById('copyAllPasswords')?.addEventListener('click', function() {
-        const passwords = @json($passwords);
-        const passwordText = passwords.map(item => 
-            `${item['officer']}: ${item['temp_password']}`
-        ).join('\n');
-        
-        navigator.clipboard.writeText(passwordText).then(() => {
-            alert('All passwords copied to clipboard!');
-        }).catch(err => {
-            console.error('Failed to copy: ', err);
+        // Show/hide password toggle with icon switch
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const passwordElement = document.getElementById(targetId);
+
+                // Save original password in data attribute (if not already saved)
+                if (!passwordElement.getAttribute('data-real-password')) {
+                    passwordElement.setAttribute('data-real-password', passwordElement.textContent);
+                }
+
+                const isMasked = passwordElement.textContent === '••••••••••';
+
+                if (isMasked) {
+                    // Show real password
+                    passwordElement.textContent = passwordElement.getAttribute('data-real-password');
+                    this.innerHTML = '<i class="feather icon-eye-off"></i>';
+                } else {
+                    // Mask password
+                    passwordElement.textContent = '••••••••••';
+                    this.innerHTML = '<i class="feather icon-eye"></i>';
+                }
+            });
         });
-    });
-</script>
+
+        // Auto-hide passwords after 5 minutes for security
+        setTimeout(() => {
+            document.querySelectorAll('[id^="password-"]').forEach(el => {
+                if (!el.getAttribute('data-real-password')) {
+                    el.setAttribute('data-real-password', el.textContent);
+                }
+                el.textContent = '••••••••••';
+            });
+
+            document.querySelectorAll('.toggle-password').forEach(btn => {
+                btn.innerHTML = '<i class="feather icon-eye"></i>';
+            });
+        }, 300000); // 5 minutes
+
+
+        // SEARCH / FILTER FUNCTIONALITY
+        document.getElementById('password-search').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#password-table tbody tr');
+
+            rows.forEach(row => {
+                // Search in Service No, Officer, Rank, Unit cells
+                const serviceNo = row.cells[0].textContent.toLowerCase();
+                const officer = row.cells[1].textContent.toLowerCase();
+                const rank = row.cells[2].textContent.toLowerCase();
+                const unit = row.cells[3].textContent.toLowerCase();
+
+                if (
+                    serviceNo.includes(searchTerm) ||
+                    officer.includes(searchTerm) ||
+                    rank.includes(searchTerm) ||
+                    unit.includes(searchTerm)
+                ) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
 @endsection

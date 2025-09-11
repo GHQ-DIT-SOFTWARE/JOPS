@@ -21,336 +21,38 @@
 
                 {{-- SUPERADMIN NAVIGATION --}}
                 @if (Auth::user()->is_role == 0)
-                    <li class="nav-item {{ $route == 'superadmin.dashboard' ? 'active' : '' }}">
-                        <a href="{{ route('superadmin.dashboard') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-desktop"></i></span>
-                            <span class="pcoded-mtext">Dashboard</span>
-                        </a>
-                    </li>
+                    
+                @include('partials.nav_roles.superadmin_consolidated')
 
-                    {{-- REPORTS --}}
-                    {{-- <li class="nav-item pcoded-hasmenu {{ Request::is('superadmin/reports*') ? 'active pcoded-trigger' : '' }}">
-                        <a href="#!" class="nav-link">
-                            <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
-                            <span class="pcoded-mtext">Reports</span>
-                        </a>
-                        <ul class="pcoded-submenu">
-                            <li class="{{ Request::is('superadmin/reports/dutyreport') ? 'active' : '' }}">
-                                <a href="{{ route('superadmin.reports.dutyreport') }}">Duty Report</a>
-                            </li>
-                            <li class="{{ Request::is('superadmin/reports/dailysitrep') ? 'active' : '' }}">
-                                <a href="{{ route('superadmin.reports.dailysitrep') }}">Daily Sitrep</a>
-                            </li>
-                        </ul>
-                    </li> --}}
-
-                    {{-- MAILS --}}
-                    <li class="nav-item {{ $route == 'superadmin.mails' ? 'active' : '' }}">
-                        <a href="{{ route('superadmin.mails') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-envelope"></i></span>
-                            <span class="pcoded-mtext">Mails</span>
-                        </a>
-                    </li>
-
-                    {{-- SCHEDULER --}}
-                    <li class="nav-item {{ $route == 'superadmin.scheduler' ? 'active' : '' }}">
-                        <a href="{{ route('superadmin.scheduler') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-calendar"></i></span>
-                            <span class="pcoded-mtext">Scheduler</span>
-                        </a>
-                    </li>
-
-                    {{-- PART ONE ORDERS --}}
-                    <li class="nav-item {{ $route == 'superadmin.partone' ? 'active' : '' }}">
-                        <a href="{{ route('superadmin.partone') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-list"></i></span>
-                            <span class="pcoded-mtext">Part One Orders</span>
-                        </a>
-                    </li>
-
-                    {{-- OPERATIONS --}}
-                    <li class="nav-item {{ $route == 'superadmin.operation' ? 'active' : '' }}">
-                        <a href="{{ route('superadmin.operation') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-diagram-project"></i></span>
-                            <span class="pcoded-mtext">Operations</span>
-                        </a>
-                    </li>
-
-                    {{-- BROADCAST --}}
-                    <li class="nav-item {{ $route == 'superadmin.broadcast' ? 'active' : '' }}">
-                        <a href="{{ route('superadmin.broadcast') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-tower-broadcast"></i></span>
-                            <span class="pcoded-mtext">Broadcast</span>
-                        </a>
-                    </li>
-
-                    {{-- USER MANAGEMENT --}}
-                    <li class="nav-item pcoded-hasmenu {{ $prefix == '/users' ? 'active pcoded-trigger' : '' }}">
-                        <a href="#" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-users"></i></span>
-                            <span class="pcoded-mtext">Users</span>
-                        </a>
-                        <ul class="pcoded-submenu">
-                            <li class="{{ $route == 'superadmin.users.list' ? 'active' : '' }}">
-                                <a href="{{ route('superadmin.users.list') }}">Users</a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    {{-- SETTINGS --}}
-                    <li class="nav-item {{ $route == 'superadmin.setting' ? 'active' : '' }}">
-                        <a href="{{ route('superadmin.setting') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-gears"></i></span>
-                            <span class="pcoded-mtext">Settings</span>
-                        </a>
-                    </li>
-
-                    {{-- DG SECTION FOR SUPERADMIN --}}
+               
                     <li class="nav-header">
                         <span>DG Section</span>
                     </li>
-
-                    <li class="nav-item {{ $route == 'dg.dashboard' ? 'active' : '' }}">
-                        <a href="{{ route('dg.dashboard') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-user-tie"></i></span>
-                            <span class="pcoded-mtext">DG Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dg.reports.awaiting' ? 'active' : '' }}">
-                        <a href="{{ route('dg.reports.awaiting') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-file-import"></i></span>
-                            <span class="pcoded-mtext">DG - Awaiting Approval</span>
-                        </a>
-                    </li>
-
-                    {{-- DLAND SECTION FOR SUPERADMIN --}}
+                @include('partials.nav_roles.dg')
+               
                     <li class="nav-header">
-                        <span>DLAND Section</span>
+                        <span>D Land Section</span>
                     </li>
-
-                    <li class="nav-item {{ $route == 'dland.dashboard' ? 'active' : '' }}">
-                        <a href="{{ route('dland.dashboard') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-landmark"></i></span>
-                            <span class="pcoded-mtext">DLAND Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dland.reports.pending' ? 'active' : '' }}">
-                        <a href="{{ route('dland.reports.pending') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-file"></i></span>
-                            <span class="pcoded-mtext">DLAND - Pending Reports</span>
-                        </a>
-                    </li>
-
-
-
-
-
-
-                    {{-- DOFFR SECTION FOR SUPERADMIN --}}
+                @include('partials.nav_roles.dland')
+               
                     <li class="nav-header">
-                        <span>Duty Officer Section</span>
+                        <span>D Officer Section</span>
                     </li>
-
-                    <li class="nav-item {{ $route == 'doffr.dashboard' ? 'active' : '' }}">
-                        <a href="{{ route('doffr.dashboard') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-user-tie"></i></span>
-                            <span class="pcoded-mtext">Duty Officer Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li
-                        class="nav-item pcoded-hasmenu {{ Request::is('doffr/reports*') ? 'active pcoded-trigger' : '' }}">
-                        <a href="#!" class="nav-link">
-                            <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
-                            <span class="pcoded-mtext">Reports</span>
-                        </a>
-                        <ul class="pcoded-submenu">
-                            <li class="{{ Request::is('doffr/reports/dutyreport') ? 'active' : '' }}">
-                                <a href="{{ route('doffr.reports.dutyreport') }}">Duty Report</a>
-                            </li>
-                            <li class="{{ Request::is('doffr/reports/dailysitrep') ? 'active' : '' }}">
-                                <a href="{{ route('doffr.reports.dailysitrep') }}">Daily Sitrep</a>
-                            </li>
-                        </ul>
-                    </li>
-
-
+                @include('partials.nav_roles.doffr')
+               
                     <li class="nav-header">
                         <span>D Clerk Section</span>
                     </li>
-
-                    <li class="nav-item {{ $route == 'dclerk.dashboard' ? 'active' : '' }}">
-                        <a href="{{ route('dclerk.dashboard') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-clipboard-check"></i></span>
-                            <span class="pcoded-mtext">D Clerk Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dclerk.roster.view' ? 'active' : '' }}">
-                        <a href="{{ route('dclerk.roster.view') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-calendar-days"></i></span>
-                            <span class="pcoded-mtext">Duty Roster</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dclerk.accounts' ? 'active' : '' }}">
-                        <a href="{{ route('dclerk.accounts') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-user-plus"></i></span>
-                            <span class="pcoded-mtext">Manage Accounts</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dclerk.password-list' ? 'active' : '' }}">
-                        <a href="{{ route('dclerk.password-list') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-user-plus"></i></span>
-                            <span class="pcoded-mtext">Manage password-list</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dclerk.communication' ? 'active' : '' }}">
-                        <a href="{{ route('dclerk.communication') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-envelope"></i></span>
-                            <span class="pcoded-mtext">Officer Communication</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dclerk.reports' ? 'active' : '' }}">
-                        <a href="{{ route('dclerk.reports') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-file-lines"></i></span>
-                            <span class="pcoded-mtext">Account Reports</span>
-                        </a>
-                    </li>
-
-                    {{-- DG NAVIGATION --}}
-                @elseif (Auth::user()->is_role == 1)
-                    <li class="nav-header">
-                        <span>DG Section</span>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dg.dashboard' ? 'active' : '' }}">
-                        <a href="{{ route('dg.dashboard') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-user-tie"></i></span>
-                            <span class="pcoded-mtext">DG Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dg.reports.awaiting' ? 'active' : '' }}">
-                        <a href="{{ route('dg.reports.awaiting') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-file-import"></i></span>
-                            <span class="pcoded-mtext">DG - Awaiting Approval</span>
-                        </a>
-                    </li>
-
-                    {{-- DLAND NAVIGATION --}}
+                @include('partials.nav_roles.dclerk')
+                @elseif(Auth::user()->is_role == 1)
+                    @include('partials.nav_roles.dg')
                 @elseif(Auth::user()->is_role == 2)
-                    <li class="nav-header">
-                        <span>DLAND Section</span>
-                    </li>
+                    @include('partials.nav_roles.dland')
+                @elseif(Auth::user()->is_role == 4)
+                    @include('partials.nav_roles.doffr')
+                @elseif(Auth::user()->is_role == 5)
+                    @include('partials.nav_roles.dclerk')
 
-                    <li class="nav-item {{ $route == 'dland.dashboard' ? 'active' : '' }}">
-                        <a href="{{ route('dland.dashboard') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-landmark"></i></span>
-                            <span class="pcoded-mtext">DLAND Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dland.reports.pending' ? 'active' : '' }}">
-                        <a href="{{ route('dland.reports.pending') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-file"></i></span>
-                            <span class="pcoded-mtext">DLAND - Pending Reports</span>
-                        </a>
-                    </li>
-                    {{-- 
-                    <li class="nav-item {{ $route == 'dland.reports.awaiting' ? 'active' : '' }}">
-                        <a href="{{ route('dland.reports.awaiting') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-hourglass-half"></i></span>
-                            <span class="pcoded-mtext">DLAND - Awaiting Approval</span>
-                        </a> --}}
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dland.reports.approved' ? 'active' : '' }}">
-                        <a href="{{ route('dland.reports.approved') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-check"></i></span>
-                            <span class="pcoded-mtext">DLAND - Approved Reports</span>
-                        </a>
-                    </li>
-                @elseif (Auth::user()->is_role == 4)
-                    <li class="nav-header">
-                        <span>Duty Officer Section</span>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'doffr.dashboard' ? 'active' : '' }}">
-                        <a href="{{ route('doffr.dashboard') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-user-tie"></i></span>
-                            <span class="pcoded-mtext">Duty Officer Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li
-                        class="nav-item pcoded-hasmenu {{ Request::is('doffr/reports*') ? 'active pcoded-trigger' : '' }}">
-                        <a href="#!" class="nav-link">
-                            <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
-                            <span class="pcoded-mtext">Reports</span>
-                        </a>
-                        <ul class="pcoded-submenu">
-                            <li class="{{ Request::is('doffr/reports/dutyreport') ? 'active' : '' }}">
-                                <a href="{{ route('doffr.reports.dutyreport') }}">Duty Report</a>
-                            </li>
-                            <li class="{{ Request::is('doffr/reports/dailysitrep') ? 'active' : '' }}">
-                                <a href="{{ route('doffr.reports.dailysitrep') }}">Daily Sitrep</a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    {{-- D CLERK NAVIGATION --}}
-                @elseif (Auth::user()->is_role == 5)
-                    <li class="nav-header">
-                        <span>D Clerk Section</span>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dclerk.dashboard' ? 'active' : '' }}">
-                        <a href="{{ route('dclerk.dashboard') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-clipboard-check"></i></span>
-                            <span class="pcoded-mtext">D Clerk Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dclerk.roster.view' ? 'active' : '' }}">
-                        <a href="{{ route('dclerk.roster.view') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-calendar-days"></i></span>
-                            <span class="pcoded-mtext">Duty Roster</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dclerk.accounts' ? 'active' : '' }}">
-                        <a href="{{ route('dclerk.accounts') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-user-plus"></i></span>
-                            <span class="pcoded-mtext">Manage Accounts</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dclerk.password-list' ? 'active' : '' }}">
-                        <a href="{{ route('dclerk.password-list') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-user-plus"></i></span>
-                            <span class="pcoded-mtext">Manage password-list</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dclerk.communication' ? 'active' : '' }}">
-                        <a href="{{ route('dclerk.communication') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-envelope"></i></span>
-                            <span class="pcoded-mtext">Officer Communication</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ $route == 'dclerk.reports' ? 'active' : '' }}">
-                        <a href="{{ route('dclerk.reports') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-file-lines"></i></span>
-                            <span class="pcoded-mtext">Account Reports</span>
-                        </a>
-                    </li>
                 @endif
 
                 {{-- COMMON NAVIGATION ITEMS (Profile, Logout) --}}
@@ -370,13 +72,13 @@
                 </li>
 
                 <!-- Add to your navigation menu -->
-                @if (Auth::check() && Auth::user()->canAccessDutyRoster())
+                {{-- @if (Auth::check() && Auth::user()->canAccessDutyRoster())
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('duty-roster.index') }}">
                             <i class="bi bi-calendar-event"></i> Duty Roster
                         </a>
                     </li>
-                @endif
+                @endif --}}
 
                 <li class="nav-item">
                     <a href="{{ route('logout') }}" class="nav-link {{ $route == 'logout' ? 'active' : '' }}">

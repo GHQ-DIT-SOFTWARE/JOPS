@@ -49,7 +49,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="text-center">
-                                                            <h3 class="mb-1 mt-3">{{ $user->rank }} {{ $user->fname }}
+                                                            <h3 class="mb-1 mt-3">{{ $user->display_rank }} {{ $user->fname }}
                                                             </h3>
 
                                                             <p class="mb-3 text-muted">{{ $user->role_name }}</p>
@@ -73,7 +73,8 @@
                                                 </div>
                                                 <div class="col">
                                                     <h6 class="mb-1">Unit</h6>
-                                                    <p class="mb-0">{{ $user->unit }}</p>
+                                                    <p class="mb-0">{{ $user->unit?->unit ?? 'N/A' }}</p>
+
                                                 </div>
                                                 <div class="col">
                                                     <h6 class="mb-1">Mobile No</h6>

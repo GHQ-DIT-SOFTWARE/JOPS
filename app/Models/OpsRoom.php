@@ -79,6 +79,15 @@ class OpsRoom extends Model
     return !is_null($this->submitted_at);
 }
 
+// In OpsRoom model
+public function getOfficerNameAttribute()
+{
+    if ($this->user && $this->user->rank) {
+        return $this->user->display_rank . ' ' . $this->user->fname;
+    }
+    
+    return $this->user->fname ?? 'Unknown Officer';
+}
 }
 
 

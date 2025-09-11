@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Models\OpsRoom;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\DutyNotification;
+use App\Models\User;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -17,12 +19,65 @@ use Illuminate\Support\Str;
 class DoffrController extends Controller
 {
 
-     public function dashboard()
-    {
-        $user = Auth::user();
+    public function dashboard()
+{
+    $user = Auth::user();
 
-        $nav_title = "Duty Report";
-        return view('doffr.dashboard', compact('user','nav_title'));
+    // Fetch duty account using the correct column name 'show_temp_password'
+    $dutyAccount = \App\Models\DutyOfficerAccount::where('user_id', $user->id)
+        ->whereNotNull('show_temp_password')
+        ->first();
+
+    // Log the details for debugging
+    \Log::info('Dashboard accessed for modal check', [
+        'user_id' => $user->id,
+        'dutyAccount_exists' => $dutyAccount !== null,
+        'show_temp_password_value' => $dutyAccount ? $dutyAccount->show_temp_password : null,
+        'current_route' => request()->path(),
+    ]);
+
+    $nav_title = "Duty Officer Dashboard";
+
+    return view('doffr.dashboard', compact('user', 'nav_title', 'dutyAccount'));
+}
+
+
+    
+    public function getNotifications(Request $request)
+{
+    if (Auth::user()->is_role !== User::ROLE_DOFFR) {
+        return response()->json([]);
+    }
+    
+    // Get current month and year
+    $month = date('m');
+    $year = date('Y');
+    $dutyMonth = "$year-$month-01";
+    
+    // Get the user's integer ID instead of service number
+    $userId = Auth::user()->id; // This gets the integer ID
+    
+    $notifications = DutyNotification::where('user_id', $userId)
+        ->where('duty_month', $dutyMonth)
+        ->orderBy('created_at', 'desc')
+        ->limit(10)
+        ->get();
+        
+    return response()->json($notifications);
+}
+    
+    public function markNotificationRead($id)
+    {
+        $notification = DutyNotification::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->first();
+            
+        if ($notification) {
+            $notification->update(['is_read' => true]);
+            return response()->json(['success' => true]);
+        }
+        
+        return response()->json(['success' => false], 404);
     }
     public function dutyReport()
     {

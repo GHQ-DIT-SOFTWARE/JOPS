@@ -42,7 +42,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'service_no',
-        'rank',
+        'rank_code',
         'fname',
         'unit_id',
         'phone',
@@ -187,14 +187,14 @@ public function dutyRosters()
     return $this->belongsTo(Rank::class, 'rank_code', 'rank_code');
 }
 
-    public function getDisplayRankAttribute()
-{
-    if ($this->rank) {
-        return $this->rank->getDisplayForService($this->arm_of_service);
-    }
+//     public function getDisplayRankAttribute()
+// {
+//     if ($this->rank) {
+//         return $this->rank->getDisplayForService($this->arm_of_service);
+//     }
 
-    return $this->rank_code;
-}
+//     return $this->rank_code;
+// }
 
 public function getFullRankAttribute()
 {
@@ -215,6 +215,21 @@ public function getFullRankAttribute()
     return $this->rank_code;
 }
 
+
+// In your User model
+public function rankInfo()
+{
+    return $this->belongsTo(Rank::class, 'rank_code', 'rank_code');
+}
+
+// In your User model
+public function getDisplayRankAttribute()
+{
+    if ($this->rankInfo) { // ✅ Changed from $this->rank
+        return $this->rankInfo->getDisplayForService($this->arm_of_service);
+    }
+    return $this->rank; // This will return the database column value
+}
 
   
 
@@ -244,5 +259,13 @@ public function getFullRankAttribute()
         
         return 'none';
     }
+// app/Models/User.php
+public function isUsingTempPassword()
+{
+    return \App\Models\DutyOfficerAccount::where('user_id', $this->id)
+        ->whereNotNull('show_temp_password')
+        ->exists();
+}
+
 }
 

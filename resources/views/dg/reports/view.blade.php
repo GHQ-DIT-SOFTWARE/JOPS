@@ -34,7 +34,7 @@
                     <table class="table table-bordered table-sm">
                         <tr>
                             <th>Duty Officer</th>
-                            <td>{{ $report->user->rank }} {{ $report->user->fname }}</td>
+                            <td>{{ $report->user->display_rank  }} {{ $report->user->fname }}</td>
                             <th>Dept/DTE</th>
                             <td>{{ $report->user->unit->unit ?? '' }}</td>
                         </tr>
