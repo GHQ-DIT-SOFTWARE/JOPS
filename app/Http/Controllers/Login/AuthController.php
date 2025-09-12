@@ -17,75 +17,59 @@ use Illuminate\Support\Str;
 class AuthController extends Controller
 {
     public function Login(Request $request)
-    {
-        $request->validate([
-            'service_no' => 'required|string',
-            'password'   => 'required|string',
-        ]);
+{
+    $request->validate([
+        'service_no' => 'required|string',
+        'password'   => 'required|string',
+    ]);
 
-        $service_no = $request->service_no;
-        $password   = $request->password;
-        $now        = Carbon::now();
-        $todayDate  = $now->toDateTimeString();
+    $service_no = $request->service_no;
+    $password   = $request->password;
 
-        Log::info('Login attempt', [
-            'service_no' => $service_no,
-            'ip'         => $request->ip(),
-            'user_agent' => $request->userAgent()
-        ]);
+    Log::info('Login attempt', [
+        'service_no' => $service_no,
+        'ip'         => $request->ip()
+    ]);
 
-        $user = User::where('service_no', $service_no)->first();
+    // Try to find user by service number
+    $user = User::where('service_no', $service_no)->first();
 
-        if (! $user) {
-            Log::warning('User not found', ['service_no' => $service_no]);
-            return redirect()->route('login')->withErrors(['error' => 'Invalid credentials. Please try again.']);
-        }
+    if (!$user) {
+        Log::warning('User not found', ['service_no' => $service_no]);
+        return redirect()->route('login')->withErrors(['error' => 'Invalid credentials.']);
+    }
 
-        Log::info('User found', [
-            'user_id'        => $user->id,
-            'service_no'     => $user->service_no,
-            'has_password'   => !empty($user->password),
-            'password_length'=> strlen($user->password),
-            'role'           => $user->is_role
-        ]);
+    // Debug: Check if user has password
+    Log::info('User password status', [
+        'has_password' => !empty($user->password),
+        'password_hash' => $user->password
+    ]);
 
-        // Manual password check for debugging
-        if (!empty($user->password)) {
-            $passwordMatches = Hash::check($password, $user->password);
-            Log::info('Password check', [
-                'password_matches' => $passwordMatches,
-            ]);
-        } else {
-            Log::warning('User has no password set');
-        }
-
-        if (Auth::attempt(['service_no' => $service_no, 'password' => $password])) {
-            $user = Auth::user();
-
+    // Manual password check for debugging
+    if (!empty($user->password)) {
+        $isPasswordCorrect = Hash::check($password, $user->password);
+        Log::info('Manual password check', ['matches' => $isPasswordCorrect]);
+        
+        if ($isPasswordCorrect) {
+            // Manually log the user in
+            Auth::login($user);
+            
+            // Log successful login
             DB::table('activity_logs')->insert([
                 'uuid'        => Str::uuid(),
-                'name'        => $user->fname ?? $user->name ?? 'Unknown',
+                'name'        => $user->fname,
                 'service_no'  => $user->service_no,
                 'description' => 'has logged in as ' . $user->roleName(),
-                'date_time'   => $todayDate,
-            ]);
-
-            Log::info('Login successful', [
-                'user_id'    => $user->id,
-                'service_no' => $user->service_no,
-                'role'       => $user->is_role
+                'date_time'   => now(),
             ]);
 
             return $this->redirectUserByRole($user);
         }
-
-        Log::warning('Login failed', [
-            'service_no' => $service_no,
-            'reason'     => 'Auth::attempt returned false'
-        ]);
-
-        return redirect()->route('login')->withErrors(['error' => 'Invalid credentials. Please try again.']);
     }
+
+    Log::warning('Login failed', ['service_no' => $service_no]);
+    return redirect()->route('login')->withErrors(['error' => 'Invalid credentials.']);
+}
 
     public function Logout()
     {

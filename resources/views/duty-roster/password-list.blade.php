@@ -13,7 +13,7 @@ use Carbon\Carbon;
                 <div class="row align-items-center">
                     <div class="col-md-12">
                         <div class="page-header-title">
-                            <h5 class="m-b-10">Temporary Passwords for Duty Officers</h5>
+                            <h5 class="m-b-10">{{ $nav_title }}</h5>
                         </div>
                         <div class="d-flex justify-content-between align-items-center flex-wrap breadcrumb-white">
                             <ul class="breadcrumb mb-0">

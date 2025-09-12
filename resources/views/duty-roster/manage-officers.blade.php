@@ -12,7 +12,7 @@ use Carbon\Carbon;
                 <div class="row align-items-center">
                     <div class="col-md-12">
                         <div class="page-header-title">
-                            <h5 class="m-b-10">Manage Available Duty Officers</h5>
+                            <h5 class="m-b-10">{{ $nav_title }}</h5>
                         </div>
                         <div class="d-flex justify-content-between align-items-center flex-wrap breadcrumb-white">
                             <ul class="breadcrumb mb-0">
@@ -89,7 +89,7 @@ use Carbon\Carbon;
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="rank">Rank *</label>
-                                                    <select class="form-control" id="rank" name="rank" required>
+                                                    <select class="form-control" id="rank" name="rank_code" required>
                                                         <option value="">Select Arm of Service First</option>
                                                         <!-- Rank options will be populated by JavaScript -->
                                                     </select>

@@ -94,43 +94,48 @@
 
     <script>
         $(document).ready(function() {
-            $('#usersTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: '{{ route('superadmin.users.ajax') }}',
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'service_no',
-                        name: 'service_no'
-                    },
-                    {
-                        data: 'rank',
-                        name: 'rank'
-                    },
-                    {
-                        data: 'fname',
-                        name: 'fname'
-                    },
-                    { data: 'unit_name', 
-                    name: 'units.unit' },
-                    {
-                        data: 'role',
-                        name: 'role',
-                        orderable: false
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    }
-                ]
-            });
-        });
+    $('#usersTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: '{{ route('superadmin.users.ajax') }}',
+        columns: [{
+                data: 'DT_RowIndex',
+                name: 'DT_RowIndex',
+                orderable: false,
+                searchable: false
+            },
+            {
+                data: 'service_no',
+                name: 'service_no'
+            },
+            {
+                data: 'rank', // ✅ This now matches the addColumn('rank') in controller
+                name: 'rank',
+                orderable: false, // Computed column - can't sort by database
+                searchable: false  // Computed column - can't search by database
+            },
+            {
+                data: 'fname',
+                name: 'fname'
+            },
+            { 
+                data: 'unit_name', 
+                name: 'units.unit' // This can stay searchable/sortable since it's from join
+            },
+            {
+                data: 'role',
+                name: 'role',
+                orderable: false,
+                searchable: false
+            },
+            {
+                data: 'action',
+                name: 'action',
+                orderable: false,
+                searchable: false
+            }
+        ]
+    });
+});
     </script>
 @endsection

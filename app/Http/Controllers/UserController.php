@@ -22,20 +22,31 @@ class UserController extends Controller
     public function usersAjax(Request $request)
 {
     // Join units so DataTables can sort & search by unit name
+    // Also eager load the rank relationship
     $users = User::select([
             'users.id',
             'users.service_no',
-            'users.rank',
+            'users.rank_code',
             'users.fname',
             'users.is_role',
             'users.email',
             'users.phone',
-            'units.unit as unit_name'
+            'units.unit as unit_name',
+            'users.arm_of_service',
+            'users.unit_id' // Add this for the relationship
         ])
-        ->leftJoin('units', 'users.unit_id', '=', 'units.id');
+        ->leftJoin('units', 'users.unit_id', '=', 'units.id')
+        ->with('rank'); // Eager load the rank relationship
 
     return DataTables::of($users)
         ->addIndexColumn()
+        ->addColumn('rank', function ($user) {
+            // Use the rank relationship to get the display name
+            if ($user->rank) {
+                return $user->rank->getDisplayForService($user->arm_of_service);
+            }
+            return $user->rank_code; // Fallback to code if no rank found
+        })
         ->addColumn('role', function ($user) {
             $roles = [
                 0 => 'Super Admin',

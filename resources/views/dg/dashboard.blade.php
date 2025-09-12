@@ -35,7 +35,7 @@
             </div>
         </div>
 
-        <div class="row">
+        {{-- <div class="row">
             <!-- Cards -->
             <div class="col-xl-3 col-md-6">
                 <div class="card glass-card">
@@ -83,10 +83,167 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- You can add more role-specific cards here -->
         </div>
+
+        <div class="row">
+                <!-- Cards -->
+                <div class="col-xl-3 col-md-6">
+                    <div class="card glass-card">
+                        <div class="card-body">
+                            <div class="row align-items-center m-l-0">
+                                <div class="col-auto">
+                                    <!-- <i class="icon feather icon-book f-30 text-c-purple"></i> -->
+                                    <img src="{{ asset('assets/images/vector 1.png') }}" alt="" width="75px"
+                                        height="75px">
+                                </div>
+                                <div class="col-auto">
+                                    <h6 class="text-muted m-b-10">Duty Report</h6>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card glass-card">
+                        <div class="card-body">
+                            <div class="row align-items-center m-l-0">
+                                <div class="col-auto">
+                                    <!-- <i class="icon feather icon-navigation-2 f-30 text-c-green"></i> -->
+                                    <img src="{{ asset('assets/images/vector 5.png') }}" alt="" width="75px"
+                                        height="75px">
+                                </div>
+                                <div class="col-auto">
+                                    <h6 class="text-muted m-b-10">Daily SITREP</h6>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card glass-card">
+                        <div class="card-body">
+                            <div class="row align-items-center m-l-0">
+                                <div class="col-auto">
+                                    <!-- <i class="icon feather icon-users f-30 text-c-red"></i> -->
+                                    <img src="{{ asset('assets/images/vector 3.png') }}" alt="" width="75px"
+                                        height="75px">
+                                </div>
+                                <div class="col-auto">
+                                    <h6 class="text-muted m-b-10">Incoming Mails</h6>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card glass-card">
+                        <div class="card-body">
+                            <div class="row align-items-center m-l-0">
+                                <div class="col-auto">
+                                    <img src="{{ asset('assets/images/vector 4.png') }}" alt="" width="75px"
+                                        height="75px">
+                                </div>
+                                <div class="col-auto">
+                                    <h6 class="text-muted m-b-10">Outgoing Mails</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <!-- Cards -->
+                <div class="col-xl-3 col-md-6">
+                    <div class="card glass-card">
+                        <div class="card-body">
+                            <div class="row align-items-center m-l-0">
+                                <div class="col-auto">
+                                    <!-- <i class="icon feather icon-book f-30 text-c-purple"></i> -->
+                                    <img src="{{ asset('assets/images/vector 2.png') }}" alt="" width="75px"
+                                        height="75px">
+                                </div>
+                                <div class="col-auto">
+                                    <h6 class="text-muted m-b-10">Scheduler</h6>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card glass-card">
+                        <div class="card-body">
+                            <div class="row align-items-center m-l-0">
+                                <div class="col-auto">
+                                    <!-- <i class="icon feather icon-navigation-2 f-30 text-c-green"></i> -->
+                                    <img src="{{ asset('assets/images/vector 6.png') }}" alt="" width="75px"
+                                        height="75px">
+                                </div>
+                                <div class="col-auto">
+                                    <h6 class="text-muted m-b-10">Part One Orders</h6>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card glass-card">
+                        <div class="card-body">
+                            <div class="row align-items-center m-l-0">
+                                <div class="col-auto">
+                                    <!-- <i class="icon feather icon-users f-30 text-c-red"></i> -->
+                                    <img src="{{ asset('assets/images/vector 8.png') }}" alt="" width="75px"
+                                        height="75px">
+                                </div>
+                                <div class="col-auto">
+                                    <h6 class="text-muted m-b-10">Operations</h6>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card glass-card">
+                        <div class="card-body">
+                            <div class="row align-items-center m-l-0">
+                                <div class="col-auto">
+                                    <img src="{{ asset('assets/images/vector 7.png') }}" alt="" width="75px"
+                                        height="75px">
+                                </div>
+                                <div class="col-auto">
+                                    <h6 class="text-muted m-b-10">Settings</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card glass-card">
+                        <div class="card-body">
+                            <div class="row align-items-center m-l-0">
+                                <div class="col-auto">
+                                    <img src="{{ asset('assets/images/vector 7.png') }}" alt="" width="75px"
+                                        height="75px">
+                                </div>
+                                <div class="col-auto">
+                                    <h6 class="text-muted m-b-10">Broadcast</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
     </div>
 </section>
 @endsection

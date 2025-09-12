@@ -12,7 +12,7 @@ use Carbon\Carbon;
                 <div class="row align-items-center">
                     <div class="col-md-12">
                         <div class="page-header-title">
-                            <h5 class="m-b-10">Manage Officer Accounts</h5>
+                            <h5 class="m-b-10">{{ $nav_title }}</h5>
                         </div>
                         <div class="d-flex justify-content-between align-items-center flex-wrap breadcrumb-white">
                             <ul class="breadcrumb mb-0">
@@ -98,7 +98,7 @@ use Carbon\Carbon;
                                 <input type="hidden" name="month" value="{{ $month }}">
                                 <input type="hidden" name="year" value="{{ $year }}">
                                 <button type="submit" class="btn btn-success btn-lg">
-                                    <i class="feather icon-user-plus"></i> Create Accounts for {{ $officersNeedingAccounts->count() }} Officers
+                                    <i class="feather icon-user-plus"></i> Create Accounts for {{ $officersNeedingAccounts->count() }} Officer(s)
                                 </button>
                                 <p class="text-muted mt-2">This will generate temporary passwords for all officers needing accounts</p>
                             </form>
