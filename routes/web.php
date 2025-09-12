@@ -145,21 +145,13 @@ Route::middleware(['auth', 'role:' . User::ROLE_DOFFR . ',' . User::ROLE_SUPERAD
     ->as('doffr.')
     ->group(function () {
         Route::get('/dashboard', [DoffrController::class, 'dashboard'])->name('dashboard');
-        
+
         // Doffr notifications routes (using DoffrController)
         Route::get('/notifications', [DoffrController::class, 'getNotifications'])->name('notifications');
         Route::post('/notification/{id}/read', [DoffrController::class, 'markNotificationRead'])->name('notification.read');
 
-<<<<<<< HEAD
-    // Report Step Saving
-    Route::post('/save-step', [DOFFRController::class, 'saveStep'])->name('saveStep');
-    Route::post('/submit', [DOFFRController::class, 'submit'])->name('submit');
 
-    // Report Store (for non-AJAX submit)
-    Route::post('/store', [DOFFRController::class, 'store'])->name('store');
-=======
-        
-        
+
         // Reports
         Route::prefix('reports')->as('reports.')->group(function () {
             // Report Views
@@ -169,12 +161,11 @@ Route::middleware(['auth', 'role:' . User::ROLE_DOFFR . ',' . User::ROLE_SUPERAD
             Route::get('/dailysitrep', [DoffrController::class, 'dailySitrep'])->name('dailysitrep');
 
             // Report Step Saving
-            Route::post('/save-step', [DoffrController::class, 'saveStep'])->name('saveStep');  
-            Route::post('/submit', [DoffrController::class, 'submit'])->name('submit');  
->>>>>>> 0763f1a4621cd3130173ae39f992c5a595c97625
+            Route::post('/save-step', [DoffrController::class, 'saveStep'])->name('saveStep');
+            Route::post('/submit', [DoffrController::class, 'submit'])->name('submit');
 
             // Report Store (for non-AJAX submit)
-            Route::post('/store', [DoffrController::class, 'store'])->name('store');  
+            Route::post('/store', [DoffrController::class, 'store'])->name('store');
 
             // Report Edit + Update
             Route::get('/{id}/edit', [DoffrController::class, 'edit'])->name('edit');
@@ -195,12 +186,12 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN . ',' . User::ROLE_DC
         Route::get('duty-roster/manage-officers', [DutyRosterController::class, 'manageOfficers'])->name('duty-roster.manage-officers');
         Route::post('duty-roster/add-officer', [DutyRosterController::class, 'addOfficer'])->name('duty-roster.add-officer');
         Route::post('duty-roster/update-available-officers', [DutyRosterController::class, 'updateAvailableOfficers'])->name('duty-roster.update-available-officers');
-        
+
         // Duty Roster extra duty and notifications (using DutyRosterController)
         Route::post('/duty-roster/extra-duty', [DutyRosterController::class, 'addExtraDuty'])->name('duty-roster.extra-duty');
         Route::get('/duty-roster/notifications', [DutyRosterController::class, 'getNotifications'])->name('duty-roster.notifications');
         Route::post('/duty-roster/notification/{id}/read', [DutyRosterController::class, 'markNotificationRead'])->name('duty-roster.notification.read');
-    
+
 
 
 Route::prefix('dclerk')->group(function () {
