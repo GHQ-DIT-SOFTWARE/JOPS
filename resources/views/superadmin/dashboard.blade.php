@@ -32,8 +32,9 @@
                     </div>
                 </div>
 
-            </div>
-            <div class="row">
+            {{-- </div>
+            <div class="row"> --}}
+
                 <!-- Cards -->
                 <div class="col-xl-3 col-md-6">
                     <div class="card glass-card">
