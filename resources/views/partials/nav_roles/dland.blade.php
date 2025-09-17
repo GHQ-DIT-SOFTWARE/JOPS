@@ -5,23 +5,23 @@
                         </a>
                     </li>
 
-                    <li class="nav-item {{ $route == 'dland.reports.pending' ? 'active' : '' }}">
-                        <a href="{{ route('dland.reports.pending') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-file"></i></span>
-                            <span class="pcoded-mtext">DLAND - Pending Reports</span>
-                        </a>
-                    </li>
-                    {{-- 
-                    <li class="nav-item {{ $route == 'dland.reports.awaiting' ? 'active' : '' }}">
-                        <a href="{{ route('dland.reports.awaiting') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-hourglass-half"></i></span>
-                            <span class="pcoded-mtext">DLAND - Awaiting Approval</span>
-                        </a> --}}
-                    </li>
+                   
 
-                    <li class="nav-item {{ $route == 'dland.reports.approved' ? 'active' : '' }}">
-                        <a href="{{ route('dland.reports.approved') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="fa-solid fa-check"></i></span>
-                            <span class="pcoded-mtext">DLAND - Approved Reports</span>
-                        </a>
-                    </li>
+
+                    <li class="nav-item pcoded-hasmenu {{ Request::is('dland/reports*') ? 'active pcoded-trigger' : '' }}">
+    <a href="#!" class="nav-link">
+        <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
+        <span class="pcoded-mtext">Reports</span>
+    </a>
+    <ul class="pcoded-submenu">
+        <li class="{{ Request::is('dland/reports/all') ? 'active' : '' }}">
+            <a href="{{ route('dland.reports.all') }}">All Reports</a>
+        </li>
+        <li class="{{ Request::is('dland/reports/awaiting-approval') ? 'active' : '' }}">
+            <a href="{{ route('dland.reports.awaiting') }}">Awaiting DG Approval</a>
+        </li>
+        <li class="{{ Request::is('dland/reports/approved') ? 'active' : '' }}">
+            <a href="{{ route('dland.reports.approved') }}">Approved Reports</a>
+        </li>
+    </ul>
+</li>

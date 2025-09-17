@@ -10,7 +10,7 @@ class DutyOfficerAccount extends Model
     use HasFactory;
 
     protected $fillable = ['user_id', 'duty_month', 'needs_account', 'account_created', 'created_by','temp_password_hash',
-    'temp_password_expires_at','show_temp_password'];
+    'temp_password_expires_at','show_temp_password','account_created_at'];
 
 
     protected $casts = [

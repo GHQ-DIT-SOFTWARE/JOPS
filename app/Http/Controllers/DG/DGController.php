@@ -18,7 +18,7 @@ class DGController extends Controller
 
         $awaitingApprovalCount = OpsRoom::where('status', 'awaiting_approval')->count();
         $approvedCount = OpsRoom::where('status', 'approved')->count();
-        
+
         // Get today's statistics
         $today = now()->format('Y-m-d');
         $approvedToday = OpsRoom::where('status', 'approved')
@@ -29,8 +29,8 @@ class DGController extends Controller
         $role = auth()->user()->is_role == User::ROLE_SUPERADMIN ? 'superadmin' : 'dg';
 
         return view('dg.dashboard', compact(
-            'nav_title', 
-            'awaitingApprovalCount', 
+            'nav_title',
+            'awaitingApprovalCount',
             'approvedCount',
             'approvedToday',
             'role'
@@ -43,12 +43,23 @@ class DGController extends Controller
     public function awaitingReports()
     {
         $nav_title = "Reports Awaiting Approval";
+
         $reports = OpsRoom::where('status', 'awaiting_approval')
             ->with('user')
             ->orderBy('dland_approved_at', 'desc')
             ->get();
 
-        return view('dg.reports.awaiting', compact('reports', 'nav_title'));
+        $pendingCount = OpsRoom::where('status', 'pending_dland')->count();
+        $awaitingApprovalCount = OpsRoom::where('status', 'awaiting_approval')->count();
+        $approvedCount = OpsRoom::where('status', 'approved')->count();
+
+        return view('dg.reports.awaiting', compact(
+            'reports',
+            'nav_title',
+            'pendingCount',
+            'awaitingApprovalCount',
+            'approvedCount'
+        ));
     }
 
     /**
@@ -84,10 +95,12 @@ class DGController extends Controller
         $nav_title = "Approve Report";
         $report = OpsRoom::with('user')->findOrFail($id);
 
-        // Ensure the report is in the correct status for DG approval
         if ($report->status !== 'awaiting_approval') {
-            return redirect()->route('dg.reports.awaiting')
-                ->with('error', 'This report is not awaiting DG approval.');
+            $notification = [
+                'message' => 'This report is not awaiting DG approval.',
+                'alert-type' => 'error'
+            ];
+            return redirect()->route('dg.reports.awaiting')->with($notification);
         }
 
         return view('dg.reports.approve', compact('report', 'nav_title'));
@@ -98,10 +111,12 @@ class DGController extends Controller
      */
     public function approveReport(Request $request, $id)
     {
-        // Prevent superadmin from approving reports (optional)
         if (auth()->user()->is_role == User::ROLE_SUPERADMIN) {
-            return redirect()->back()
-                ->with('error', 'Superadmin cannot approve reports. Please log in as DG.');
+            $notification = [
+                'message' => 'Superadmin cannot approve reports. Please log in as DG.',
+                'alert-type' => 'error'
+            ];
+            return redirect()->back()->with($notification);
         }
 
         $request->validate([
@@ -111,10 +126,12 @@ class DGController extends Controller
 
         $report = OpsRoom::findOrFail($id);
 
-        // Ensure the report is in the correct status for DG approval
         if ($report->status !== 'awaiting_approval') {
-            return redirect()->back()
-                ->with('error', 'This report is not awaiting DG approval.');
+            $notification = [
+                'message' => 'This report is not awaiting DG approval.',
+                'alert-type' => 'error'
+            ];
+            return redirect()->back()->with($notification);
         }
 
         $report->update([
@@ -124,40 +141,46 @@ class DGController extends Controller
             'dg_approved_at' => now(),
         ]);
 
-        return redirect()->route('dg.reports.awaiting')
-            ->with('success', 'Report approved successfully.');
+        $notification = [
+            'message' => 'Report approved successfully.',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->route('dg.reports.awaiting')->with($notification);
     }
 
+    /**
+     * Update DG comment and signature (optional upload)
+     */
     public function updateComment(Request $request, $id)
-{
-    $request->validate([
-        'dg_remarks' => 'required|string|max:2000',
-        'dg_signature' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    ]);
+    {
+        $request->validate([
+            'dg_remarks' => 'required|string|max:2000',
+            'dg_signature' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-    $report = OpsRoom::findOrFail($id);
+        $report = OpsRoom::findOrFail($id);
 
-    // Update DG comment
-    $report->dg_remarks = $request->dg_remarks;
+        $report->dg_remarks = $request->dg_remarks;
 
-    // Handle DG signature upload
-    if ($request->hasFile('dg_signature')) {
-        $file = $request->file('dg_signature');
-        $filename = time() . '_dg_' . $file->getClientOriginalName();
-        $file->move(public_path('upload'), $filename);
-        $report->dg_signature = $filename;
+        if ($request->hasFile('dg_signature')) {
+            $file = $request->file('dg_signature');
+            $filename = time() . '_dg_' . $file->getClientOriginalName();
+            $file->move(public_path('upload'), $filename);
+            $report->dg_signature = $filename;
+        }
+
+        $report->status = 'approved';
+        $report->dg_approved_at = now();
+        $report->save();
+
+        $notification = [
+            'message' => 'Comment and DG signature updated. Report approved.',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->back()->with($notification);
     }
-
-    // Change status to 'approved'
-    $report->status = 'approved';
-
-    // Record DG approval timestamp
-    $report->dg_approved_at = now();
-
-    $report->save();
-
-    return redirect()->back()->with('success', 'Comment and DG signature updated. Report approved.');
-}
 
     /**
      * Get reports statistics for dashboard
@@ -167,7 +190,7 @@ class DGController extends Controller
         $today = now()->format('Y-m-d');
         $weekStart = now()->startOfWeek()->format('Y-m-d');
         $monthStart = now()->startOfMonth()->format('Y-m-d');
-        
+
         $stats = [
             'awaiting_approval' => OpsRoom::where('status', 'awaiting_approval')->count(),
             'approved_today' => OpsRoom::where('status', 'approved')
@@ -200,14 +223,13 @@ class DGController extends Controller
     }
 
     /**
-     * Get reports summary by period
+     * Get reports summary for last 7 days
      */
     public function getReportsSummary()
     {
-        // Last 7 days summary
         $dates = [];
         $approvals = [];
-        
+
         for ($i = 6; $i >= 0; $i--) {
             $date = now()->subDays($i)->format('Y-m-d');
             $dates[] = $date;
@@ -221,4 +243,17 @@ class DGController extends Controller
             'approvals' => $approvals
         ]);
     }
+
+
+    public function allReports()
+{
+    $nav_title = "All Duty Reports";
+
+    $reports = OpsRoom::with('user')
+        ->orderBy('updated_at', 'desc')
+        ->get();
+
+    return view('dg.reports.all', compact('reports', 'nav_title'));
+}
+
 }

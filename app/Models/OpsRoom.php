@@ -51,23 +51,22 @@ class OpsRoom extends Model
         'd_land_signature',
         'dg_signature',
         'submitted_at',
+        'status',
     ];
 
-    // Remove $casts array entirely or empty it
     protected $casts = [
-    'gen_sig_events' => 'array',
-    'ops_room_messages' => 'array',
-    'visit_ops_room' => 'array',
-    'major_event' => 'array',
-    'sitrep_army_sig_event' => 'array',
-    'sitrep_navy_sig_event' => 'array',
-    'sitrep_airforce_sig_event' => 'array',
-    'major_news_of_military' => 'array',
-    'ghq_office_keys' => 'array',
-    'gaf_fire_station' => 'array',
-    'additional_information' => 'array',
-];
-
+        'gen_sig_events' => 'array',
+        'ops_room_messages' => 'array',
+        'visit_ops_room' => 'array',
+        'major_event' => 'array',
+        'sitrep_army_sig_event' => 'array',
+        'sitrep_navy_sig_event' => 'array',
+        'sitrep_airforce_sig_event' => 'array',
+        'major_news_of_military' => 'array',
+        'ghq_office_keys' => 'array',
+        'gaf_fire_station' => 'array',
+        'additional_information' => 'array',
+    ];
 
     public function user()
     {
@@ -75,19 +74,16 @@ class OpsRoom extends Model
     }
 
     public function getIsSubmittedAttribute(): bool
-{
-    return !is_null($this->submitted_at);
-}
-
-// In OpsRoom model
-public function getOfficerNameAttribute()
-{
-    if ($this->user && $this->user->rank) {
-        return $this->user->display_rank . ' ' . $this->user->fname;
+    {
+        return !is_null($this->submitted_at);
     }
-    
-    return $this->user->fname ?? 'Unknown Officer';
-}
-}
 
+    public function getOfficerNameAttribute()
+    {
+        if ($this->user && $this->user->rank) {
+            return $this->user->display_rank . ' ' . $this->user->fname;
+        }
 
+        return $this->user->fname ?? 'Unknown Officer';
+    }
+}

@@ -16,8 +16,7 @@
                                     <li class="breadcrumb-item"><a href="#!">Report</a></li>
                                 </ul>
                                 <div class="d-flex gap-2">
-                                    <a href="{{ route('dland.dashboard') }}"
-                                        class="btn btn-secondary">Back</a>
+                                    <a href="{{ route('dland.dashboard') }}" class="btn btn-secondary">Back</a>
                                 </div>
                             </div>
                         </div>
@@ -34,7 +33,7 @@
                     <table class="table table-bordered table-sm">
                         <tr>
                             <th>Duty Officer</th>
-                            <td>{{ $report->user->display_rank  }} {{ $report->user->fname }}</td>
+                            <td>{{ $report->user->display_rank }} {{ $report->user->fname }}</td>
                             <th>Dept/DTE</th>
                             <td>{{ $report->user->unit->unit ?? '' }}</td>
                         </tr>
@@ -324,49 +323,62 @@
 
 
                     @php
-    $isEditable = is_null($report->d_land_signature) && empty($report->d_land_ops_comment);
-@endphp
+                        // Allow editing only if the report is not yet approved
+                        $isEditable = $report->status !== 'approved';
+                    @endphp
 
-{{-- D LANDS OPS COMMENT --}}
-<label class="mt-4" style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
-    D LANDS OPS COMMENT
-</label>
+                    {{-- D LANDS OPS COMMENT --}}
+                    <label class="mt-4"
+                        style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
+                        D LANDS OPS COMMENT
+                    </label>
 
-<form action="{{ route('dland.reports.updateComment', $report->id) }}" method="POST" enctype="multipart/form-data">
-    @csrf
-    @method('PUT')
+                    <form action="{{ route('dland.reports.updateComment', $report->id) }}" method="POST"
+                        enctype="multipart/form-data" class="mt-3">
+                        @csrf
+                        @method('PUT')
 
-    <textarea name="d_land_ops_comment" class="form-control" rows="5" required
-        @if(!$isEditable) disabled @endif>{{ $report->d_land_ops_comment }}</textarea>
+                        {{-- COMMENT TEXTAREA --}}
+                        <div class="mb-3">
+                            <label for="d_land_ops_comment" class="form-label">Comment</label>
+                            <textarea name="d_land_ops_comment" id="d_land_ops_comment" class="form-control" rows="5" required
+                                @if (!$isEditable) disabled @endif>{{ $report->d_land_ops_comment }}</textarea>
+                        </div>
 
-    {{-- DLAND Signature --}}
-    <label class="mt-2">D LANDS Signature</label>
+                        {{-- SIGNATURE SECTION --}}
+                        <div class="mb-3">
+                            <label for="signatureInput" class="form-label">D LANDS Signature</label>
 
-    @if ($report->d_land_signature)
-        <div class="mb-2">
-            <img id="currentSignature" src="{{ asset('upload/' . $report->d_land_signature) }}" alt="DLAND Signature" height="80">
-        </div>
-    @endif
+                            @if ($report->d_land_signature)
+                                <div class="mb-2">
+                                    <img id="currentSignature" src="{{ asset('upload/' . $report->d_land_signature) }}"
+                                        alt="DLAND Signature" height="80" class="border rounded">
+                                </div>
+                            @endif
 
-    <div class="mb-2">
-        <img id="previewSignature" src="" alt="Preview Signature" height="80" style="display:none; border:1px solid #ccc;">
-    </div>
+                            <div class="mb-2">
+                                <img id="previewSignature" src="" alt="Preview Signature" height="80"
+                                    class="border rounded" style="display: none;">
+                            </div>
 
-    <input type="file" name="d_land_signature" class="form-control" accept="image/*" id="signatureInput"
-        @if(!$isEditable) disabled @endif>
+                            <input type="file" name="d_land_signature" class="form-control" accept="image/*"
+                                id="signatureInput" @if (!$isEditable) disabled @endif>
+                        </div>
 
-    @if($isEditable)
-        <p class="mt-2 text-info">
-            Submitting this form will update your comment/signature and send the report to DG for final approval.
-        </p>
+                        {{-- ALERT & SUBMIT --}}
+                        @if ($isEditable)
+                            <div class="alert alert-info">
+                                You may edit and resubmit your comment and signature before DG approval.
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update & Send to DG</button>
+                        @else
+                            <div class="alert alert-success">
+                                <strong>Approved:</strong> This report has already been approved by DG. You can no longer
+                                edit your comment or signature.
+                            </div>
+                        @endif
+                    </form>
 
-        <button type="submit" class="btn btn-primary mt-2">Update & Send to DG</button>
-    @else
-        <p class="mt-2 text-success">
-            You have already submitted your comment and signature. Fields are now read-only.
-        </p>
-    @endif
-</form>
 
                     {{-- DG REMARKS (Read-only) --}}
                     <label class="mt-4"

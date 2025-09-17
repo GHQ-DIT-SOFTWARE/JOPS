@@ -29,10 +29,10 @@
                                         <a href="{{ route('doffr.reports.dutyreport') }}"
                                             class="btn btn-secondary">Back</a>
 
-                                        @if (!$report->is_submitted)
-                                            <a href="{{ route('doffr.reports.edit', $report->id) }}"
-                                                class="btn btn-primary">Edit</a>
-                                        @endif
+                                        @if (is_null($report->dland_approved_at))
+    <a href="{{ route('doffr.reports.edit', $report->id) }}" class="btn btn-primary">Edit</a>
+@endif
+
                                     </div>
 
                                 </div>

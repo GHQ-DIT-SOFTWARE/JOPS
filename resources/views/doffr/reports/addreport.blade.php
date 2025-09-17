@@ -245,11 +245,29 @@
                                                     name="reporting_time">
                                             </div>
 
-                                            <!-- Period Covered -->
-                                            <div class="col-md-12 mb-3">
-                                                <label class="form-label">Period Covered</label>
-                                                <input type="text" name="period_covered" class="form-control"
-                                                    placeholder="e.g. 011330Z - 020730Z AUG 25">
+                                            <!-- Date Range Picker -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label" for="datetimes">Duty Period</label>
+                                                <input type="text" id="datetimes" class="form-control"
+                                                    placeholder="Select date & time range">
+                                            </div>
+
+                                            <!-- Hidden start/end times -->
+                                            <input type="hidden" id="start_time" name="start_time">
+                                            <input type="hidden" id="end_time" name="end_time">
+
+                                            <!-- Formatted Military Period -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label" for="period_covered">Formatted Period
+                                                    Covered</label>
+                                                <input type="text" id="period_covered" name="period_covered"
+                                                    class="form-control" readonly>
+                                            </div>
+
+                                            <!-- Military Format Explanation -->
+                                            <div class="col-12" id="period_preview"
+                                                style="display:none; margin-top: 10px;">
+                                                <div class="alert alert-info" id="period_explanation"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -439,8 +457,6 @@
                                             </div>
                                         </div>
 
-
-
                                         <!-- SITREP - Navy -->
                                         <label><strong>SITREP - Navy</strong></label>
                                         <div class="form-group row">
@@ -468,7 +484,6 @@
                                                 </div>
                                             </div>
                                         </div>
-
 
                                         <!-- SITREP - Airforce -->
                                         <label><strong>SITREP - Airforce</strong></label>

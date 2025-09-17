@@ -37,7 +37,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['daily'], // Removed 'slack' unless you have webhook configured
             'ignore_exceptions' => false,
         ],
 

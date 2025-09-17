@@ -97,8 +97,11 @@ class DLANDController extends Controller
 
         // Ensure the report is in the correct status for DLAND review
         if ($report->status !== 'pending_dland') {
-            return redirect()->back()
-                ->with('error', 'This report is not pending DLAND review.');
+            $notification = [
+                'message' => 'This report is not pending DLAND review.',
+                'alert-type' => 'error'
+            ];
+            return redirect()->back()->with($notification);
         }
 
         $report->update([
@@ -108,8 +111,12 @@ class DLANDController extends Controller
             'dland_approved_at' => now(),
         ]);
 
-        return redirect()->route('dland.reports.pending')
-            ->with('success', 'Report reviewed and sent for DG approval.');
+        $notification = [
+            'message' => 'Report reviewed and sent for DG approval.',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->route('dland.reports.pending')->with($notification);
     }
 
     /**
@@ -122,8 +129,11 @@ class DLANDController extends Controller
 
         // Ensure the report is in the correct status for DLAND review
         if ($report->status !== 'pending_dland') {
-            return redirect()->route('dland.reports.pending')
-                ->with('error', 'This report is not pending DLAND review.');
+            $notification = [
+                'message' => 'This report is not pending DLAND review.',
+                'alert-type' => 'error'
+            ];
+            return redirect()->route('dland.reports.pending')->with($notification);
         }
 
         return view('dland.reports.review', compact('report', 'nav_title'));
@@ -166,41 +176,57 @@ class DLANDController extends Controller
         return response()->json($recentActivity);
     }
 
+    /**
+     * Update DLAND comment and signature (if needed)
+     */
     public function updateComment(Request $request, $id)
-{
-    $request->validate([
-        'd_land_ops_comment' => 'required|string|max:2000',
-        'd_land_signature' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    ]);
+    {
+        $request->validate([
+            'd_land_ops_comment' => 'required|string|max:2000',
+            'd_land_signature' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-    $report = OpsRoom::findOrFail($id);
+        $report = OpsRoom::findOrFail($id);
 
-    // Update DLAND comment
-    $report->d_land_ops_comment = $request->d_land_ops_comment;
+        // Update DLAND comment
+        $report->d_land_ops_comment = $request->d_land_ops_comment;
 
-    // Handle DLAND signature upload
-    if ($request->hasFile('d_land_signature')) {
-        $file = $request->file('d_land_signature');
-        $filename = time() . '_dland_' . $file->getClientOriginalName();
-        $file->move(public_path('upload'), $filename);
-        $report->d_land_signature = $filename;
+        // Handle DLAND signature upload
+        if ($request->hasFile('d_land_signature')) {
+            $file = $request->file('d_land_signature');
+            $filename = time() . '_dland_' . $file->getClientOriginalName();
+            $file->move(public_path('upload'), $filename);
+            $report->d_land_signature = $filename;
+        }
+
+        // Change status to 'awaiting_approval' for DG review
+        $report->status = 'awaiting_approval';
+
+        // Record DLAND approval timestamp
+        $report->dland_approved_at = now();
+
+        $report->save();
+
+        $notification = [
+            'message' => 'Comment and DLAND signature updated. Report sent to DG for approval.',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->back()->with($notification);
     }
 
-    // Change status to 'awaiting_approval' for DG review
-    $report->status = 'awaiting_approval';
 
-    // Record DLAND approval timestamp
-    $report->dland_approved_at = now();
+    public function allReports()
+{
+    $nav_title = "All Duty Reports";
 
-    // DG approval timestamp will remain null until DG approves
-    // $report->dg_approved_at = null;
+    $reports = OpsRoom::with('user')
+        ->orderBy('updated_at', 'desc')
+        ->get();
 
-    $report->save();
-
-    return redirect()->back()->with('success', 'Comment and DLAND signature updated. Report sent to DG for approval.');
+    return view('dland.reports.all', compact('reports', 'nav_title'));
+}
 }
 
 
 
-
-}

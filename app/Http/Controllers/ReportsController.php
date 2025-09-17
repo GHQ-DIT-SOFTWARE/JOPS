@@ -7,6 +7,9 @@ namespace App\Http\Controllers;
 use App\Models\OpsRoom;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class ReportsController extends Controller
 {
@@ -131,104 +134,179 @@ class ReportsController extends Controller
         ]);
     }
 
+
+
+
+
+
+public function downloadPDF($id)
+{
+    $report = OpsRoom::with(['user.unit'])->findOrFail($id);
+
+    $pdf = Pdf::loadView('report.pdf', compact('report'))
+              ->setPaper('a4', 'portrait');
+            
+ return $pdf->stream('duty_officer_report_'.$id.'.pdf');
+}
+
+
+
+
+
+
     public function submit(Request $request)
     {
         $reportId = $request->input('report_id');
-        $user = auth()->user();
+        $user = Auth::user();
         
         $report = OpsRoom::where('user_service_no', $user->service_no)
                         ->findOrFail($reportId);
 
+        // Set recall period (5 minutes from now)
+        $recallUntil = now()->addMinutes(5);
+        
         $report->update([
-            'submitted_at' => now(),
-            'status' => 'pending_dland',
+            'recall_until' => $recallUntil,
+            'scheduled_submit_at' => $recallUntil,
+            'status' => 'recall',
         ]);
 
         return response()->json([
             'success' => true,
-            'redirect' => route('superadmin.reports.dutyreport')
+            'recall_until' => $recallUntil->toISOString(),
+            'report_id' => $report->id,
+            'message' => 'Report submitted. You can recall and edit for 5 minutes.',
         ]);
     }
 
-    // Store all data for the report (called after the final submit or whenever needed)
-    public function store(Request $request)
-{
-    $reportId = $request->input('report_id');
-    $user = auth()->user();
-
-    if ($reportId) {
+    public function finalizeSubmission(Request $request)
+    {
+        $reportId = $request->input('report_id');
+        $user = Auth::user();
+        
         $report = OpsRoom::where('user_service_no', $user->service_no)
                         ->findOrFail($reportId);
-    } else {
-        $report = new OpsRoom();
-        $report->user_service_no = $user->service_no;
-    }
-
-    $report->fill($request->except('current_step', '_token', 'report_id'));
-    $report->save();
-
-    if ($request->ajax()) {
+        
+        // Only finalize if still in recall status and recall period has expired
+        if ($report->status === 'recall' && now()->greaterThan($report->recall_until)) {
+            $report->update([
+                'submitted_at' => now(),
+                'status' => 'pending_dland',
+                'recall_until' => null,
+                'scheduled_submit_at' => null,
+            ]);
+            
+            return response()->json(['success' => true]);
+        }
+        
         return response()->json([
-            'status' => 'success',
-            'step' => $request->current_step,
-            'report_id' => $report->id
+            'success' => false, 
+            'message' => 'Report not ready for final submission'
         ]);
     }
 
-    return redirect()->route('superadmin.reports.dutyreport')
-        ->with('notification', [
-            'type' => 'success',
-            'message' => 'Report saved!'
-        ]);
-}
+    public function store(Request $request)
+    {
+        $reportId = $request->input('report_id');
+        $user = Auth::user();
 
+        if ($reportId) {
+            $report = OpsRoom::where('user_service_no', $user->service_no)
+                            ->findOrFail($reportId);
+        } else {
+            $report = new OpsRoom();
+            $report->user_service_no = $user->service_no;
+        }
+
+        $report->fill($request->except('current_step', '_token', 'report_id'));
+        $report->save();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'step' => $request->current_step,
+                'report_id' => $report->id
+            ]);
+        }
+
+        return redirect()->route('superadmin.reports.dutyreport')
+            ->with('notification', [
+                'type' => 'success',
+                'message' => 'Report saved!'
+            ]);
+    }
 
     public function edit($id)
-{
-    $user = auth()->user();
-    $report = OpsRoom::where('user_service_no', $user->service_no)
-                    ->findOrFail($id);
+    {
+        $user = Auth::user();
+        $report = OpsRoom::where('user_service_no', $user->service_no)
+                        ->findOrFail($id);
 
-    if ($report->submitted_at) {
-        return redirect()
-            ->route('superadmin.reports.view', $id)
-            ->with('notification', [
-                'type' => 'error',
-                'message' => 'This report has been submitted and cannot be edited.'
-            ]);
+        // Allow editing if in recall status and recall period hasn't expired
+        $canEdit = $report->status === 'recall' && now()->lessThan($report->recall_until);
+        
+        if ($report->submitted_at && !$canEdit) {
+            return redirect()
+                ->route('superadmin.reports.view', $id)
+                ->with('notification', [
+                    'type' => 'error',
+                    'message' => 'This report has been submitted and cannot be edited.'
+                ]);
+        }
+
+        return view('superadmin.reports.editreport', compact('report', 'canEdit'));
     }
-
-    return view('superadmin.reports.editreport', compact('report'));
-}
 
     public function update(Request $request, $id)
-{
-    $user = auth()->user();
-    $report = OpsRoom::where('user_service_no', $user->service_no)
-                    ->findOrFail($id);
+    {
+        $user = Auth::user();
+        $report = OpsRoom::where('user_service_no', $user->service_no)
+                        ->findOrFail($id);
 
-    if ($report->submitted_at) {
+        // Allow updating if in recall status and recall period hasn't expired
+        $canEdit = $report->status === 'recall' && now()->lessThan($report->recall_until);
+        
+        if ($report->submitted_at && !$canEdit) {
+            return redirect()
+                ->route('superadmin.reports.view', $id)
+                ->with('notification', [
+                    'type' => 'error',
+                    'message' => 'This report has been submitted and cannot be edited.'
+                ]);
+        }
+
+        $validated = $request->validate([
+            // ... your validation rules
+        ]);
+
+        $report->update($validated);
+
         return redirect()
-            ->route('superadmin.reports.view', $id)
+            ->route('superadmin.reports.view', $report->id)
             ->with('notification', [
-                'type' => 'error',
-                'message' => 'This report has been submitted and cannot be edited.'
+                'type' => 'success',
+                'message' => 'Report updated successfully.'
             ]);
     }
 
-    $validated = $request->validate([
-        // ... your validation rules
-    ]);
+    public function cancelRecall(Request $request)
+    {
+        $reportId = $request->input('report_id');
+        $user = Auth::user();
+        
+        $report = OpsRoom::where('user_service_no', $user->service_no)
+                        ->findOrFail($reportId);
 
-    $report->update($validated);
-
-    return redirect()
-        ->route('superadmin.reports.view', $report->id)
-        ->with('notification', [
-            'type' => 'success',
-            'message' => 'Report updated successfully.'
-        ]);
-}
-
-
+        if ($report->status === 'recall') {
+            $report->update([
+                'recall_until' => null,
+                'scheduled_submit_at' => null,
+                'status' => 'draft',
+            ]);
+            
+            return response()->json(['success' => true]);
+        }
+        
+        return response()->json(['success' => false, 'message' => 'Cannot cancel recall']);
+    }
 }

@@ -1,7 +1,7 @@
  <li class="nav-item {{ $route == 'doffr.dashboard' ? 'active' : '' }}">
                         <a href="{{ route('doffr.dashboard') }}" class="nav-link">
                             <span class="pcoded-micon"><i class="fa-solid fa-user-tie"></i></span>
-                            <span class="pcoded-mtext">Duty Officer Dashboard</span>
+                            <span class="pcoded-mtext">DO Dashboard</span>
                         </a>
                     </li>
 

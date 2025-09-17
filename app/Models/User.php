@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Carbon\Carbon;
+
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
@@ -115,23 +115,21 @@ class User extends Authenticatable
     }
 
     public function getRoleNameAttribute(): string
-{
-    return self::$roleNames[$this->is_role] ?? 'Unknown';
-}
+    {
+        return self::$roleNames[$this->is_role] ?? 'Unknown';
+    }
 
+    public function opsRooms()
+    {
+        return $this->hasMany(OpsRoom::class);
+    }
 
-public function opsRooms()
-{
-    return $this->hasMany(OpsRoom::class);
-}
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class, 'unit_id');
+    }
 
-public function unit()
-{
-    return $this->belongsTo(Unit::class, 'unit_id');
-}
-
-
-public function dutyRosters()
+    public function dutyRosters()
     {
         return $this->hasMany(DutyRoster::class);
     }
@@ -182,56 +180,56 @@ public function dutyRosters()
         ]);
     }
 
+    /**
+     * Check if user can view activity logs
+     */
+    public function canViewActivityLog()
+    {
+        return in_array($this->is_role, [
+            self::ROLE_SUPERADMIN,
+            self::ROLE_DG,
+            self::ROLE_DLAND,
+            self::ROLE_DADMIN,
+            self::ROLE_DCLERK
+        ]);
+    }
+
     public function rank()
-{
-    return $this->belongsTo(Rank::class, 'rank_code', 'rank_code');
-}
-
-//     public function getDisplayRankAttribute()
-// {
-//     if ($this->rank) {
-//         return $this->rank->getDisplayForService($this->arm_of_service);
-//     }
-
-//     return $this->rank_code;
-// }
-
-public function getFullRankAttribute()
-{
-    if ($this->rank) {
-        $arm = strtolower(str_replace(' ', '', $this->arm_of_service));
-
-        if (in_array($arm, ['navy', 'nv'])) {
-            return $this->rank->navy_full ?? $this->rank->navy_display ?? $this->rank_code;
-        }
-
-        if (in_array($arm, ['airforce', 'air', 'af'])) {
-            return $this->rank->airforce_full ?? $this->rank->airforce_display ?? $this->rank_code;
-        }
-
-        return $this->rank->army_full ?? $this->rank->army_display ?? $this->rank_code;
+    {
+        return $this->belongsTo(Rank::class, 'rank_code', 'rank_code');
     }
 
-    return $this->rank_code;
-}
+    public function getFullRankAttribute()
+    {
+        if ($this->rank) {
+            $arm = strtolower(str_replace(' ', '', $this->arm_of_service));
 
+            if (in_array($arm, ['navy', 'nv'])) {
+                return $this->rank->navy_full ?? $this->rank->navy_display ?? $this->rank_code;
+            }
 
-// In your User model
-public function rankInfo()
-{
-    return $this->belongsTo(Rank::class, 'rank_code', 'rank_code');
-}
+            if (in_array($arm, ['airforce', 'air', 'af'])) {
+                return $this->rank->airforce_full ?? $this->rank->airforce_display ?? $this->rank_code;
+            }
 
-// In your User model
-public function getDisplayRankAttribute()
-{
-    if ($this->rankInfo) { // ✅ Changed from $this->rank
-        return $this->rankInfo->getDisplayForService($this->arm_of_service);
+            return $this->rank->army_full ?? $this->rank->army_display ?? $this->rank_code;
+        }
+
+        return $this->rank_code;
     }
-    return $this->rank; // This will return the database column value
-}
 
-  
+    public function rankInfo()
+    {
+        return $this->belongsTo(Rank::class, 'rank_code', 'rank_code');
+    }
+
+    public function getDisplayRankAttribute()
+    {
+        if ($this->rankInfo) {
+            return $this->rankInfo->getDisplayForService($this->arm_of_service);
+        }
+        return $this->rank;
+    }
 
     /**
      * Get account status for a specific month and year
@@ -239,12 +237,8 @@ public function getDisplayRankAttribute()
      */
     public function getAccountStatusForMonth($month, $year)
     {
-        // Assuming you have a DutyOfficerAccount model that tracks account status
-        // Adjust this based on your actual database structure
-        
         $dutyMonth = Carbon::createFromDate($year, $month, 1)->format('Y-m-01');
         
-        // Check if this user has an account record for the specified month
         $account = DutyOfficerAccount::where('user_id', $this->id)
                     ->where('duty_month', $dutyMonth)
                     ->first();
@@ -259,13 +253,23 @@ public function getDisplayRankAttribute()
         
         return 'none';
     }
-// app/Models/User.php
-public function isUsingTempPassword()
+
+    public function isUsingTempPassword()
+    {
+        return \App\Models\DutyOfficerAccount::where('user_id', $this->id)
+            ->whereNotNull('show_temp_password')
+            ->exists();
+    }
+
+    /**
+ * Check if user can publish duty rosters
+ * Only Super Admin (role 0) and D Clerk (role 5) can publish
+ */
+public function canPublishDutyRoster()
 {
-    return \App\Models\DutyOfficerAccount::where('user_id', $this->id)
-        ->whereNotNull('show_temp_password')
-        ->exists();
+    return in_array($this->is_role, [
+        self::ROLE_SUPERADMIN,
+        self::ROLE_DCLERK
+    ]);
 }
-
 }
-

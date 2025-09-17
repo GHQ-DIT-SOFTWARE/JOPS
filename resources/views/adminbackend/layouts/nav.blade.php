@@ -71,6 +71,14 @@
                     </ul>
                 </li>
 
+                @if(Auth::user()->canViewActivityLog())
+<li class="nav-item">
+    <a class="nav-link" href="{{ route('activity-log.index') }}">
+        <i class="fas fa-history"></i> Activity Log
+    </a>
+</li>
+@endif
+
                 <!-- Add to your navigation menu -->
                 {{-- @if (Auth::check() && Auth::user()->canAccessDutyRoster())
                     <li class="nav-item">

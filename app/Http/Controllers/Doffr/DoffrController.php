@@ -148,13 +148,35 @@ class DoffrController extends Controller
     {
         $user = auth()->user();
         $report = OpsRoom::where('user_service_no', $user->service_no)
-                        ->with('user')
+                        ->with(['user.rankInfo'])
                         ->findOrFail($id);
         
         $nav_title = "View Report";
 
         return view('doffr.reports.viewreport', compact('nav_title', 'report'));
     }
+    
+
+
+    // Save progress step-wise (AJAX for each step)
+    
+
+
+
+
+
+public function downloadPDF($id)
+{
+    $report = OpsRoom::with(['user.unit'])->findOrFail($id);
+
+    $pdf = Pdf::loadView('report.pdf', compact('report'))
+              ->setPaper('a4', 'portrait');
+            
+ return $pdf->stream('duty_officer_report_'.$id.'.pdf');
+}
+
+
+
 
     public function add()
     {
@@ -273,21 +295,23 @@ class DoffrController extends Controller
     }
 
     public function edit($id)
-    {
-        $user = auth()->user();
-        $nav_title = "Edit Duty Report";
-        $report = OpsRoom::where('user_service_no', $user->service_no)->findOrFail($id);
+{
+    $user = auth()->user();
+    $nav_title = "Edit Duty Report";
+    $report = OpsRoom::where('user_service_no', $user->service_no)->findOrFail($id);
 
-        if ($report->submitted_at) {
-            $notification = [
-                'message' => 'This report has been submitted and cannot be edited.',
-                'alert-type' => 'danger'
-            ];
-            return redirect()->route('doffr.reports.view', $id)->with($notification);
-        }
-
-        return view('doffr.reports.editreport', compact('report', 'nav_title'));
+    // Only block if DLand has approved
+    if ($report->dland_approved_at) {
+        $notification = [
+            'message' => 'This report has been approved by DLand and can no longer be edited.',
+            'alert-type' => 'danger'
+        ];
+        return redirect()->route('doffr.reports.view', $id)->with($notification);
     }
+
+    return view('doffr.reports.editreport', compact('report', 'nav_title'));
+}
+
 
     public function update(Request $request, $id)
     {

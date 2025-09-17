@@ -18,14 +18,13 @@ use App\Http\Controllers\BroadcastController;
 use App\Http\Controllers\SchedulerController;
 use App\Http\Controllers\DutyRosterController;
 
-
 use App\Http\Controllers\DG\DGController;
 use App\Http\Controllers\DLAND\DLANDController;
 use App\Http\Controllers\Doffr\DoffrController;
 use App\Http\Controllers\DclerkController;
 use App\Http\Controllers\CommunicationController;
 use App\Http\Controllers\Auth\PasswordChangeController;
-
+use App\Http\Controllers\ActivityLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,6 +75,7 @@ Route::middleware(['auth', 'role:' . User::ROLE_DG . ',' . User::ROLE_SUPERADMIN
         Route::get('/reports/{id}/approve-form', [DGController::class, 'showApproveForm'])->name('reports.approve-form');
         Route::post('/reports/{id}/approve', [DGController::class, 'approveReport'])->name('reports.approve');
         Route::post('/reports/{id}/comment', [DGController::class, 'addComment'])->name('reports.comment');
+Route::get('/reports/all', [DGController::class, 'allReports'])->name('reports.all');
 
         Route::put('/reports/{id}/update-comment', [DGController::class, 'updateComment'])->name('reports.updateComment');
 
@@ -92,7 +92,9 @@ Route::middleware(['auth', 'role:' . User::ROLE_DLAND . ',' . User::ROLE_SUPERAD
         Route::get('/reports/approved', [DLANDController::class, 'approvedReports'])->name('reports.approved');
         Route::get('/reports/{id}/view', [DLANDController::class, 'viewReport'])->name('reports.view'); 
         Route::post('/reports/{id}/review', [DLANDController::class, 'reviewReport'])->name('reports.review');
-         Route::put('/reports/{id}/update-comment', [DLANDController::class, 'updateComment'])->name('reports.updateComment');
+        Route::get('/reports/all', [DLANDController::class, 'allReports'])->name('reports.all');
+
+        Route::put('/reports/{id}/update-comment', [DLANDController::class, 'updateComment'])->name('reports.updateComment');
     });
 
 
@@ -139,7 +141,6 @@ Route::prefix('profile')->middleware('auth')->group(function () {
 
 
 
-// For DOFFR routes
 Route::middleware(['auth', 'role:' . User::ROLE_DOFFR . ',' . User::ROLE_SUPERADMIN])
     ->prefix('doffr')
     ->as('doffr.')
@@ -150,8 +151,6 @@ Route::middleware(['auth', 'role:' . User::ROLE_DOFFR . ',' . User::ROLE_SUPERAD
         Route::get('/notifications', [DoffrController::class, 'getNotifications'])->name('notifications');
         Route::post('/notification/{id}/read', [DoffrController::class, 'markNotificationRead'])->name('notification.read');
 
-        
-        
         // Reports
         Route::prefix('reports')->as('reports.')->group(function () {
             // Report Views
@@ -170,10 +169,61 @@ Route::middleware(['auth', 'role:' . User::ROLE_DOFFR . ',' . User::ROLE_SUPERAD
             // Report Edit + Update
             Route::get('/{id}/edit', [DoffrController::class, 'edit'])->name('edit');
             Route::put('/{id}', [DoffrController::class, 'update'])->name('update');
+
+            // ADD THESE NEW ROUTES INSIDE THE GROUP:
+            Route::post('/finalize', [DoffrController::class, 'finalizeSubmission'])->name('finalize');
+            Route::post('/cancel-recall', [DoffrController::class, 'cancelRecall'])->name('cancelRecall');
         });
     });
 
 
+    Route::get('/duty-report/{id}/pdf', [\App\Http\Controllers\ReportsController::class, 'downloadPDF'])
+     ->name('doffr.reports.pdf');
+
+
+
+
+
+// D Clerk routes - CORRECTED VERSION
+Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN . ',' . User::ROLE_DCLERK])
+    ->prefix('dclerk')
+    ->name('dclerk.')
+    ->group(function () {
+        // Dashboard and management routes
+        Route::get('/dashboard', [DclerkController::class, 'dashboard'])->name('dashboard');
+        Route::get('/accounts', [DclerkController::class, 'manageAccounts'])->name('accounts');
+        Route::post('/create-accounts', [DclerkController::class, 'createAccounts'])->name('create-accounts');
+        Route::get('/communication', [DclerkController::class, 'officerCommunication'])->name('communication');
+        Route::get('/reports', [DclerkController::class, 'accountReports'])->name('reports');
+        Route::get('/roster', [DclerkController::class, 'viewRoster'])->name('roster.view');
+        Route::get('/password-list', [DclerkController::class, 'showPasswords'])->name('password-list');
+        
+        // Password regeneration
+        Route::post('/regenerate-temp-password/{userId}', [DclerkController::class, 'regenerateTempPassword'])
+            ->name('regenerate-temp-password');
+        
+        Route::prefix('communication')->name('communication.')->group(function () {
+    Route::post('/sms/{user}', [CommunicationController::class, 'sendSms'])
+        ->name('sendSms');
+
+    Route::post('/email/{user}', [CommunicationController::class, 'sendEmail'])
+        ->name('sendEmail');
+
+    Route::post('/bulk-sms', [CommunicationController::class, 'sendBulkSms'])
+        ->name('sendBulkSms');
+
+    Route::post('/bulk-email', [CommunicationController::class, 'sendBulkEmail'])
+        ->name('sendBulkEmail');
+});
+
+        
+        // Duty roster routes
+        Route::post('/publish-roster', [DclerkController::class, 'publishRoster'])->name('publish-roster');
+    });
+
+
+
+// Keep these outside if they need to be accessible by other roles
 Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN . ',' . User::ROLE_DCLERK])
     ->group(function () {
         Route::get('duty-roster', [DutyRosterController::class, 'index'])->name('duty-roster.index');
@@ -187,38 +237,33 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPERADMIN . ',' . User::ROLE_DC
         Route::post('duty-roster/add-officer', [DutyRosterController::class, 'addOfficer'])->name('duty-roster.add-officer');
         Route::post('duty-roster/update-available-officers', [DutyRosterController::class, 'updateAvailableOfficers'])->name('duty-roster.update-available-officers');
         
-        // Duty Roster extra duty and notifications (using DutyRosterController)
+        // Duty Roster extra duty and notifications
         Route::post('/duty-roster/extra-duty', [DutyRosterController::class, 'addExtraDuty'])->name('duty-roster.extra-duty');
         Route::get('/duty-roster/notifications', [DutyRosterController::class, 'getNotifications'])->name('duty-roster.notifications');
         Route::post('/duty-roster/notification/{id}/read', [DutyRosterController::class, 'markNotificationRead'])->name('duty-roster.notification.read');
-    
+    });
 
-
-Route::prefix('dclerk')->group(function () {
-    Route::get('/dashboard', [DclerkController::class, 'dashboard'])->name('dclerk.dashboard');
-    Route::get('/accounts', [DclerkController::class, 'manageAccounts'])->name('dclerk.accounts');
-    Route::post('/create-accounts', [DclerkController::class, 'createAccounts'])->name('dclerk.create-accounts');
-    Route::get('/communication', [DclerkController::class, 'officerCommunication'])->name('dclerk.communication');
-    Route::get('/reports', [DclerkController::class, 'accountReports'])->name('dclerk.reports');
-    Route::get('/roster', [DclerkController::class, 'viewRoster'])->name('dclerk.roster.view');
-    Route::get('/password-list', [DclerkController::class, 'showPasswords'])->name('dclerk.password-list');
-});
-
-});
-
-Route::post('/dclerk/regenerate-temp-password/{userId}', [DclerkController::class, 'regenerateTempPassword'])
-    ->name('dclerk.regenerate-temp-password');
-
-// Single SMS route
-Route::post('/dclerk/send-sms/{user}', [CommunicationController::class, 'sendSms'])
-    ->name('dclerk.sendSms');
-
-// Bulk communication route  
-Route::post('/dclerk/send-bulk', [CommunicationController::class, 'sendBulk'])
-    ->name('dclerk.sendBulkCommunication');
 
 Route::get('/ck', function () {
     return view('dutyofficer');
+
+
+
 });
+
+
+// routes/web.php
+Route::middleware(['auth'])->group(function () {
+    Route::get('/activity-log', [ActivityLogController::class, 'index'])->name('activity-log.index');
+    Route::get('/activity-log/replacements', [ActivityLogController::class, 'replacements'])->name('activity-log.replacements');
+    Route::get('/activity-log/{id}', [ActivityLogController::class, 'show'])->name('activity-log.show');
+});
+
+Route::get('/test-status-update', [DoffrController::class, 'testUpdateStatus'])->middleware('auth');
+
+
+
+
+
 
 

@@ -16,8 +16,7 @@
                                     <li class="breadcrumb-item"><a href="#!">Report</a></li>
                                 </ul>
                                 <div class="d-flex gap-2">
-                                    <a href="{{ route('superadmin.reports.dutyreport') }}"
-                                        class="btn btn-secondary">Back</a>
+                                    <a href="{{ route('dg.reports.awaiting') }}" class="btn btn-secondary">Back</a>
                                 </div>
                             </div>
                         </div>
@@ -34,7 +33,7 @@
                     <table class="table table-bordered table-sm">
                         <tr>
                             <th>Duty Officer</th>
-                            <td>{{ $report->user->display_rank  }} {{ $report->user->fname }}</td>
+                            <td>{{ $report->user->display_rank }} {{ $report->user->fname }}</td>
                             <th>Dept/DTE</th>
                             <td>{{ $report->user->unit->unit ?? '' }}</td>
                         </tr>
@@ -321,80 +320,90 @@
                         </ol>
                     @endif
 
-                     {{-- D LANDS OPS COMMENT (Read-only) --}}
-                        <label class="mt-4"
-                            style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
-                            D LANDS OPS COMMENT
-                        </label>
-                        <div class="border p-2">
-                            {!! nl2br(e($report->d_land_ops_comment)) !!}
-                        </div>
+                    {{-- D LANDS OPS COMMENT (Read-only) --}}
+                    <label class="mt-4"
+                        style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
+                        D LANDS OPS COMMENT
+                    </label>
+                    <div class="border p-2">
+                        {!! nl2br(e($report->d_land_ops_comment)) !!}
+                    </div>
 
-                        {{-- D LANDS Signature --}}
-                        <label class="mt-2">D LANDS Signature</label>
-                        <div class="mb-2">
-                            @if ($report->d_land_signature)
-                                <img src="{{ asset('upload/' . $report->d_land_signature) }}" alt="DLAND Signature"
-                                    height="80">
-                            @else
-                                <p><em>No signature provided</em></p>
-                            @endif
-                        </div>
+                    {{-- D LANDS Signature --}}
+                    <label class="mt-2">D LANDS Signature</label>
+                    <div class="mb-2">
+                        @if ($report->d_land_signature)
+                            <img src="{{ asset('upload/' . $report->d_land_signature) }}" alt="DLAND Signature"
+                                height="80">
+                        @else
+                            <p><em>No signature provided</em></p>
+                        @endif
+                    </div>
 
 
                     @php
-                        $isEditable = is_null($report->dg_signature) && empty($report->dg_remarks);
-                    @endphp
+    $editableWindow = 24; // hours
+    $now = \Carbon\Carbon::now();
+    $approvedAt = $report->dg_approved_at ? \Carbon\Carbon::parse($report->dg_approved_at) : null;
 
-                    {{-- DG OPS COMMENT --}}
-                    <label class="mt-4"
-                        style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
-                        DG OPS COMMENT
-                    </label>
+    $isEditable = false;
 
-                    <form action="{{ route('dg.reports.updateComment', $report->id) }}" method="POST"
-                        enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
+    if (is_null($approvedAt)) {
+        $isEditable = true;
+    } elseif ($now->diffInHours($approvedAt) < $editableWindow) {
+        $isEditable = true;
+    }
+@endphp
 
-                        <textarea name="dg_remarks" class="form-control" rows="5" required
-                            @if (!$isEditable) disabled @endif>{{ $report->dg_remarks }}</textarea>
+<label class="mt-4"
+    style="background-color: navy; color: white; padding: 4px 8px; border-radius: 4px; width:300px; font-size: 1.2em">
+    DG OPS COMMENT
+</label>
 
-                        {{-- DLAND Signature --}}
-                        <label class="mt-2">DG Signature</label>
+<form action="{{ route('dg.reports.updateComment', $report->id) }}" method="POST"
+    enctype="multipart/form-data" class="mt-3">
+    @csrf
+    @method('PUT')
 
-                        @if ($report->dg_signature)
-                            <div class="mb-2">
-                                <img id="currentSignature" src="{{ asset('upload/' . $report->dg_signature) }}"
-                                    alt="DLAND Signature" height="80">
-                            </div>
-                        @endif
+    <div class="mb-3">
+        <label for="dg_remarks" class="form-label">Comment</label>
+        <textarea name="dg_remarks" class="form-control" rows="5" required
+            @if (!$isEditable) disabled @endif>{{ $report->dg_remarks }}</textarea>
+    </div>
 
-                        <div class="mb-2">
-                            <img id="previewSignature" src="" alt="Preview Signature" height="80"
-                                style="display:none; border:1px solid #ccc;">
-                        </div>
+    <div class="mb-3">
+        <label for="signatureInput" class="form-label">DG Signature</label>
+        @if ($report->dg_signature)
+            <div class="mb-2">
+                <img id="currentSignature" src="{{ asset('upload/' . $report->dg_signature) }}"
+                    alt="DG Signature" height="80" class="border rounded">
+            </div>
+        @endif
 
-                        <input type="file" name="dg_signature" class="form-control" accept="image/*"
-                            id="signatureInput" @if (!$isEditable) disabled @endif>
+        <div class="mb-2">
+            <img id="previewSignature" src="" alt="Preview Signature" height="80"
+                class="border rounded" style="display:none;">
+        </div>
 
-                        @if ($isEditable)
-                            <p class="mt-2 text-info">
-                                Submitting this form will update your comment/signature and send the report to DG for final
-                                approval.
-                            </p>
+        <input type="file" name="dg_signature" class="form-control" accept="image/*"
+            id="signatureInput" @if (!$isEditable) disabled @endif>
+    </div>
 
-                            <button type="submit" class="btn btn-primary mt-2">Update & Send to DG</button>
-                        @else
-                            <p class="mt-2 text-success">
-                                You have already submitted your comment and signature. Fields are now read-only.
-                            </p>
-                        @endif
-                    </form>
+    @if ($isEditable)
+        <p class="mt-2 text-info">
+            Submitting this form will update your comment/signature.
+        </p>
+        <button type="submit" class="btn btn-primary mt-2">Update & Send to DG</button>
+    @else
+        <p class="mt-2 text-danger">
+            You can no longer update the comment and signature after 24 hours of approval.
+        </p>
+    @endif
+</form>
 
 
 
-                   
+
                 </div>
             </div>
         </div>

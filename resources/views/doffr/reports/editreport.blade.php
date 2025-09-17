@@ -213,12 +213,12 @@
                                         <div class="row">
                                             <!-- Duty Officer -->
                                             <div class="col-md-6 mb-3">
-                                                <label for="duty_officer_display" class="form-label">Duty Officer</label>
-                                                <input type="text" id="duty_officer_display" class="form-control"
-                                                    value="{{ $report->user?->rank }} {{ $report->user?->fname }}"
+                                                <label class="form-label">Duty Officer</label>
+                                                <input type="text" class="form-control"
+                                                    value="{{ $report->user->display_rank ?? '' }} {{ $report->user->fname ?? '' }}"
                                                     readonly>
-                                                <input type="hidden" id="duty_officer" name="duty_officer"
-                                                    value="{{ $report->user?->rank }} {{ $report->user?->fname }}">
+                                                <input type="hidden" name="duty_officer"
+                                                    value="{{ $report->user->display_rank ?? '' }} {{ $report->user->fname ?? '' }}">
                                             </div>
 
                                             <!-- Dept/DTE -->
@@ -247,14 +247,31 @@
                                                     value="{{ old('reporting_time', \Carbon\Carbon::parse($report->reporting_time)->format('H:i')) }}">
                                             </div>
 
-                                            <!-- Period Covered -->
-                                            <div class="col-md-12 mb-3">
-                                                <label for="period_covered" class="form-label">Period Covered</label>
-                                                <input type="text" id="period_covered" name="period_covered"
-                                                    class="form-control"
-                                                    value="{{ old('period_covered', $report->period_covered) }}"
-                                                    placeholder="e.g. 011330Z - 020730Z AUG 25">
+                                            <!-- Date Range Picker -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label" for="datetimes">Duty Period</label>
+                                                <input type="text" id="datetimes" class="form-control"
+                                                    placeholder="Select date & time range">
                                             </div>
+
+                                            <!-- Hidden start/end times -->
+                                            <input type="hidden" id="start_time" name="start_time">
+                                            <input type="hidden" id="end_time" name="end_time">
+
+                                            <!-- Formatted Military Period -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label" for="period_covered">Formatted Period
+                                                    Covered</label>
+                                                <input type="text" id="period_covered" name="period_covered"
+                                                    class="form-control" value="{{ old('period_covered', $report->period_covered) }}" readonly>
+                                            </div>
+
+                                            <!-- Military Format Explanation -->
+                                            <div class="col-12" id="period_preview"
+                                                style="display:none; margin-top: 10px;">
+                                                <div class="alert alert-info" id="period_explanation"></div>
+                                            </div>
+                                           
                                         </div>
                                     </div>
 
@@ -1229,5 +1246,111 @@ $(function() {
 
 });
 </script>
+
+<!-- Required CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <!-- Required JS -->
+    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+    <script>
+        $(function() {
+            // Padding helper
+            function pad(n) {
+                return n < 10 ? '0' + n : n;
+            }
+
+            // Format to military time period
+            function formatToMilitaryPeriod(start, end) {
+                const day1 = pad(start.utc().date());
+                const hour1 = pad(start.utc().hour());
+                const min1 = pad(start.utc().minute());
+
+                const day2 = pad(end.utc().date());
+                const hour2 = pad(end.utc().hour());
+                const min2 = pad(end.utc().minute());
+
+                const month = start.utc().format('MMM').toUpperCase();
+                const year = start.utc().format('YY');
+
+                return `${day1}${hour1}${min1}Z - ${day2}${hour2}${min2}Z ${month} ${year}`;
+            }
+
+            // Update military period & explanation preview
+            function updatePeriodPreview(start, end) {
+                const militaryPeriod = formatToMilitaryPeriod(start, end);
+                $('#period_covered').val(militaryPeriod);
+
+                // Hidden backend values
+                $('#start_time').val(start.format('YYYY-MM-DD HH:mm:ss'));
+                $('#end_time').val(end.format('YYYY-MM-DD HH:mm:ss'));
+
+                $('#period_preview').show();
+                $('#period_explanation').html(`
+                <div><strong>${militaryPeriod}</strong></div>
+                <div>${start.utc().format('DDHHmm')}Z → Day ${pad(start.utc().date())} at ${pad(start.utc().hour())}:${pad(start.utc().minute())} UTC</div>
+                <div>${end.utc().format('DDHHmm')}Z → Day ${pad(end.utc().date())} at ${pad(end.utc().hour())}:${pad(end.utc().minute())} UTC</div>
+                <div>${start.utc().format('MMM')} ${start.utc().format('YY')} → Month and Year</div>
+            `);
+            }
+
+            // Initialize daterangepicker
+            $('#datetimes').daterangepicker({
+                timePicker: true,
+                timePicker24Hour: true,
+                timePickerSeconds: false,
+                autoUpdateInput: true,
+                locale: {
+                    format: 'YYYY-MM-DD HH:mm',
+                    cancelLabel: 'Clear'
+                },
+                startDate: moment().subtract(6, 'hours'),
+                endDate: moment()
+            }, function(start, end) {
+                updatePeriodPreview(start, end);
+            });
+
+            // Clear fields on cancel
+            $('#datetimes').on('cancel.daterangepicker', function() {
+                $(this).val('');
+                $('#period_covered').val('');
+                $('#start_time').val('');
+                $('#end_time').val('');
+                $('#period_preview').hide();
+            });
+
+            // Set default values on load
+            const defaultStart = moment().subtract(6, 'hours');
+            const defaultEnd = moment();
+            updatePeriodPreview(defaultStart, defaultEnd);
+
+            // Validation before progressing in wizard
+            window.validatePeriodTimes = function() {
+                const startStr = $('#start_time').val();
+                const endStr = $('#end_time').val();
+
+                if (!startStr || !endStr) {
+                    alert('Please select both start and end times.');
+                    return false;
+                }
+
+                const start = moment(startStr);
+                const end = moment(endStr);
+
+                if (!start.isValid() || !end.isValid()) {
+                    alert('Invalid date format.');
+                    return false;
+                }
+
+                if (start.isSameOrAfter(end)) {
+                    alert('End time must be after start time.');
+                    return false;
+                }
+
+                return true;
+            };
+        });
+    </script>
 
 @endsection

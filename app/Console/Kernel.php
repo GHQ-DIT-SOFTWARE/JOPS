@@ -22,11 +22,21 @@ class Kernel extends ConsoleKernel
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
-    protected function schedule(Schedule $schedule)
-    {
-        // $schedule->command('inspire')->hourly();
-    }
-
+   protected function schedule(Schedule $schedule)
+{
+    $schedule->call(function () {
+        \App\Models\OpsRoom::where('status', 'recall')
+            ->where('recall_until', '<=', now())
+            ->each(function ($report) {
+                $report->update([
+                    'submitted_at' => now(),
+                    'status' => 'pending_dland',
+                    'recall_until' => null,
+                    'scheduled_submit_at' => null,
+                ]);
+            });
+    })->everyMinute();
+}
     /**
      * Register the commands for the application.
      *

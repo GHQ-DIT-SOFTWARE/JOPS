@@ -66,4 +66,11 @@ class Kernel extends HttpKernel
         'role' => \App\Http\Middleware\RoleMiddleware::class,
         'check.password.change' => \App\Http\Middleware\CheckPasswordChange::class,
     ];
+
+    protected function schedule(Schedule $schedule)
+{
+    $schedule->call(function () {
+        app('App\Http\Controllers\ReportsController')->processPendingReports();
+    })->everyMinute();
+}
 }

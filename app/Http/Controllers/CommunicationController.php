@@ -1,189 +1,412 @@
 <?php
 
+
+
+
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\DutyOfficerAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-use App\Helpers\Traits\SendsSMS;
-use App\Mail\OfficerCommunication;
-use App\Mail\BulkOfficerCommunication;
+use Illuminate\Support\Facades\Http;
+use App\Services\ActivityLogService;
+use App\Models\DutyRoster;
+use Carbon\Carbon; 
 
 class CommunicationController extends Controller
 {
-    use SendsSMS;
-
-    /**
-     * Send email to specific user
-     */
-    public function sendEmail(Request $request)
+    public function sendSms(User $user, Request $request)
     {
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'subject' => 'sometimes|string|max:255',
-            'message' => 'sometimes|string'
-        ]);
-
-        $user = User::findOrFail($validated['user_id']);
-
         try {
-            $subject = $validated['subject'] ?? 'Officer Communication';
-            $messageContent = $validated['message'] ?? 'This is a test email to officer.';
-
-            Mail::to($user->email)
-                ->send(new OfficerCommunication($subject, $messageContent));
-
-            Log::info("Email sent successfully", [
-                'user_id' => $user->id,
-                'email' => $user->email
-            ]);
-
-            return back()->with('success', "Email sent to {$user->fname}");
-
-        } catch (\Exception $e) {
-            Log::error("Failed to send email", [
-                'user_id' => $user->id,
-                'error' => $e->getMessage()
-            ]);
-
-            return back()->with('error', "Failed to send email: " . $e->getMessage());
-        }
-    }
-
-    /**
- * Send SMS to specific user
- */
-public function sendSms(User $user)
-{
-    try {
-        $serviceNo = $user->service_no ?? 'N/A';
-        $rank = $user->display_rank ?? 'N/A';
-        $fname = $user->fname ?? 'Officer';
-
-        $smsText = "📢 Service No: $serviceNo – $rank $fname: Your account has been successfully created. Please log in and follow the instructions provided.\n\n– Directorate of Information Technology – GHQ(DIT)";
-
-        Log::info("Attempting to send SMS", [
-            'user_id' => $user->id,
-            'phone' => $user->phone
-        ]);
-
-        $sent = $this->sendSMS($user, $smsText);
-
-        if ($sent) {
-            $user->update(['last_sms_sent_at' => now()]);
-            Log::info("SMS sent successfully", ['user_id' => $user->id]);
-            return response()->json([
-                'success' => true, 
-                'message' => 'SMS sent successfully to ' . $user->fname
-            ]);
-        }
-
-        Log::error("Failed to send SMS", ['user_id' => $user->id]);
-        return response()->json([
-            'success' => false, 
-            'message' => 'Failed to send SMS. Please check phone number format.'
-        ], 500);
-
-    } catch (\Exception $e) {
-        Log::error("Exception in sendSms", [
-            'user_id' => $user->id,
-            'error' => $e->getMessage()
-        ]);
-        
-        return response()->json([
-            'success' => false, 
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-}
-
-/**
- * Send bulk communications
- */
-public function sendBulk(Request $request)
-{
-    try {
-        $validated = $request->validate([
-            'type' => 'required|in:email,sms',
-            'user_ids' => 'required|array',
-            'user_ids.*' => 'exists:users,id',
-        ]);
-
-        $users = User::whereIn('id', $validated['user_ids'])->get();
-        $type = $validated['type'];
-
-        Log::info("Starting bulk communication", [
-            'type' => $type,
-            'user_count' => $users->count()
-        ]);
-
-        $results = ['success' => 0, 'failed' => 0, 'details' => []];
-
-        foreach ($users as $user) {
-            try {
-                if ($type === 'sms') {
-                    // Use the same SMS logic as single send
-                    $serviceNo = $user->service_no ?? 'N/A';
-                    $rank = $user->display_rank ?? 'N/A';
-                    $fname = $user->fname ?? 'Officer';
-                    
-                    $smsText = "📢 Service No: $serviceNo – $rank $fname: Your account has been successfully created. Please log in and follow the instructions provided.\n\n– Directorate of Information Technology – GHQ(DIT)";
-
-                    $sent = $this->sendSMS($user, $smsText);
-                    
-                    if ($sent) {
-                        $user->update(['last_sms_sent_at' => now()]);
-                        $results['success']++;
-                        $results['details'][] = "SMS sent to {$user->phone}";
-                    } else {
-                        $results['failed']++;
-                        $results['details'][] = "Failed to send SMS to {$user->phone}";
-                    }
-                }
-                
-            } catch (\Exception $e) {
-                $results['failed']++;
-                $results['details'][] = "Error for {$user->phone}: " . $e->getMessage();
-                Log::error("Failed to send {$type}", [
-                    'user_id' => $user->id,
-                    'error' => $e->getMessage()
+            if (empty($user->phone)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Officer does not have a phone number'
                 ]);
             }
+
+            $dutyAccount = DutyOfficerAccount::where('user_id', $user->id)
+                ->where('duty_month', now()->format('Y-m-01'))
+                ->first();
+
+            if (!$dutyAccount || empty($dutyAccount->show_temp_password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No temporary password found for this officer'
+                ]);
+            }
+
+            $formattedNumber = $this->formatGhanaPhoneNumber($user->phone);
+
+            if (!$formattedNumber) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid phone number format'
+                ]);
+            }
+
+            $message = "Hello {$user->fname}, your GHQ Duty Roster credentials have been created. Service No: {$user->service_no}, Temp Password: {$dutyAccount->show_temp_password}. This password expires in 5 minutes.";
+
+            $smsSent = $this->sendViaSmsGateway($formattedNumber, $message);
+
+            if ($smsSent) {
+                // Log the activity
+                ActivityLogService::logSmsSent($user, $message, auth()->user(), $request);
+                
+                Log::info("SMS sent to officer: {$user->fname} ({$formattedNumber})");
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'SMS sent successfully'
+                ]);
+            } else {
+                throw new \Exception('SMS gateway returned failure');
+            }
+
+        } catch (\Exception $e) {
+            Log::error("Failed to send SMS to {$user->phone}: " . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send SMS: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    public function sendEmail(User $user, Request $request)
+{
+    try {
+        // Check if the user has an email address
+        if (empty($user->email)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Officer does not have an email address'
+            ]);
         }
 
-        Log::info("Bulk communication completed", $results);
+        // Fetch the duty roster account for the current month
+        $dutyAccount = DutyOfficerAccount::where('user_id', $user->id)
+            ->where('duty_month', now()->format('Y-m-01'))
+            ->first();
+
+        // Check if the duty account exists
+        if (!$dutyAccount) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No duty roster found for this officer'
+            ]);
+        }
+
+        // Retrieve the duty dates for this officer
+        $dutyDates = DutyRoster::where('user_id', $user->id)
+            ->whereMonth('duty_date', now()->month)
+            ->whereYear('duty_date', now()->year)
+            ->pluck('duty_date');
+        
+        // Format the duty dates
+        $formattedDates = $dutyDates->map(function($date) {
+            return Carbon::parse($date)->format('M j, Y');
+        })->toArray();
+
+        $datesList = implode("\n", $formattedDates);
+        
+        // Prepare the email message
+        $subject = "Your Duty Roster for " . now()->format('M/Y');
+        $message = "
+            Dear {$user->fname},\n\n
+            Your duty roster for " . now()->format('M/Y') . " has been published.\n\n
+            You are scheduled for duty on the following dates:\n
+            {$datesList}\n\n
+            Please make necessary arrangements.\n\n
+            Thank you,\n
+            Duty Roster System
+        ";
+
+        // Send the email using Laravel's Mail facade
+        Mail::raw($message, function ($mail) use ($user, $subject) {
+            $mail->to($user->email)
+                 ->subject($subject);
+        });
+
+        // Log the activity
+        ActivityLogService::logEmailSent($user, 'Duty Roster for ' . now()->format('M/Y'), auth()->user(), $request);
+
+        Log::info("Email sent to officer: {$user->fname} ({$user->email})");
 
         return response()->json([
             'success' => true,
-            'message' => "{$results['success']} SMS messages sent successfully. {$results['failed']} failed.",
-            'details' => $results['details']
+            'message' => 'Email sent successfully'
         ]);
-
     } catch (\Exception $e) {
-        Log::error("Bulk communication error", ['error' => $e->getMessage()]);
-        
+        // Handle the error
+        Log::error("Failed to send duty roster email to {$user->email}: " . $e->getMessage());
+
         return response()->json([
             'success' => false,
-            'message' => 'Error processing bulk request: ' . $e->getMessage()
-        ], 500);
+            'message' => 'Failed to send email: ' . $e->getMessage()
+        ]);
     }
 }
 
-   
 
-    /**
-     * Get user communication preferences
-     */
-    public function getUserCommunicationInfo(User $user)
+    public function sendBulkSms(Request $request)
     {
+        try {
+            $userIds = $request->input('user_ids', []);
+            $users = User::whereIn('id', $userIds)->get();
+
+            $successCount = 0;
+            $failCount = 0;
+
+            foreach ($users as $user) {
+                if (empty($user->phone)) {
+                    $failCount++;
+                    continue;
+                }
+
+                $formattedNumber = $this->formatGhanaPhoneNumber($user->phone);
+
+                if (!$formattedNumber) {
+                    $failCount++;
+                    continue;
+                }
+
+                $dutyAccount = DutyOfficerAccount::where('user_id', $user->id)
+                    ->where('duty_month', now()->format('Y-m-01'))
+                    ->first();
+
+                if (!$dutyAccount || empty($dutyAccount->show_temp_password)) {
+                    $failCount++;
+                    continue;
+                }
+
+                try {
+                    $message = "Hello {$user->fname}, your GHQ Duty Roster credentials. Service No: {$user->service_no}, Temp Password: {$dutyAccount->show_temp_password}. Expires in 5 minutes.";
+                    
+                    $smsSent = $this->sendViaSmsGateway($formattedNumber, $message);
+
+                    if ($smsSent) {
+                        $successCount++;
+                        ActivityLogService::logSmsSent($user, $message, auth()->user(), $request);
+                        Log::info("Bulk SMS sent to: {$user->fname} ({$formattedNumber})");
+                    } else {
+                        $failCount++;
+                    }
+
+                } catch (\Exception $e) {
+                    $failCount++;
+                    Log::error("Failed bulk SMS to {$formattedNumber}: " . $e->getMessage());
+                }
+            }
+
+            // Log bulk operation
+            ActivityLogService::logBulkCommunication('sms', $successCount, auth()->user(), $request);
+
+            return response()->json([
+                'success' => true,
+                'message' => "SMS sent: {$successCount} successful, {$failCount} failed"
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error("Bulk SMS error: " . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Bulk SMS operation failed: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    public function sendBulkEmail(Request $request)
+{
+    try {
+        $userIds = $request->input('user_ids', []);
+        $users = User::whereIn('id', $userIds)->get();
+
+        $successCount = 0;
+        $failCount = 0;
+
+        foreach ($users as $user) {
+            if (empty($user->email)) {
+                $failCount++;
+                continue;
+            }
+
+            $dutyAccount = DutyOfficerAccount::where('user_id', $user->id)
+                ->where('duty_month', now()->format('Y-m-01'))
+                ->first();
+
+            if (!$dutyAccount) {
+                $failCount++;
+                continue;
+            }
+
+            try {
+                // Retrieve the duty dates for this officer
+                $dutyDates = DutyRoster::where('user_id', $user->id)
+                    ->whereMonth('duty_date', now()->month)
+                    ->whereYear('duty_date', now()->year)
+                    ->pluck('duty_date');
+                
+                // Format the duty dates
+                $formattedDates = $dutyDates->map(function($date) {
+                    return Carbon::parse($date)->format('M j, Y');
+                })->toArray();
+
+                $datesList = implode("\n", $formattedDates);
+                
+                // Prepare the email message
+                $subject = "Your Duty Roster for " . now()->format('M/Y');
+                $message = "
+                    Dear {$user->fname},\n\n
+                    Your duty roster for " . now()->format('M/Y') . " has been published.\n\n
+                    You are scheduled for duty on the following dates:\n
+                    {$datesList}\n\n
+                    Please make necessary arrangements.\n\n
+                    Thank you,\n
+                    Duty Roster System
+                ";
+
+                // Send the email using Laravel's Mail facade
+                Mail::raw($message, function ($mail) use ($user, $subject) {
+                    $mail->to($user->email)
+                         ->subject($subject);
+                });
+
+                $successCount++;
+                ActivityLogService::logEmailSent($user, 'Duty Roster for ' . now()->format('M/Y'), auth()->user(), $request);
+                Log::info("Bulk email sent to: {$user->fname} ({$user->email})");
+
+            } catch (\Exception $e) {
+                $failCount++;
+                Log::error("Failed bulk email to {$user->email}: " . $e->getMessage());
+            }
+        }
+
+        // Log bulk operation
+        ActivityLogService::logBulkCommunication('email', $successCount, auth()->user(), $request);
+
         return response()->json([
-            'email' => $user->email,
-            'phone' => $user->phone,
-            'has_email' => !empty($user->email),
-            'has_phone' => !empty($user->phone),
-            'last_sms_sent_at' => $user->last_sms_sent_at,
-            'last_email_sent_at' => $user->last_email_sent_at
+            'success' => true,
+            'message' => "Emails sent: {$successCount} successful, {$failCount} failed"
+        ]);
+
+    } catch (\Exception $e) {
+        Log::error("Bulk email error: " . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Bulk email operation failed: ' . $e->getMessage()
         ]);
     }
+}
+
+
+    // ... keep the existing helper methods (formatGhanaPhoneNumber, sendViaSmsGateway)
+    
+    /**
+     * Format Ghanaian phone numbers to international format
+     */
+    private function formatGhanaPhoneNumber($phone)
+    {
+        $phone = preg_replace('/\D/', '', $phone);
+
+        if (str_starts_with($phone, '0')) {
+            return '+233' . substr($phone, 1);
+        }
+
+        if (str_starts_with($phone, '233') && strlen($phone) === 12) {
+            return '+' . $phone;
+        }
+
+        if (str_starts_with($phone, '+233') && strlen($phone) === 13) {
+            return $phone;
+        }
+
+        return null;
+    }
+
+
+
+    // Reusable SMS sending helper method
+protected function sendViaSmsGateway($recipient, string $message): bool
+{
+    // Handle both objects and strings
+    if (is_object($recipient) && property_exists($recipient, 'phone')) {
+        $phone = $recipient->phone;
+    } else {
+        $phone = $recipient; // Assume it's already a phone number
+    }
+
+    if (!$phone) {
+        Log::error("sendViaSmsGateway called with invalid phone: " . print_r($recipient, true));
+        return false;
+    }
+
+    // Format the phone number
+    $formattedPhone = $this->formatGhanaPhoneNumber($phone);
+    
+    if (!$formattedPhone) {
+        Log::error("Invalid phone number format: " . $phone);
+        return false;
+    }
+
+    $apiKey = env('MNOTIFY_API_KEY');
+    $sender = env('MNOTIFY_SENDER_ID', 'GHQJOPS');
+    $url = "https://api.mnotify.com/api/sms/quick?key={$apiKey}";
+
+    $payload = [
+        'recipient' => [$formattedPhone],
+        'sender' => $sender,
+        'message' => $message,
+        'is_schedule' => 'false',
+    ];
+
+    try {
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+        ])->post($url, $payload);
+
+        Log::info('📤 MNotify SMS Attempt', [
+            'status' => $response->status(),
+            'body' => $response->body(),
+            'payload' => $payload,
+        ]);
+
+        return $response->successful();
+    } catch (\Exception $e) {
+        Log::error("❗ Exception while sending SMS to $formattedPhone: " . $e->getMessage());
+        return false;
+    }
+}
+
+
+
+
+// public function testEmail()
+// {
+//     try {
+//         $subject = 'Test Email';
+//         $message = 'This is a test email to verify SMTP settings with Brevo.';
+
+//         Mail::raw($message, function($mail) use ($subject) {
+//             $mail->to('ojamkwab@gmail.com') // Replace with your actual test email
+//                  ->subject($subject);
+//         });
+
+//         return response()->json([
+//             'success' => true,
+//             'message' => 'Test email sent successfully'
+//         ]);
+
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Failed to send test email: ' . $e->getMessage()
+//         ]);
+//     }
+// }
+
 }

@@ -12,6 +12,10 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DutyNotification;
+use App\Services\ActivityLogService;
+use App\Models\ActivityLog;
+use Illuminate\Support\Facades\Mail;
+
 
 class DutyRosterController extends Controller
 {
@@ -220,57 +224,47 @@ public function store(Request $request)
         abort(403, 'Unauthorized access.');
     }
     
+    // Validate the request
     $request->validate([
         'user_id' => 'required|exists:users,id',
-        'duty_dates' => 'required|array',
-        'duty_dates.*' => 'date',
-        'is_extra' => 'boolean',
-        'replaced_user_id' => 'nullable|exists:users,id' // For extra duty that replaces someone
+        'duty_dates' => 'required|string', // This will be JSON string
+        'is_extra' => 'boolean'
     ]);
     
-    foreach ($request->duty_dates as $date) {
-        // Check if this date already has an assignment
+    // Decode the JSON array of dates
+    $dutyDates = json_decode($request->duty_dates, true);
+    
+    if (!is_array($dutyDates) || empty($dutyDates)) {
+        $notification = [
+            'message' => 'Please select at least one day for duty assignment.',
+            'alert-type' => 'error'
+        ];
+        return redirect()->back()->with($notification);
+    }
+    
+    $newUser = User::findOrFail($request->user_id);
+    $isExtra = $request->boolean('is_extra', false);
+    
+    foreach ($dutyDates as $date) {
         $existingAssignment = DutyRoster::where('duty_date', $date)->first();
         
         if ($existingAssignment) {
-            // If this is an extra duty that replaces someone
-            if ($request->is_extra && $request->replaced_user_id) {
-                // Create notification for the officer being replaced
-                DutyNotification::create([
-                    'user_id' => $request->replaced_user_id,
-                    'message' => "Your duty on " . Carbon::parse($date)->format('M j, Y') . 
-                                " has been reassigned to " . User::find($request->user_id)->fname . 
-                                " as extra duty assignment",
-                    'type' => 'duty_replaced',
-                    'related_date' => $date,
-                    'duty_month' => Carbon::parse($date)->startOfMonth()->format('Y-m-d')
-                ]);
-            }
-            
-            // Update the existing assignment
+            // Update existing assignment
             $existingAssignment->update([
                 'user_id' => $request->user_id,
-                'is_extra' => $request->is_extra ?? false
+                'is_extra' => $isExtra,
+                'replaced_user_id' => $existingAssignment->user_id
             ]);
+            
+            $assignment = $existingAssignment;
         } else {
             // Create new assignment
-            DutyRoster::create([
+            $assignment = DutyRoster::create([
                 'user_id' => $request->user_id,
                 'duty_date' => $date,
-                'is_extra' => $request->is_extra ?? false,
-                'status' => 'draft'
-            ]);
-        }
-        
-        // Create notification if this is extra duty
-        if ($request->is_extra) {
-            DutyNotification::create([
-                'user_id' => $request->user_id,
-                'message' => "You have been assigned " . ($request->is_extra ? "extra " : "") . 
-                            "duty on " . Carbon::parse($date)->format('M j, Y'),
-                'type' => $request->is_extra ? 'extra_duty' : 'regular_duty',
-                'related_date' => $date,
-                'duty_month' => Carbon::parse($date)->startOfMonth()->format('Y-m-d')
+                'is_extra' => $isExtra,
+                'status' => 'draft',
+                'assigned_by' => Auth::id()
             ]);
         }
         
@@ -279,12 +273,12 @@ public function store(Request $request)
         $this->markOfficerNeedsAccount($request->user_id, $dutyMonth);
     }
     
-$notification = [
-    'message' => 'Duty roster updated successfully.',
-    'alert-type' => 'success'
-];
+    $notification = [
+        'message' => 'Duty assignments created successfully.',
+        'alert-type' => 'success'
+    ];
 
-return redirect()->back()->with($notification);
+    return redirect()->back()->with($notification);
 }
     
     private function markOfficerNeedsAccount($userId, $dutyMonth)
@@ -325,84 +319,167 @@ return redirect()->back()->with($notification);
     }
     
     public function destroy($id)
-    {
-        if (!Auth::user()->canManageDutyRoster()) {
-            abort(403, 'Unauthorized access.');
-        }
-        
-        $dutyRoster = DutyRoster::findOrFail($id);
-        
-        // Only allow deletion if roster is in draft status
-        if ($dutyRoster->status !== 'draft') {
-$notification = [
-    'message' => 'Cannot delete assignment once roster is submitted.',
-    'alert-type' => 'error'
-];
-
-return redirect()->back()->with($notification);
-        }
-        
-        $dutyRoster->delete();
-        
-$notification = [
-    'message' => 'Duty assignment removed successfully.',
-    'alert-type' => 'success'
-];
-
-return redirect()->back()->with($notification);
-    }
-
-    public function submitRoster(Request $request)
-    {
-        if (!Auth::user()->canManageDutyRoster()) {
-            abort(403, 'Unauthorized access.');
-        }
-        
-        $month = $request->input('month', date('m'));
-        $year = $request->input('year', date('Y'));
-        
-        // Update roster status to submitted
-        DutyRoster::whereYear('duty_date', $year)
-                 ->whereMonth('duty_date', $month)
-                 ->update([
-                     'status' => 'submitted',
-                     'submitted_at' => now(),
-                     'submitted_by' => Auth::user()->id
-                 ]);
-        
-$notification = [
-    'message' => 'Roster submitted successfully. D Clerk can now create accounts for duty officers.',
-    'alert-type' => 'success'
-];
-
-return redirect()->back()->with($notification);
+{
+    if (!Auth::user()->canManageDutyRoster()) {
+        abort(403, 'Unauthorized access.');
     }
     
-    public function publishRoster(Request $request)
-    {
-        if (!Auth::user()->canManageDutyRoster()) {
-            abort(403, 'Unauthorized access.');
+    $dutyRoster = DutyRoster::findOrFail($id);
+    
+    // REMOVED: Status check to allow deletion even after publishing
+    // if ($dutyRoster->status !== 'draft') {
+    //     $notification = [
+    //         'message' => 'Cannot delete assignment once roster is submitted.',
+    //         'alert-type' => 'error'
+    //     ];
+    //     return redirect()->back()->with($notification);
+    // }
+    
+    // Log the removal
+    ActivityLogService::logDutyRemoval(
+        $dutyRoster,
+        $dutyRoster->user,
+        Auth::user(),
+        request()
+    );
+    
+    $dutyRoster->delete();
+    
+    $notification = [
+        'message' => 'Duty assignment removed successfully.',
+        'alert-type' => 'success'
+    ];
+
+    return redirect()->back()->with($notification);
+}
+    public function submitRoster(Request $request)
+{
+    if (!Auth::user()->canManageDutyRoster()) {
+        abort(403, 'Unauthorized access.');
+    }
+    
+    $month = $request->input('month', date('m'));
+    $year = $request->input('year', date('Y'));
+    
+    // Update roster status to submitted
+    DutyRoster::whereYear('duty_date', $year)
+             ->whereMonth('duty_date', $month)
+             ->update([
+                 'status' => 'submitted',
+                 'submitted_at' => now(),
+                 'submitted_by' => Auth::user()->id
+             ]);
+    
+    // Log activity using the service
+    ActivityLogService::logRosterSubmission($month, $year, Auth::user(), $request);
+
+    $notification = [
+        'message' => 'Roster submitted successfully. D Clerk can now review and publish.',
+        'alert-type' => 'success'
+    ];
+
+    return redirect()->back()->with($notification);
+}
+
+public function publishRoster(Request $request)
+{
+    if (!Auth::user()->canPublishDutyRoster()) {
+        abort(403, 'Unauthorized access.');
+    }
+    
+    $month = $request->input('month', date('m'));
+    $year = $request->input('year', date('Y'));
+    $dutyMonth = "{$year}-{$month}-01";
+    
+    // Update roster status to published
+    DutyRoster::whereYear('duty_date', $year)
+             ->whereMonth('duty_date', $month)
+             ->update([
+                 'status' => 'published',
+                 'published_at' => now(),
+                 'published_by' => Auth::user()->id
+             ]);
+    
+    // Log activity using the service
+    ActivityLogService::logRosterPublication($month, $year, Auth::user(), $request);
+    
+    // Trigger notifications
+    $this->sendRosterNotifications($month, $year);
+    
+    $notification = [
+        'message' => 'Roster published successfully. Notifications sent to all duty officers.',
+        'alert-type' => 'success'
+    ];
+
+    return redirect()->back()->with($notification);
+}
+
+private function sendRosterNotifications($month, $year)
+{
+    $startDate = Carbon::create($year, $month, 1);
+    $endDate = Carbon::create($year, $month, 1)->endOfMonth();
+    
+    // Get all duty assignments for the month
+    $assignments = DutyRoster::with('user')
+        ->whereBetween('duty_date', [$startDate, $endDate])
+        ->get()
+        ->groupBy('user_id');
+    
+    foreach ($assignments as $userId => $userAssignments) {
+        $user = $userAssignments->first()->user;
+        $dutyDates = $userAssignments->pluck('duty_date')->toArray();
+        
+        // Send email notification
+        if ($user->email) {
+            $this->sendRosterEmail($user, $dutyDates, $month, $year);
         }
         
-        $month = $request->input('month', date('m'));
-        $year = $request->input('year', date('Y'));
+        // Create notification
+        $datesList = implode(', ', array_map(function($date) {
+            return Carbon::parse($date)->format('M j, Y');
+        }, $dutyDates));
         
-        // Update roster status to published (no account creation check)
-        DutyRoster::whereYear('duty_date', $year)
-                 ->whereMonth('duty_date', $month)
-                 ->update([
-                     'status' => 'published',
-                     'published_at' => now(),
-                     'published_by' => Auth::user()->id
-                 ]);
-        
-$notification = [
-    'message' => 'Roster published successfully. Duty officers can now view their assignments.',
-    'alert-type' => 'success'
-];
-
-return redirect()->back()->with($notification);
+        DutyNotification::create([
+            'user_id' => $userId,
+            'message' => "Your duty schedule for {$month}/{$year} has been published. You are scheduled on: {$datesList}",
+            'type' => 'roster_published',
+            'related_date' => null,
+            'duty_month' => "{$year}-{$month}-01",
+            'is_read' => false
+        ]);
     }
+}
+
+private function sendRosterEmail($user, $dutyDates, $month, $year)
+{
+    $subject = "Your Duty Roster for {$month}/{$year}";
+    
+    // Convert dates to formatted strings if they're Carbon objects
+    $formattedDates = array_map(function($date) {
+        if ($date instanceof Carbon) {
+            return $date->format('M j, Y');
+        }
+        return Carbon::parse($date)->format('M j, Y');
+    }, $dutyDates);
+    
+    $datesList = implode("\n", $formattedDates);
+    
+    $message = "
+        Dear {$user->fname},\n\n
+        Your duty roster for {$month}/{$year} has been published.\n\n
+        You are scheduled for duty on the following dates:\n
+        {$datesList}\n\n
+        Please make necessary arrangements.\n\n
+        Thank you,\n
+        Duty Roster System
+    ";
+    
+    // Use Laravel's mail functionality
+    Mail::raw($message, function($mail) use ($user, $subject) {
+        $mail->to($user->email)
+             ->subject($subject);
+    });
+}
 
 
 public function addExtraDuty(Request $request)
@@ -440,29 +517,27 @@ public function addExtraDuty(Request $request)
             
             // Delete the existing assignment
             $existingAssignment->delete();
-            
-            // Create notification for the officer being unassigned
-            DutyNotification::create([
-                'user_id' => $replacedOfficerId,
-                'message' => "Your duty on " . Carbon::parse($date)->format('M j, Y') . 
-                            " has been reassigned as extra duty to another officer",
-                'type' => 'duty_replaced',
-                'related_date' => $date,
-                'duty_month' => Carbon::parse($date)->startOfMonth()->format('Y-m-d')
-            ]);
         }
         
         // Create new extra duty assignment
         DutyRoster::create([
-            'user_id' => User::find($request->user_id)->id,
+            'user_id' => $request->user_id,
             'duty_date' => $date,
             'is_extra' => true,
             'extra_reason' => $request->reason,
-            'status' => 'draft'
+            'status' => 'draft',
+            'assigned_by' => Auth::id()
         ]);
         
         $extraDaysCount++;
         
+        // Mark that this officer needs an account for this month
+        $dutyMonth = Carbon::parse($date)->startOfMonth()->format('Y-m-d');
+        $this->markOfficerNeedsAccount($request->user_id, $dutyMonth);
+    }
+    
+    // Create notifications after all assignments are done
+    foreach ($request->duty_dates as $date) {
         // Create notification for the officer receiving extra duty
         DutyNotification::create([
             'user_id' => $request->user_id,
@@ -471,10 +546,6 @@ public function addExtraDuty(Request $request)
             'related_date' => $date,
             'duty_month' => Carbon::parse($date)->startOfMonth()->format('Y-m-d')
         ]);
-        
-        // Mark that this officer needs an account for this month
-        $dutyMonth = Carbon::parse($date)->startOfMonth()->format('Y-m-d');
-        $this->markOfficerNeedsAccount($request->user_id, $dutyMonth);
     }
     
     // Create summary notifications
@@ -487,21 +558,6 @@ public function addExtraDuty(Request $request)
             'type' => 'extra_duty_summary',
             'duty_month' => Carbon::parse($request->duty_dates[0])->startOfMonth()->format('Y-m-d')
         ]);
-        
-        // For each replaced officer, create a summary notification
-        foreach ($replacedOfficers as $officerId => $info) {
-            $dateCount = count($info['dates']);
-            $datesList = implode(', ', array_map(function($date) {
-                return Carbon::parse($date)->format('M j');
-            }, $info['dates']));
-            
-            DutyNotification::create([
-                'user_id' => $officerId,
-                'message' => "Your duties on $datesList have been reassigned as extra duty to another officer",
-                'type' => 'duty_replaced_summary',
-                'duty_month' => Carbon::parse($request->duty_dates[0])->startOfMonth()->format('Y-m-d')
-            ]);
-        }
     }
     
     $message = "Extra duty assigned successfully. $extraDaysCount days added.";
@@ -510,12 +566,12 @@ public function addExtraDuty(Request $request)
         $message .= " $replacedCount officer(s) were unassigned from these dates.";
     }
     
-$notification = [
-    'message' => $message,
-    'alert-type' => 'success'
-];
+    $notification = [
+        'message' => $message,
+        'alert-type' => 'success'
+    ];
 
-return redirect()->back()->with($notification);
+    return redirect()->back()->with($notification);
 }
 
 public function getNotifications(Request $request)
